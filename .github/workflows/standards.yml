@@ -1,0 +1,21 @@
+name: standards
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  php-cs-fixer:
+    name: PHP CS Fixer Dry Run
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run
+        env:
+          NO_TTY: "true"
+        run: composer cs-fixer-dry-run
