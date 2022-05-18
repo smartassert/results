@@ -8,7 +8,10 @@ use App\Entity\Token;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-final class Version20220518141642 extends AbstractMigration
+/**
+ * Auto-generated Migration: Please modify to your needs!
+ */
+final class Version20220518154358 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -19,11 +22,13 @@ final class Version20220518141642 extends AbstractMigration
     {
         $this->addSql('
             CREATE TABLE token (
+                token VARCHAR(32) NOT NULL, 
                 job_label VARCHAR(32) NOT NULL, 
                 user_id VARCHAR(32) NOT NULL, 
-                PRIMARY KEY(job_label)
+                PRIMARY KEY(token, job_label)
             )
         ');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_5F37A13B5F37A13B ON token (token)');
         $this->addSql('CREATE INDEX user_id_idx ON token (user_id)');
         $this->addSql('CREATE UNIQUE INDEX job_label_idx ON token (job_label)');
     }

@@ -92,6 +92,9 @@
             "@functional-start",
             "sleep 2",
             "@db-setup"
+        ],
+        "functional-teardown": [
+            "docker-compose -f ./tests/build/docker-compose.yml down"
         ]
     },
     "conflict": {
