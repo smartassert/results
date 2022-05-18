@@ -47,6 +47,13 @@ class TokenTest extends WebTestCase
 
         self::assertSame($jobLabel, $token->getJobLabel());
         self::assertSame($userId, $token->getUserId());
+
+        $this->entityManager->clear();
+
+        $retrievedToken = $this->repository->findOneBy(['token' => $token->getToken()]);
+
+        self::assertNotSame($token, $retrievedToken);
+        self::assertEquals($token, $retrievedToken);
     }
 
     public function testJobLabelIsUnique(): void
@@ -56,12 +63,10 @@ class TokenTest extends WebTestCase
         $jobLabel = md5((string) rand());
         $userId = md5((string) rand());
 
-        $token = new Token($jobLabel, $userId);
-
-        $this->entityManager->persist($token);
+        $this->entityManager->persist(new Token($jobLabel, $userId));
         $this->entityManager->flush();
         $this->entityManager->clear();
-        $this->entityManager->persist($token);
+        $this->entityManager->persist(new Token($jobLabel, $userId));
 
         self::expectException(UniqueConstraintViolationException::class);
 
