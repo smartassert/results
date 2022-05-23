@@ -21,8 +21,8 @@ class EventTest extends WebTestCase
         \assert($repository instanceof EventRepository);
         $this->repository = $repository;
 
-        foreach ($repository->findAll() as $event) {
-            $repository->remove($event);
+        foreach ($repository->findAll() as $entity) {
+            $repository->remove($entity);
         }
     }
 
