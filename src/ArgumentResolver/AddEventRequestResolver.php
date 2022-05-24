@@ -22,6 +22,9 @@ class AddEventRequestResolver implements ArgumentValueResolverInterface
     public function resolve(Request $request, ArgumentMetadata $argument): \Traversable
     {
         if ($this->supports($request, $argument)) {
+            $identifier = $request->request->get(AddEventRequest::KEY_IDENTIFIER);
+            $identifier = is_int($identifier) || ctype_digit($identifier) ? (int) $identifier : null;
+
             $type = $request->request->get(AddEventRequest::KEY_TYPE);
             $type = is_string($type) ? trim($type) : null;
 
@@ -35,7 +38,7 @@ class AddEventRequestResolver implements ArgumentValueResolverInterface
                 $payload = is_array($payload) ? $payload : null;
             }
 
-            yield new AddEventRequest($type, $reference, $payload);
+            yield new AddEventRequest($identifier, $type, $reference, $payload);
         }
     }
 }
