@@ -15,6 +15,9 @@ class Event implements \JsonSerializable
     #[ORM\Column(type: 'string', length: self::ID_LENGTH, unique: true)]
     protected string $id;
 
+    #[ORM\Column(type: 'integer', nullable: false)]
+    private int $identifier;
+
     #[ORM\Column(type: 'string', length: self::ID_LENGTH)]
     private string $label;
 
@@ -33,9 +36,10 @@ class Event implements \JsonSerializable
     /**
      * @param array<mixed> $payload
      */
-    public function __construct(string $label, string $type, string $reference, array $payload)
+    public function __construct(int $identifier, string $label, string $type, string $reference, array $payload)
     {
         $this->id = (string) new Ulid();
+        $this->identifier = $identifier;
         $this->label = $label;
         $this->type = $type;
         $this->reference = $reference;
@@ -48,6 +52,7 @@ class Event implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
+            'identifier' => $this->identifier,
             'label' => $this->label,
             'type' => $this->type,
             'reference' => $this->reference,

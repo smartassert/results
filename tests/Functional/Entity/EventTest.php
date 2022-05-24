@@ -31,16 +31,17 @@ class EventTest extends WebTestCase
      *
      * @param array<mixed> $payload
      */
-    public function testCreate(string $label, string $type, string $reference, array $payload): void
+    public function testCreate(int $identifier, string $label, string $type, string $reference, array $payload): void
     {
         self::assertSame(0, $this->repository->count([]));
 
-        $event = new Event($label, $type, $reference, $payload);
+        $event = new Event($identifier, $label, $type, $reference, $payload);
 
         $this->repository->add($event);
 
         self::assertSame(1, $this->repository->count([]));
 
+        self::assertSame($identifier, ObjectReflector::getProperty($event, 'identifier'));
         self::assertSame($label, ObjectReflector::getProperty($event, 'label'));
         self::assertSame($type, ObjectReflector::getProperty($event, 'type'));
         self::assertSame($reference, ObjectReflector::getProperty($event, 'reference'));
@@ -54,12 +55,14 @@ class EventTest extends WebTestCase
     {
         return [
             'empty payload' => [
+                'identifier' => 1,
                 'label' => md5('empty payload label'),
                 'type' => 'job/started',
                 'reference' => md5('empty payload reference'),
                 'payload' => [],
             ],
             'non-empty payload' => [
+                'identifier' => 2,
                 'label' => md5('label'),
                 'type' => 'job/finished',
                 'reference' => md5('reference'),

@@ -27,12 +27,14 @@ class EventTest extends TestCase
         return [
             'empty payload' => [
                 'event' => new Event(
+                    1,
                     md5('empty payload label'),
                     'job/started',
                     md5('empty payload reference'),
                     []
                 ),
                 'expected' => [
+                    'identifier' => 1,
                     'label' => md5('empty payload label'),
                     'type' => 'job/started',
                     'reference' => md5('empty payload reference'),
@@ -41,6 +43,7 @@ class EventTest extends TestCase
             ],
             'non-empty payload' => [
                 'event' => new Event(
+                    2,
                     md5('label'),
                     'job/finished',
                     md5('reference'),
@@ -54,6 +57,7 @@ class EventTest extends TestCase
                     ]
                 ),
                 'expected' => [
+                    'identifier' => 2,
                     'label' => md5('label'),
                     'type' => 'job/finished',
                     'reference' => md5('reference'),
