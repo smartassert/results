@@ -36,7 +36,7 @@ class Token
         return $this->token;
     }
 
-    public function getJobLabel(): ?string
+    public function getJobLabel(): string
     {
         return $this->jobLabel;
     }
