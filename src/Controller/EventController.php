@@ -19,15 +19,6 @@ class EventController
             return new Response('', 404);
         }
 
-        /**
-         * @todo Inject UserInterface instance into action in #7
-         */
-        $userId = md5('user id');
-
-        if ($userId !== $tokenEntity->getUserId()) {
-            return new Response('', 403);
-        }
-
         if (null === $request->identifier) {
             return $this->createInvalidAddEventRequestFieldResponse(AddEventRequest::KEY_IDENTIFIER, 'an integer');
         }

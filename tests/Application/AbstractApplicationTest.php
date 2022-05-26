@@ -8,6 +8,7 @@ use App\Repository\EventRepository;
 use App\Repository\TokenRepository;
 use App\Tests\Services\ApplicationClient\Client;
 use App\Tests\Services\ApplicationClient\ClientFactory;
+use App\Tests\Services\AuthenticationConfiguration;
 use SmartAssert\SymfonyTestClient\ClientInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -16,6 +17,7 @@ abstract class AbstractApplicationTest extends WebTestCase
 {
     protected KernelBrowser $kernelBrowser;
     protected Client $applicationClient;
+    protected AuthenticationConfiguration $authenticationConfiguration;
 
     protected function setUp(): void
     {
@@ -27,6 +29,10 @@ abstract class AbstractApplicationTest extends WebTestCase
         \assert($factory instanceof ClientFactory);
 
         $this->applicationClient = $factory->create($this->getClientAdapter());
+
+        $authenticationConfiguration = self::getContainer()->get(AuthenticationConfiguration::class);
+        \assert($authenticationConfiguration instanceof AuthenticationConfiguration);
+        $this->authenticationConfiguration = $authenticationConfiguration;
 
         $tokenRepository = self::getContainer()->get(TokenRepository::class);
         if ($tokenRepository instanceof TokenRepository) {

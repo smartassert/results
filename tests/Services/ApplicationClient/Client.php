@@ -16,11 +16,15 @@ class Client
     ) {
     }
 
-    public function makeCreateTokenRequest(string $jobLabel, string $method = 'POST'): ResponseInterface
-    {
+    public function makeCreateTokenRequest(
+        ?string $authenticationToken,
+        string $jobLabel,
+        string $method = 'POST'
+    ): ResponseInterface {
         return $this->client->makeRequest(
             $method,
-            $this->router->generate('token_create', ['job_label' => $jobLabel])
+            $this->router->generate('token_create', ['job_label' => $jobLabel]),
+            $this->createAuthorizationHeader($authenticationToken)
         );
     }
 
@@ -37,5 +41,20 @@ class Client
             ],
             http_build_query($payload)
         );
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function createAuthorizationHeader(?string $authenticationToken): array
+    {
+        $headers = [];
+        if (is_string($authenticationToken)) {
+            $headers = [
+                'authorization' => 'Bearer ' . $authenticationToken,
+            ];
+        }
+
+        return $headers;
     }
 }

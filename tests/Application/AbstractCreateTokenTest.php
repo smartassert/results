@@ -6,6 +6,7 @@ namespace App\Tests\Application;
 
 use App\Entity\Token;
 use App\Repository\TokenRepository;
+use App\Tests\Services\AuthenticationConfiguration;
 use Symfony\Component\Uid\Ulid;
 
 abstract class AbstractCreateTokenTest extends AbstractApplicationTest
@@ -17,7 +18,11 @@ abstract class AbstractCreateTokenTest extends AbstractApplicationTest
     {
         $label = (string) new Ulid();
 
-        $response = $this->applicationClient->makeCreateTokenRequest($label, $method);
+        $response = $this->applicationClient->makeCreateTokenRequest(
+            $this->authenticationConfiguration->validToken,
+            $label,
+            $method
+        );
 
         self::assertSame(405, $response->getStatusCode());
     }
@@ -43,6 +48,43 @@ abstract class AbstractCreateTokenTest extends AbstractApplicationTest
         ];
     }
 
+    /**
+     * @dataProvider unauthorizedUserDataProvider
+     */
+    public function testCreateUnauthorizedUser(callable $tokenCreator): void
+    {
+        $response = $this->applicationClient->makeCreateTokenRequest(
+            $tokenCreator($this->authenticationConfiguration),
+            (string) new Ulid()
+        );
+
+        self::assertSame(401, $response->getStatusCode());
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function unauthorizedUserDataProvider(): array
+    {
+        return [
+            'no token' => [
+                'tokenCreator' => function () {
+                    return null;
+                },
+            ],
+            'empty token' => [
+                'tokenCreator' => function () {
+                    return '';
+                },
+            ],
+            'non-empty invalid token' => [
+                'tokenCreator' => function (AuthenticationConfiguration $authenticationConfiguration) {
+                    return $authenticationConfiguration->invalidToken;
+                },
+            ],
+        ];
+    }
+
     public function testCreateSuccess(): void
     {
         $tokenRepository = self::getContainer()->get(TokenRepository::class);
@@ -52,7 +94,10 @@ abstract class AbstractCreateTokenTest extends AbstractApplicationTest
 
         $jobLabel = (string) new Ulid();
 
-        $response = $this->applicationClient->makeCreateTokenRequest($jobLabel);
+        $response = $this->applicationClient->makeCreateTokenRequest(
+            $this->authenticationConfiguration->validToken,
+            $jobLabel
+        );
 
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('application/json', $response->getHeaderLine('content-type'));
@@ -77,10 +122,10 @@ abstract class AbstractCreateTokenTest extends AbstractApplicationTest
 
         $jobLabel = (string) new Ulid();
 
-        $this->applicationClient->makeCreateTokenRequest($jobLabel);
+        $this->applicationClient->makeCreateTokenRequest($this->authenticationConfiguration->validToken, $jobLabel);
         self::assertSame(1, $tokenRepository->count([]));
 
-        $this->applicationClient->makeCreateTokenRequest($jobLabel);
+        $this->applicationClient->makeCreateTokenRequest($this->authenticationConfiguration->validToken, $jobLabel);
         self::assertSame(1, $tokenRepository->count([]));
     }
 }

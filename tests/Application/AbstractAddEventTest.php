@@ -345,7 +345,10 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
 
     private function createToken(string $jobLabel): string
     {
-        $createTokenResponse = $this->applicationClient->makeCreateTokenRequest($jobLabel);
+        $createTokenResponse = $this->applicationClient->makeCreateTokenRequest(
+            $this->authenticationConfiguration->validToken,
+            $jobLabel
+        );
         $createTokenResponseData = json_decode($createTokenResponse->getBody()->getContents(), true);
         self::assertIsArray($createTokenResponseData);
 
