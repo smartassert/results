@@ -23,7 +23,9 @@ class AddEventRequestResolver implements ArgumentValueResolverInterface
     {
         if ($this->supports($request, $argument)) {
             $identifier = $request->request->get(AddEventRequest::KEY_IDENTIFIER);
-            $identifier = is_int($identifier) || ctype_digit($identifier) ? (int) $identifier : null;
+            if (null !== $identifier) {
+                $identifier = is_int($identifier) || ctype_digit($identifier) ? (int) $identifier : null;
+            }
 
             $type = $request->request->get(AddEventRequest::KEY_TYPE);
             $type = is_string($type) ? trim($type) : null;
