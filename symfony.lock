@@ -77,6 +77,12 @@
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.12"
     },
+    "guzzlehttp/guzzle": {
+        "version": "7.4.3"
+    },
+    "guzzlehttp/promises": {
+        "version": "1.5.1"
+    },
     "guzzlehttp/psr7": {
         "version": "2.2.1"
     },
@@ -225,6 +231,12 @@
     },
     "smartassert/symfony-test-client": {
         "version": "0.1"
+    },
+    "smartassert/users-client": {
+        "version": "0.2"
+    },
+    "smartassert/users-security-bundle": {
+        "version": "0.4"
     },
     "squizlabs/php_codesniffer": {
         "version": "3.6",
