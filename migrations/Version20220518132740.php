@@ -21,7 +21,7 @@ final class Version20220518132740 extends AbstractMigration
             CREATE TABLE event (
                 id VARCHAR(32) NOT NULL,
                 identifier INT NOT NULL, 
-                label VARCHAR(32) NOT NULL, 
+                job VARCHAR(32) NOT NULL, 
                 type VARCHAR(32) NOT NULL, 
                 reference VARCHAR(32) NOT NULL, 
                 payload JSON NOT NULL, PRIMARY KEY(id)

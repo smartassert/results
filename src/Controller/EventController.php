@@ -40,7 +40,7 @@ class EventController
 
         $event = $eventRepository->findOneBy([
             'identifier' => $request->identifier,
-            'label' => $tokenEntity->getJobLabel(),
+            'job' => $tokenEntity->getJobLabel(),
         ]);
 
         if (null === $event) {
