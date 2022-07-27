@@ -31,17 +31,17 @@ class EventTest extends WebTestCase
      *
      * @param array<mixed> $payload
      */
-    public function testCreate(int $identifier, string $job, string $type, string $reference, array $payload): void
+    public function testCreate(int $sequenceNumber, string $job, string $type, string $reference, array $payload): void
     {
         self::assertSame(0, $this->repository->count([]));
 
-        $event = new Event($identifier, $job, $type, $reference, $payload);
+        $event = new Event($sequenceNumber, $job, $type, $reference, $payload);
 
         $this->repository->add($event);
 
         self::assertSame(1, $this->repository->count([]));
 
-        self::assertSame($identifier, ObjectReflector::getProperty($event, 'identifier'));
+        self::assertSame($sequenceNumber, ObjectReflector::getProperty($event, 'sequenceNumber'));
         self::assertSame($job, ObjectReflector::getProperty($event, 'job'));
         self::assertSame($type, ObjectReflector::getProperty($event, 'type'));
         self::assertSame($reference, ObjectReflector::getProperty($event, 'reference'));
@@ -55,14 +55,14 @@ class EventTest extends WebTestCase
     {
         return [
             'empty payload' => [
-                'identifier' => 1,
+                'sequence_number' => 1,
                 'job' => md5('empty payload job'),
                 'type' => 'job/started',
                 'reference' => md5('empty payload reference'),
                 'payload' => [],
             ],
             'non-empty payload' => [
-                'identifier' => 2,
+                'sequence_number' => 2,
                 'job' => md5('job'),
                 'type' => 'job/finished',
                 'reference' => md5('reference'),
