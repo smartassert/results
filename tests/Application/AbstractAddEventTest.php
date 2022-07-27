@@ -240,7 +240,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         self::assertSame(
             [
                 'identifier' => $identifier,
-                'label' => $jobLabel,
+                'job' => $jobLabel,
                 AddEventRequest::KEY_TYPE => $type,
                 AddEventRequest::KEY_REFERENCE => $reference,
                 AddEventRequest::KEY_PAYLOAD => $payloadData,
