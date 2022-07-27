@@ -19,8 +19,8 @@ class EventController
             return new Response('', 404);
         }
 
-        if (null === $request->identifier) {
-            return $this->createInvalidAddEventRequestFieldResponse(AddEventRequest::KEY_IDENTIFIER, 'an integer');
+        if (null === $request->sequenceNumber) {
+            return $this->createInvalidAddEventRequestFieldResponse(AddEventRequest::KEY_SEQUENCE_NUMBER, 'an integer');
         }
 
         if (null === $request->type) {
@@ -39,13 +39,13 @@ class EventController
         }
 
         $event = $eventRepository->findOneBy([
-            'identifier' => $request->identifier,
+            'sequenceNumber' => $request->sequenceNumber,
             'job' => $tokenEntity->getJobLabel(),
         ]);
 
         if (null === $event) {
             $event = new Event(
-                $request->identifier,
+                $request->sequenceNumber,
                 $tokenEntity->getJobLabel(),
                 $request->type,
                 $request->reference,

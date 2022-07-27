@@ -20,7 +20,7 @@ final class Version20220518132740 extends AbstractMigration
         $this->addSql('
             CREATE TABLE event (
                 id VARCHAR(32) NOT NULL,
-                identifier INT NOT NULL, 
+                sequence_number INT NOT NULL, 
                 job VARCHAR(32) NOT NULL, 
                 type VARCHAR(32) NOT NULL, 
                 reference VARCHAR(32) NOT NULL, 

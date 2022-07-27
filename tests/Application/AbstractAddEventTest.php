@@ -83,7 +83,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
     public function addBadRequestDataProvider(): array
     {
         return [
-            'identifier missing' => [
+            'sequence number missing' => [
                 'requestPayload' => [
                     AddEventRequest::KEY_TYPE => 'type',
                     AddEventRequest::KEY_REFERENCE => 'reference',
@@ -93,9 +93,9 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                     'error' => [
                         'type' => 'invalid_request',
                         'payload' => [
-                            AddEventRequest::KEY_IDENTIFIER => [
+                            AddEventRequest::KEY_SEQUENCE_NUMBER => [
                                 'value' => null,
-                                'message' => 'Required field "identifier" invalid, ' .
+                                'message' => 'Required field "sequence_number" invalid, ' .
                                     'missing from request or not an integer.',
                             ],
                         ],
@@ -104,7 +104,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             ],
             'type missing' => [
                 'requestPayload' => [
-                    AddEventRequest::KEY_IDENTIFIER => 123,
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 123,
                     AddEventRequest::KEY_REFERENCE => 'reference',
                     AddEventRequest::KEY_PAYLOAD => json_encode([]),
                 ],
@@ -122,7 +122,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             ],
             'reference missing' => [
                 'requestPayload' => [
-                    AddEventRequest::KEY_IDENTIFIER => 123,
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 123,
                     AddEventRequest::KEY_TYPE => 'type',
                     AddEventRequest::KEY_PAYLOAD => json_encode([]),
                 ],
@@ -141,7 +141,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             ],
             'payload missing' => [
                 'requestPayload' => [
-                    AddEventRequest::KEY_IDENTIFIER => 123,
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 123,
                     AddEventRequest::KEY_TYPE => 'type',
                     AddEventRequest::KEY_REFERENCE => 'reference',
                 ],
@@ -160,7 +160,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             ],
             'payload is not json' => [
                 'requestPayload' => [
-                    AddEventRequest::KEY_IDENTIFIER => 123,
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 123,
                     AddEventRequest::KEY_TYPE => 'type',
                     AddEventRequest::KEY_REFERENCE => 'reference',
                     AddEventRequest::KEY_PAYLOAD => 'foo',
@@ -180,7 +180,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             ],
             'payload does not decode to an array' => [
                 'requestPayload' => [
-                    AddEventRequest::KEY_IDENTIFIER => 123,
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 123,
                     AddEventRequest::KEY_TYPE => 'type',
                     AddEventRequest::KEY_REFERENCE => 'reference',
                     AddEventRequest::KEY_PAYLOAD => json_encode('foo'),
@@ -208,7 +208,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
 
         self::assertSame(0, $this->eventRepository->count([]));
 
-        $identifier = rand();
+        $sequenceNumber = rand();
         $type = md5((string) rand());
         $reference = md5((string) rand());
         $payloadData = [
@@ -221,7 +221,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         ];
 
         $requestPayload = [
-            AddEventRequest::KEY_IDENTIFIER => (string) $identifier,
+            AddEventRequest::KEY_SEQUENCE_NUMBER => (string) $sequenceNumber,
             AddEventRequest::KEY_TYPE => $type,
             AddEventRequest::KEY_REFERENCE => $reference,
             AddEventRequest::KEY_PAYLOAD => (string) json_encode($payloadData),
@@ -239,7 +239,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
 
         self::assertSame(
             [
-                'identifier' => $identifier,
+                'sequence_number' => $sequenceNumber,
                 'job' => $jobLabel,
                 AddEventRequest::KEY_TYPE => $type,
                 AddEventRequest::KEY_REFERENCE => $reference,
@@ -257,7 +257,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
      */
     public function testAddIsIdempotent(
         string $jobLabel,
-        int $identifier,
+        int $sequenceNumber,
         array $firstRequestPayload,
         array $secondRequestPayload
     ): void {
@@ -267,13 +267,13 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
 
         $firstResponse = $this->applicationClient->makeAddEventRequest(
             $token,
-            array_merge([AddEventRequest::KEY_IDENTIFIER => (string) $identifier], $firstRequestPayload)
+            array_merge([AddEventRequest::KEY_SEQUENCE_NUMBER => (string) $sequenceNumber], $firstRequestPayload)
         );
         self::assertSame(1, $this->eventRepository->count([]));
 
         $secondResponse = $this->applicationClient->makeAddEventRequest(
             $token,
-            array_merge([AddEventRequest::KEY_IDENTIFIER => (string) $identifier], $secondRequestPayload)
+            array_merge([AddEventRequest::KEY_SEQUENCE_NUMBER => (string) $sequenceNumber], $secondRequestPayload)
         );
         self::assertSame(1, $this->eventRepository->count([]));
 
@@ -288,7 +288,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         return [
             'type is not modified by second request' => [
                 'jobLabel' => (string) new Ulid(),
-                'identifier' => rand(),
+                'sequence_number' => rand(),
                 'firstRequestPayload' => [
                     AddEventRequest::KEY_TYPE => 'first request type',
                     AddEventRequest::KEY_REFERENCE => 'first request reference',
@@ -306,7 +306,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             ],
             'reference is not modified by second request' => [
                 'jobLabel' => (string) new Ulid(),
-                'identifier' => rand(),
+                'sequence_number' => rand(),
                 'firstRequestPayload' => [
                     AddEventRequest::KEY_TYPE => 'first request type',
                     AddEventRequest::KEY_REFERENCE => 'first request reference',
@@ -324,7 +324,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             ],
             'payload is not modified by second request' => [
                 'jobLabel' => (string) new Ulid(),
-                'identifier' => rand(),
+                'sequence_number' => rand(),
                 'firstRequestPayload' => [
                     AddEventRequest::KEY_TYPE => 'first request type',
                     AddEventRequest::KEY_REFERENCE => 'first request reference',

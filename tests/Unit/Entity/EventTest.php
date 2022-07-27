@@ -34,7 +34,7 @@ class EventTest extends TestCase
                     []
                 ),
                 'expected' => [
-                    'identifier' => 1,
+                    'sequence_number' => 1,
                     'job' => md5('empty payload job'),
                     'type' => 'job/started',
                     'reference' => md5('empty payload reference'),
@@ -57,7 +57,7 @@ class EventTest extends TestCase
                     ]
                 ),
                 'expected' => [
-                    'identifier' => 2,
+                    'sequence_number' => 2,
                     'job' => md5('job'),
                     'type' => 'job/finished',
                     'reference' => md5('reference'),

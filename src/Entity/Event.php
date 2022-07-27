@@ -16,7 +16,7 @@ class Event implements \JsonSerializable
     protected string $id;
 
     #[ORM\Column(type: 'integer', nullable: false)]
-    private int $identifier;
+    private int $sequenceNumber;
 
     #[ORM\Column(type: 'string', length: self::ID_LENGTH)]
     private string $job;
@@ -36,10 +36,10 @@ class Event implements \JsonSerializable
     /**
      * @param array<mixed> $payload
      */
-    public function __construct(int $identifier, string $job, string $type, string $reference, array $payload)
+    public function __construct(int $sequenceNumber, string $job, string $type, string $reference, array $payload)
     {
         $this->id = (string) new Ulid();
-        $this->identifier = $identifier;
+        $this->sequenceNumber = $sequenceNumber;
         $this->job = $job;
         $this->type = $type;
         $this->reference = $reference;
@@ -52,7 +52,7 @@ class Event implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'identifier' => $this->identifier,
+            'sequence_number' => $this->sequenceNumber,
             'job' => $this->job,
             'type' => $this->type,
             'reference' => $this->reference,

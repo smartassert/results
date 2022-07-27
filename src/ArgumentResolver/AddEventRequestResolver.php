@@ -22,9 +22,11 @@ class AddEventRequestResolver implements ArgumentValueResolverInterface
     public function resolve(Request $request, ArgumentMetadata $argument): \Traversable
     {
         if ($this->supports($request, $argument)) {
-            $identifier = $request->request->get(AddEventRequest::KEY_IDENTIFIER);
-            if (null !== $identifier) {
-                $identifier = is_int($identifier) || ctype_digit($identifier) ? (int) $identifier : null;
+            $sequenceNumber = $request->request->get(AddEventRequest::KEY_SEQUENCE_NUMBER);
+            if (null !== $sequenceNumber) {
+                $sequenceNumber = is_int($sequenceNumber) || ctype_digit($sequenceNumber)
+                    ? (int) $sequenceNumber
+                    : null;
             }
 
             $type = $request->request->get(AddEventRequest::KEY_TYPE);
@@ -40,7 +42,7 @@ class AddEventRequestResolver implements ArgumentValueResolverInterface
                 $payload = is_array($payload) ? $payload : null;
             }
 
-            yield new AddEventRequest($identifier, $type, $reference, $payload);
+            yield new AddEventRequest($sequenceNumber, $type, $reference, $payload);
         }
     }
 }
