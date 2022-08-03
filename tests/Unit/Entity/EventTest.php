@@ -30,6 +30,7 @@ class EventTest extends TestCase
                     1,
                     md5('empty payload job'),
                     'job/started',
+                    'empty payload label',
                     md5('empty payload reference'),
                     []
                 ),
@@ -37,6 +38,7 @@ class EventTest extends TestCase
                     'sequence_number' => 1,
                     'job' => md5('empty payload job'),
                     'type' => 'job/started',
+                    'label' => 'empty payload label',
                     'reference' => md5('empty payload reference'),
                     'payload' => [],
                 ],
@@ -46,6 +48,7 @@ class EventTest extends TestCase
                     2,
                     md5('job'),
                     'job/finished',
+                    'non-empty payload label',
                     md5('reference'),
                     [
                         'key1' => 'value1',
@@ -60,6 +63,7 @@ class EventTest extends TestCase
                     'sequence_number' => 2,
                     'job' => md5('job'),
                     'type' => 'job/finished',
+                    'label' => 'non-empty payload label',
                     'reference' => md5('reference'),
                     'payload' => [
                         'key1' => 'value1',
