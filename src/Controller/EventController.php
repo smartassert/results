@@ -27,6 +27,10 @@ class EventController
             return $this->createInvalidAddEventRequestFieldResponse(AddEventRequest::KEY_TYPE, 'a string');
         }
 
+        if (null === $request->label) {
+            return $this->createInvalidAddEventRequestFieldResponse(AddEventRequest::KEY_LABEL, 'a string');
+        }
+
         if (null === $request->reference) {
             return $this->createInvalidAddEventRequestFieldResponse(AddEventRequest::KEY_REFERENCE, 'a string');
         }
@@ -48,6 +52,7 @@ class EventController
                 $request->sequenceNumber,
                 $tokenEntity->getJobLabel(),
                 $request->type,
+                $request->label,
                 $request->reference,
                 $request->payload
             );

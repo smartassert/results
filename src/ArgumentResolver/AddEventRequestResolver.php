@@ -32,6 +32,9 @@ class AddEventRequestResolver implements ArgumentValueResolverInterface
             $type = $request->request->get(AddEventRequest::KEY_TYPE);
             $type = is_string($type) ? trim($type) : null;
 
+            $label = $request->request->get(AddEventRequest::KEY_LABEL);
+            $label = is_string($label) ? trim($label) : null;
+
             $reference = $request->request->get(AddEventRequest::KEY_REFERENCE);
             $reference = is_string($reference) ? trim($reference) : null;
 
@@ -42,7 +45,7 @@ class AddEventRequestResolver implements ArgumentValueResolverInterface
                 $payload = is_array($payload) ? $payload : null;
             }
 
-            yield new AddEventRequest($sequenceNumber, $type, $reference, $payload);
+            yield new AddEventRequest($sequenceNumber, $type, $label, $reference, $payload);
         }
     }
 }
