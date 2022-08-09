@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\EventRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Ulid;
 
@@ -25,17 +24,15 @@ class Event implements \JsonSerializable
     #[ORM\Column(type: 'string', length: self::ID_LENGTH)]
     private readonly string $type;
 
-    #[ORM\Column(type: 'string', length: self::ID_LENGTH)]
-    private readonly string $reference;
-
     /**
      * @var array<mixed>
      */
     #[ORM\Column(type: 'json')]
     private readonly array $payload;
 
-    #[ORM\Column(type: Types::TEXT)]
-    private readonly string $label;
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private readonly Reference $reference;
 
     /**
      * @param array<mixed> $payload
@@ -44,17 +41,15 @@ class Event implements \JsonSerializable
         int $sequenceNumber,
         string $job,
         string $type,
-        string $label,
-        string $reference,
-        array $payload
+        array $payload,
+        Reference $referenceEntity,
     ) {
         $this->id = (string) new Ulid();
         $this->sequenceNumber = $sequenceNumber;
         $this->job = $job;
         $this->type = $type;
-        $this->label = $label;
-        $this->reference = $reference;
         $this->payload = $payload;
+        $this->reference = $referenceEntity;
     }
 
     /**
@@ -66,8 +61,8 @@ class Event implements \JsonSerializable
             'sequence_number' => $this->sequenceNumber,
             'job' => $this->job,
             'type' => $this->type,
-            'label' => $this->label,
-            'reference' => $this->reference,
+            'label' => $this->reference->getLabel(),
+            'reference' => $this->reference->getReference(),
             'payload' => $this->payload,
         ];
     }
