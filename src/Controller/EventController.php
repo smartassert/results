@@ -2,9 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Event;
 use App\Entity\Token;
-use App\Repository\EventRepository;
+use App\EntityFactory\EventFactory;
 use App\Request\AddEventRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,8 +12,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class EventController
 {
     #[Route('/event/{token<[A-Z0-9]{26,32}>}', name: 'event_add', methods: ['POST'])]
-    public function add(EventRepository $eventRepository, ?Token $tokenEntity, AddEventRequest $request): Response
-    {
+    public function add(
+        EventFactory $eventFactory,
+        ?Token $tokenEntity,
+        AddEventRequest $request
+    ): Response {
         if (null === $tokenEntity) {
             return new Response('', 404);
         }
@@ -42,23 +44,14 @@ class EventController
             );
         }
 
-        $event = $eventRepository->findOneBy([
-            'sequenceNumber' => $request->sequenceNumber,
-            'job' => $tokenEntity->jobLabel,
-        ]);
-
-        if (null === $event) {
-            $event = new Event(
-                $request->sequenceNumber,
-                $tokenEntity->jobLabel,
-                $request->type,
-                $request->label,
-                $request->reference,
-                $request->payload
-            );
-
-            $eventRepository->add($event);
-        }
+        $event = $eventFactory->create(
+            $tokenEntity->jobLabel,
+            $request->sequenceNumber,
+            $request->type,
+            $request->label,
+            $request->reference,
+            $request->payload
+        );
 
         return new JsonResponse($event);
     }
