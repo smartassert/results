@@ -35,6 +35,7 @@ class AddEventRequestResolver implements ArgumentValueResolverInterface
 
             $type = $request->request->get(AddEventRequest::KEY_TYPE);
             $type = is_string($type) ? trim($type) : null;
+            $type = '' === $type ? null : $type;
 
             $label = $request->request->get(AddEventRequest::KEY_LABEL);
             $label = is_string($label) ? trim($label) : null;
