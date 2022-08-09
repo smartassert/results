@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Application;
 
 use App\Repository\EventRepository;
+use App\Repository\ReferenceRepository;
 use App\Repository\TokenRepository;
 use App\Tests\Services\ApplicationClient\Client;
 use App\Tests\Services\ApplicationClient\ClientFactory;
@@ -49,6 +50,14 @@ abstract class AbstractApplicationTest extends WebTestCase
         $eventRepository = self::getContainer()->get(EventRepository::class);
         if ($eventRepository instanceof EventRepository) {
             foreach ($eventRepository->findAll() as $entity) {
+                $entityManager->remove($entity);
+                $entityManager->flush();
+            }
+        }
+
+        $referenceRepository = self::getContainer()->get(ReferenceRepository::class);
+        if ($referenceRepository instanceof ReferenceRepository) {
+            foreach ($referenceRepository->findAll() as $entity) {
                 $entityManager->remove($entity);
                 $entityManager->flush();
             }

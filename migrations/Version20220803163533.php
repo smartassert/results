@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use App\Entity\Reference;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -11,7 +12,7 @@ final class Version20220803163533 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Create table for ' . Reference::class;
     }
 
     public function up(Schema $schema): void

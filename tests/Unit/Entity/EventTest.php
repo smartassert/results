@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Entity;
 
 use App\Entity\Event;
+use App\Entity\Reference;
 use PHPUnit\Framework\TestCase;
 
 class EventTest extends TestCase
@@ -30,9 +31,8 @@ class EventTest extends TestCase
                     1,
                     md5('empty payload job'),
                     'job/started',
-                    'empty payload label',
-                    md5('empty payload reference'),
-                    []
+                    [],
+                    new Reference('empty payload label', md5('empty payload reference'))
                 ),
                 'expected' => [
                     'sequence_number' => 1,
@@ -48,8 +48,6 @@ class EventTest extends TestCase
                     2,
                     md5('job'),
                     'job/finished',
-                    'non-empty payload label',
-                    md5('reference'),
                     [
                         'key1' => 'value1',
                         'key2' => 'value2',
@@ -57,7 +55,8 @@ class EventTest extends TestCase
                             'key31' => 'value 31',
                             'key32' => 'value 32',
                         ],
-                    ]
+                    ],
+                    new Reference('non-empty payload label', md5('reference'))
                 ),
                 'expected' => [
                     'sequence_number' => 2,

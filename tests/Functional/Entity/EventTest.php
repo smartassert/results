@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Entity;
 
 use App\Entity\Event;
+use App\Entity\Reference;
 use App\Repository\EventRepository;
+use App\Repository\ReferenceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use webignition\ObjectReflector\ObjectReflector;
 
 class EventTest extends WebTestCase
 {
-    private EventRepository $repository;
+    private EventRepository $eventRepository;
+    private ReferenceRepository $referenceRepository;
 
     protected function setUp(): void
     {
@@ -20,12 +23,20 @@ class EventTest extends WebTestCase
 
         $repository = self::getContainer()->get(EventRepository::class);
         \assert($repository instanceof EventRepository);
-        $this->repository = $repository;
+        $this->eventRepository = $repository;
+
+        $referenceRepository = self::getContainer()->get(ReferenceRepository::class);
+        \assert($referenceRepository instanceof ReferenceRepository);
+        $this->referenceRepository = $referenceRepository;
 
         $entityManager = self::getContainer()->get(EntityManagerInterface::class);
         \assert($entityManager instanceof EntityManagerInterface);
-
         foreach ($repository->findAll() as $entity) {
+            $entityManager->remove($entity);
+            $entityManager->flush();
+        }
+
+        foreach ($referenceRepository->findAll() as $entity) {
             $entityManager->remove($entity);
             $entityManager->flush();
         }
@@ -40,23 +51,22 @@ class EventTest extends WebTestCase
         int $sequenceNumber,
         string $job,
         string $type,
-        string $label,
-        string $reference,
-        array $payload
+        array $payload,
+        Reference $referenceEntity,
     ): void {
-        self::assertSame(0, $this->repository->count([]));
+        $this->referenceRepository->add($referenceEntity);
 
-        $event = new Event($sequenceNumber, $job, $type, $label, $reference, $payload);
+        self::assertSame(0, $this->eventRepository->count([]));
 
-        $this->repository->add($event);
+        $event = new Event($sequenceNumber, $job, $type, $payload, $referenceEntity);
 
-        self::assertSame(1, $this->repository->count([]));
+        $this->eventRepository->add($event);
+
+        self::assertSame(1, $this->eventRepository->count([]));
 
         self::assertSame($sequenceNumber, ObjectReflector::getProperty($event, 'sequenceNumber'));
         self::assertSame($job, ObjectReflector::getProperty($event, 'job'));
         self::assertSame($type, ObjectReflector::getProperty($event, 'type'));
-        self::assertSame($label, ObjectReflector::getProperty($event, 'label'));
-        self::assertSame($reference, ObjectReflector::getProperty($event, 'reference'));
         self::assertSame($payload, ObjectReflector::getProperty($event, 'payload'));
     }
 
@@ -70,16 +80,13 @@ class EventTest extends WebTestCase
                 'sequence_number' => 1,
                 'job' => md5('empty payload job'),
                 'type' => 'job/started',
-                'label' => 'empty payload label',
-                'reference' => md5('empty payload reference'),
                 'payload' => [],
+                'referenceEntity' => new Reference('empty payload label', 'empty payload reference'),
             ],
             'non-empty payload' => [
                 'sequence_number' => 2,
                 'job' => md5('job'),
                 'type' => 'job/finished',
-                'label' => 'non-empty payload label',
-                'reference' => md5('reference'),
                 'payload' => [
                     'key1' => 'value1',
                     'key2' => 'value2',
@@ -88,6 +95,7 @@ class EventTest extends WebTestCase
                         'key32' => 'value 32',
                     ],
                 ],
+                'referenceEntity' => new Reference('non-empty payload label', 'non-empty payload reference'),
             ],
         ];
     }
