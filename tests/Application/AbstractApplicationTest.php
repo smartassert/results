@@ -9,6 +9,7 @@ use App\Repository\TokenRepository;
 use App\Tests\Services\ApplicationClient\Client;
 use App\Tests\Services\ApplicationClient\ClientFactory;
 use App\Tests\Services\AuthenticationConfiguration;
+use Doctrine\ORM\EntityManagerInterface;
 use SmartAssert\SymfonyTestClient\ClientInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -34,17 +35,22 @@ abstract class AbstractApplicationTest extends WebTestCase
         \assert($authenticationConfiguration instanceof AuthenticationConfiguration);
         $this->authenticationConfiguration = $authenticationConfiguration;
 
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        \assert($entityManager instanceof EntityManagerInterface);
+
         $tokenRepository = self::getContainer()->get(TokenRepository::class);
         if ($tokenRepository instanceof TokenRepository) {
             foreach ($tokenRepository->findAll() as $entity) {
-                $tokenRepository->remove($entity);
+                $entityManager->remove($entity);
+                $entityManager->flush();
             }
         }
 
         $eventRepository = self::getContainer()->get(EventRepository::class);
         if ($eventRepository instanceof EventRepository) {
             foreach ($eventRepository->findAll() as $entity) {
-                $eventRepository->remove($entity);
+                $entityManager->remove($entity);
+                $entityManager->flush();
             }
         }
     }
