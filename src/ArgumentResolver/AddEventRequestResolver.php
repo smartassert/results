@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\ArgumentResolver;
 
 use App\Request\AddEventRequest;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -22,24 +23,15 @@ class AddEventRequestResolver implements ArgumentValueResolverInterface
     public function resolve(Request $request, ArgumentMetadata $argument): \Traversable
     {
         if ($this->supports($request, $argument)) {
-            $sequenceNumber = $request->request->get(AddEventRequest::KEY_SEQUENCE_NUMBER);
-            if (null !== $sequenceNumber) {
-                $sequenceNumber = is_int($sequenceNumber) || ctype_digit($sequenceNumber)
-                    ? (int) $sequenceNumber
-                    : null;
-            }
+            $data = $request->request;
 
-            $type = $request->request->get(AddEventRequest::KEY_TYPE);
-            $type = is_string($type) ? trim($type) : null;
-
-            $label = $request->request->get(AddEventRequest::KEY_LABEL);
-            $label = is_string($label) ? trim($label) : null;
-
-            $reference = $request->request->get(AddEventRequest::KEY_REFERENCE);
-            $reference = is_string($reference) ? trim($reference) : null;
+            $sequenceNumber = $this->getPositiveIntegerFromRequestPayload($data, AddEventRequest::KEY_SEQUENCE_NUMBER);
+            $type = $this->getNonEmptyStringFromRequestPayload($data, AddEventRequest::KEY_TYPE);
+            $label = $this->getNonEmptyStringFromRequestPayload($data, AddEventRequest::KEY_LABEL);
+            $reference = $this->getNonEmptyStringFromRequestPayload($data, AddEventRequest::KEY_REFERENCE);
 
             $payload = null;
-            $payloadContent = $request->request->get(AddEventRequest::KEY_PAYLOAD);
+            $payloadContent = $data->get(AddEventRequest::KEY_PAYLOAD);
             if (is_string($payloadContent)) {
                 $payload = json_decode($payloadContent, true);
                 $payload = is_array($payload) ? $payload : null;
@@ -47,5 +39,33 @@ class AddEventRequestResolver implements ArgumentValueResolverInterface
 
             yield new AddEventRequest($sequenceNumber, $type, $label, $reference, $payload);
         }
+    }
+
+    /**
+     * @param non-empty-string$key
+     *
+     * @return null|positive-int
+     */
+    private function getPositiveIntegerFromRequestPayload(ParameterBag $data, string $key): ?int
+    {
+        $value = $data->get($key);
+        if ((is_string($value) && ctype_digit($value)) || is_int($value)) {
+            $value = (int) $value;
+        }
+
+        return is_int($value) && $value > 0 ? $value : null;
+    }
+
+    /**
+     * @param non-empty-string $key
+     *
+     * @return null|non-empty-string
+     */
+    private function getNonEmptyStringFromRequestPayload(ParameterBag $data, string $key): ?string
+    {
+        $value = $data->get($key);
+        $value = is_string($value) ? trim($value) : null;
+
+        return '' === $value ? null : $value;
     }
 }
