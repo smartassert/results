@@ -15,20 +15,20 @@ class Token
 
     #[ORM\Id]
     #[ORM\Column(type: 'string', length: self::ID_LENGTH, unique: true)]
-    protected string $token;
+    public readonly string $token;
 
     /**
      * @var non-empty-string
      */
     #[ORM\Id]
     #[ORM\Column(type: 'string', length: self::ID_LENGTH, unique: true)]
-    private string $jobLabel;
+    public readonly string $jobLabel;
 
     /**
      * @var non-empty-string
      */
     #[ORM\Column(type: 'string', length: 32)]
-    private string $userId;
+    private readonly string $userId;
 
     /**
      * @param non-empty-string $jobLabel
@@ -39,26 +39,5 @@ class Token
         $this->token = (string) new Ulid();
         $this->jobLabel = $jobLabel;
         $this->userId = $userId;
-    }
-
-    public function getToken(): string
-    {
-        return $this->token;
-    }
-
-    /**
-     * @return non-empty-string
-     */
-    public function getJobLabel(): string
-    {
-        return $this->jobLabel;
-    }
-
-    /**
-     * @return non-empty-string
-     */
-    public function getUserId(): string
-    {
-        return $this->userId;
     }
 }

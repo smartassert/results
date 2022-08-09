@@ -9,6 +9,7 @@ use App\Repository\TokenRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use webignition\ObjectReflector\ObjectReflector;
 
 class TokenTest extends WebTestCase
 {
@@ -45,12 +46,12 @@ class TokenTest extends WebTestCase
 
         self::assertSame(1, $this->repository->count([]));
 
-        self::assertSame($jobLabel, $token->getJobLabel());
-        self::assertSame($userId, $token->getUserId());
+        self::assertSame($jobLabel, $token->jobLabel);
+        self::assertSame($userId, ObjectReflector::getProperty($token, 'userId'));
 
         $this->entityManager->clear();
 
-        $retrievedToken = $this->repository->findOneBy(['token' => $token->getToken()]);
+        $retrievedToken = $this->repository->findOneBy(['token' => $token->token]);
 
         self::assertNotSame($token, $retrievedToken);
         self::assertEquals($token, $retrievedToken);

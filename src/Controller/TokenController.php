@@ -19,7 +19,7 @@ class TokenController
     {
         try {
             return new JsonResponse([
-                'token' => $tokenFactory->createForUserAndJob($user, $job_label)->getToken(),
+                'token' => $tokenFactory->createForUserAndJob($user, $job_label)->token,
             ]);
         } catch (InvalidUserException) {
             return new JsonResponse(null, 403);

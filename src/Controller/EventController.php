@@ -44,13 +44,13 @@ class EventController
 
         $event = $eventRepository->findOneBy([
             'sequenceNumber' => $request->sequenceNumber,
-            'job' => $tokenEntity->getJobLabel(),
+            'job' => $tokenEntity->jobLabel,
         ]);
 
         if (null === $event) {
             $event = new Event(
                 $request->sequenceNumber,
-                $tokenEntity->getJobLabel(),
+                $tokenEntity->jobLabel,
                 $request->type,
                 $request->label,
                 $request->reference,
