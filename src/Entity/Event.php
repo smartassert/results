@@ -14,28 +14,28 @@ class Event implements \JsonSerializable
 
     #[ORM\Id]
     #[ORM\Column(type: 'string', length: self::ID_LENGTH, unique: true)]
-    protected string $id;
+    private readonly string $id;
 
     #[ORM\Column(type: 'integer', nullable: false)]
-    private int $sequenceNumber;
+    private readonly int $sequenceNumber;
 
     #[ORM\Column(type: 'string', length: self::ID_LENGTH)]
-    private string $job;
+    private readonly string $job;
 
     #[ORM\Column(type: 'string', length: self::ID_LENGTH)]
-    private string $type;
+    private readonly string $type;
 
     #[ORM\Column(type: 'string', length: self::ID_LENGTH)]
-    private string $reference;
+    private readonly string $reference;
 
     /**
      * @var array<mixed>
      */
     #[ORM\Column(type: 'json')]
-    private array $payload = [];
+    private readonly array $payload;
 
     #[ORM\Column(type: Types::TEXT)]
-    private string $label;
+    private readonly string $label;
 
     /**
      * @param array<mixed> $payload
