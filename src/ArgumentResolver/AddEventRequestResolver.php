@@ -27,6 +27,10 @@ class AddEventRequestResolver implements ArgumentValueResolverInterface
                 $sequenceNumber = is_int($sequenceNumber) || ctype_digit($sequenceNumber)
                     ? (int) $sequenceNumber
                     : null;
+
+                if (is_int($sequenceNumber) && $sequenceNumber <= 1) {
+                    $sequenceNumber = null;
+                }
             }
 
             $type = $request->request->get(AddEventRequest::KEY_TYPE);

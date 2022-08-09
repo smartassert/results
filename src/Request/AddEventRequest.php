@@ -11,6 +11,8 @@ class AddEventRequest
     public const KEY_PAYLOAD = 'payload';
 
     /**
+     * @param positive-int|null $sequenceNumber
+     *
      * @param array<mixed> $payload
      */
     public function __construct(
