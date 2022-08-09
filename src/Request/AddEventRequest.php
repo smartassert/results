@@ -13,6 +13,7 @@ class AddEventRequest
     /**
      * @param positive-int|null $sequenceNumber
      * @param non-empty-string|null $type
+     * @param non-empty-string|null $label
      *
      * @param array<mixed> $payload
      */
