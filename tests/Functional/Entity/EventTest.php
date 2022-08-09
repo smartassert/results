@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Entity;
 
 use App\Entity\Event;
 use App\Repository\EventRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use webignition\ObjectReflector\ObjectReflector;
 
@@ -21,8 +22,12 @@ class EventTest extends WebTestCase
         \assert($repository instanceof EventRepository);
         $this->repository = $repository;
 
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        \assert($entityManager instanceof EntityManagerInterface);
+
         foreach ($repository->findAll() as $entity) {
-            $repository->remove($entity);
+            $entityManager->remove($entity);
+            $entityManager->flush();
         }
     }
 
