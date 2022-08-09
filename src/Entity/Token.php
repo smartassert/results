@@ -17,13 +17,23 @@ class Token
     #[ORM\Column(type: 'string', length: self::ID_LENGTH, unique: true)]
     protected string $token;
 
+    /**
+     * @var non-empty-string
+     */
     #[ORM\Id]
     #[ORM\Column(type: 'string', length: self::ID_LENGTH, unique: true)]
     private string $jobLabel;
 
+    /**
+     * @var non-empty-string
+     */
     #[ORM\Column(type: 'string', length: 32)]
     private string $userId;
 
+    /**
+     * @param non-empty-string $jobLabel
+     * @param non-empty-string $userId
+     */
     public function __construct(string $jobLabel, string $userId)
     {
         $this->token = (string) new Ulid();
@@ -36,12 +46,18 @@ class Token
         return $this->token;
     }
 
+    /**
+     * @return non-empty-string
+     */
     public function getJobLabel(): string
     {
         return $this->jobLabel;
     }
 
-    public function getUserId(): ?string
+    /**
+     * @return non-empty-string
+     */
+    public function getUserId(): string
     {
         return $this->userId;
     }

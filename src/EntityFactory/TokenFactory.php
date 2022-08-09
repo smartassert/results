@@ -32,7 +32,7 @@ class TokenFactory
                 throw InvalidUserException::createForEmptyUserIdentifier($user);
             }
 
-            $token = new Token($jobLabel, $user->getUserIdentifier());
+            $token = new Token($jobLabel, $userIdentifier);
             $this->repository->add($token);
         }
 
