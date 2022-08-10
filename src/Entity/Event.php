@@ -78,6 +78,16 @@ class Event implements \JsonSerializable
             $data['body'] = $this->body;
         }
 
+        if (0 !== count($this->relatedReferences)) {
+            $serializedRelatedReferences = [];
+
+            foreach ($this->relatedReferences as $relatedReference) {
+                $serializedRelatedReferences[] = $relatedReference->toArray();
+            }
+
+            $data['related_references'] = $serializedRelatedReferences;
+        }
+
         return array_merge(
             $data,
             $this->reference->toArray(),
