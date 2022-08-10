@@ -6,13 +6,13 @@ namespace App\EntityFactory;
 
 use App\Entity\Token;
 use App\Exception\InvalidUserException;
-use App\Repository\TokenRepository;
+use App\Repository\JobRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class TokenFactory
 {
     public function __construct(
-        private readonly TokenRepository $repository,
+        private readonly JobRepository $repository,
     ) {
     }
 

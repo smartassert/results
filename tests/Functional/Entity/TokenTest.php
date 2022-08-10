@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Entity;
 
 use App\Entity\Token;
-use App\Repository\TokenRepository;
+use App\Repository\JobRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -13,15 +13,15 @@ use webignition\ObjectReflector\ObjectReflector;
 
 class TokenTest extends WebTestCase
 {
-    private TokenRepository $repository;
+    private JobRepository $repository;
     private EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $repository = self::getContainer()->get(TokenRepository::class);
-        \assert($repository instanceof TokenRepository);
+        $repository = self::getContainer()->get(JobRepository::class);
+        \assert($repository instanceof JobRepository);
         $this->repository = $repository;
 
         $entityManager = self::getContainer()->get(EntityManagerInterface::class);

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\ArgumentResolver;
 
 use App\Entity\Token;
-use App\Repository\TokenRepository;
+use App\Repository\JobRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 class JobResolver implements ArgumentValueResolverInterface
 {
     public function __construct(
-        private readonly TokenRepository $tokenRepository,
+        private readonly JobRepository $jobRepository,
     ) {
     }
 
@@ -30,6 +30,6 @@ class JobResolver implements ArgumentValueResolverInterface
         $requestToken = $request->attributes->get('token');
         $requestToken = is_string($requestToken) ? trim($requestToken) : '';
 
-        yield '' === $requestToken ? null : $this->tokenRepository->findOneBy(['token' => $requestToken]);
+        yield '' === $requestToken ? null : $this->jobRepository->findOneBy(['token' => $requestToken]);
     }
 }

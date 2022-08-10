@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Application;
 
 use App\Entity\Token;
-use App\Repository\TokenRepository;
+use App\Repository\JobRepository;
 use App\Tests\Services\AuthenticationConfiguration;
 use Symfony\Component\Uid\Ulid;
 
@@ -87,10 +87,10 @@ abstract class AbstractCreateTokenTest extends AbstractApplicationTest
 
     public function testCreateSuccess(): void
     {
-        $tokenRepository = self::getContainer()->get(TokenRepository::class);
-        \assert($tokenRepository instanceof TokenRepository);
+        $jobRepository = self::getContainer()->get(JobRepository::class);
+        \assert($jobRepository instanceof JobRepository);
 
-        self::assertSame(0, $tokenRepository->count([]));
+        self::assertSame(0, $jobRepository->count([]));
 
         $jobLabel = (string) new Ulid();
 
@@ -102,30 +102,30 @@ abstract class AbstractCreateTokenTest extends AbstractApplicationTest
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('application/json', $response->getHeaderLine('content-type'));
 
-        self::assertSame(1, $tokenRepository->count([]));
+        self::assertSame(1, $jobRepository->count([]));
 
         $responseData = json_decode($response->getBody()->getContents(), true);
         self::assertIsArray($responseData);
         self::assertArrayHasKey('token', $responseData);
 
-        $token = $tokenRepository->findOneBy(['token' => $responseData['token']]);
+        $token = $jobRepository->findOneBy(['token' => $responseData['token']]);
         self::assertInstanceOf(Token::class, $token);
         self::assertSame($jobLabel, $token->jobLabel);
     }
 
     public function testCreateIsIdempotent(): void
     {
-        $tokenRepository = self::getContainer()->get(TokenRepository::class);
-        \assert($tokenRepository instanceof TokenRepository);
+        $jobRepository = self::getContainer()->get(JobRepository::class);
+        \assert($jobRepository instanceof JobRepository);
 
-        self::assertSame(0, $tokenRepository->count([]));
+        self::assertSame(0, $jobRepository->count([]));
 
         $jobLabel = (string) new Ulid();
 
         $this->applicationClient->makeCreateTokenRequest($this->authenticationConfiguration->validToken, $jobLabel);
-        self::assertSame(1, $tokenRepository->count([]));
+        self::assertSame(1, $jobRepository->count([]));
 
         $this->applicationClient->makeCreateTokenRequest($this->authenticationConfiguration->validToken, $jobLabel);
-        self::assertSame(1, $tokenRepository->count([]));
+        self::assertSame(1, $jobRepository->count([]));
     }
 }

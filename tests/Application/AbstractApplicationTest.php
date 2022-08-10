@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Application;
 
 use App\Repository\EventRepository;
+use App\Repository\JobRepository;
 use App\Repository\ReferenceRepository;
-use App\Repository\TokenRepository;
 use App\Tests\Services\ApplicationClient\Client;
 use App\Tests\Services\ApplicationClient\ClientFactory;
 use App\Tests\Services\AuthenticationConfiguration;
@@ -39,9 +39,9 @@ abstract class AbstractApplicationTest extends WebTestCase
         $entityManager = self::getContainer()->get(EntityManagerInterface::class);
         \assert($entityManager instanceof EntityManagerInterface);
 
-        $tokenRepository = self::getContainer()->get(TokenRepository::class);
-        if ($tokenRepository instanceof TokenRepository) {
-            foreach ($tokenRepository->findAll() as $entity) {
+        $jobRepository = self::getContainer()->get(JobRepository::class);
+        if ($jobRepository instanceof JobRepository) {
+            foreach ($jobRepository->findAll() as $entity) {
                 $entityManager->remove($entity);
                 $entityManager->flush();
             }
