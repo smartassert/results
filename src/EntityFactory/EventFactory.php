@@ -22,6 +22,7 @@ class EventFactory
      * @param null|array<mixed> $body
      * @param non-empty-string  $label
      * @param non-empty-string  $reference
+     * @param null|array<mixed> $relatedReferences
      */
     public function create(
         string $jobLabel,
@@ -30,6 +31,7 @@ class EventFactory
         string $label,
         string $reference,
         ?array $body,
+        ?array $relatedReferences,
     ): Event {
         $event = $this->repository->findOneBy([
             'job' => $jobLabel,
@@ -37,12 +39,19 @@ class EventFactory
         ]);
 
         if (null === $event) {
+            $referenceEntity = $this->referenceFactory->create($label, $reference);
+
+            $relatedReferenceEntities = is_array($relatedReferences)
+                ? $this->referenceFactory->createFromArrayCollection($relatedReferences)
+                : [];
+
             $event = new Event(
                 $sequenceNumber,
                 $jobLabel,
                 $type,
                 $body,
-                $this->referenceFactory->create($label, $reference)
+                $referenceEntity,
+                $relatedReferenceEntities,
             );
 
             $this->repository->add($event);

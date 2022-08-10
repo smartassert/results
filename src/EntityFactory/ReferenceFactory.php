@@ -34,4 +34,42 @@ class ReferenceFactory
 
         return $entity;
     }
+
+    /**
+     * @param array<mixed> $collection
+     *
+     * @return array<Reference>
+     */
+    public function createFromArrayCollection(array $collection): array
+    {
+        $entities = [];
+
+        foreach ($collection as $referenceData) {
+            if (is_array($referenceData)) {
+                $entity = $this->createFromArray($referenceData);
+
+                if ($entity instanceof Reference) {
+                    $entities[] = $entity;
+                }
+            }
+        }
+
+        return $entities;
+    }
+
+    /**
+     * @param array<mixed> $data
+     */
+    private function createFromArray(array $data): ?Reference
+    {
+        $label = $data['label'] ?? null;
+        $label = is_string($label) ? $label : null;
+        $label = '' !== $label ? $label : null;
+
+        $reference = $data['reference'] ?? null;
+        $reference = is_string($reference) ? $reference : null;
+        $reference = '' !== $reference ? $reference : null;
+
+        return is_string($label) && is_string($reference) ? $this->create($label, $reference) : null;
+    }
 }

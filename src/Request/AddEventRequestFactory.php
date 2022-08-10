@@ -19,10 +19,13 @@ class AddEventRequestFactory
         $label = $this->getNonEmptyStringFromArray($headerSection, AddEventRequest::KEY_LABEL);
         $reference = $this->getNonEmptyStringFromArray($headerSection, AddEventRequest::KEY_REFERENCE);
 
+        $relatedReferences = $headerSection[AddEventRequest::KEY_RELATED_REFERENCES] ?? null;
+        $relatedReferences = is_array($relatedReferences) ? $relatedReferences : null;
+
         $body = $data[AddEventRequest::KEY_BODY] ?? null;
         $body = is_array($body) ? $body : null;
 
-        return new AddEventRequest($sequenceNumber, $type, $label, $reference, $body);
+        return new AddEventRequest($sequenceNumber, $type, $label, $reference, $relatedReferences, $body);
     }
 
     /**

@@ -46,7 +46,8 @@ class EventController
             $request->type,
             $request->label,
             $request->reference,
-            $request->body
+            $request->body,
+            $request->relatedReferences,
         );
 
         return new JsonResponse($event);
