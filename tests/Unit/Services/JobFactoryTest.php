@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Services;
 
-use App\EntityFactory\TokenFactory;
+use App\EntityFactory\JobFactory;
 use App\Exception\InvalidUserException;
-use App\Repository\TokenRepository;
+use App\Repository\JobRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class TokenFactoryTest extends TestCase
+class JobFactoryTest extends TestCase
 {
     public function testCreateThrowsInvalidUserException(): void
     {
         $jobLabel = md5((string) rand());
 
-        $tokenRepository = \Mockery::mock(TokenRepository::class);
-        $tokenRepository
+        $jobRepository = \Mockery::mock(JobRepository::class);
+        $jobRepository
             ->shouldReceive('findOneBy')
             ->with(['jobLabel' => $jobLabel])
             ->andReturnNull()
@@ -29,7 +29,7 @@ class TokenFactoryTest extends TestCase
             ->andReturn('')
         ;
 
-        $factory = new TokenFactory($tokenRepository);
+        $factory = new JobFactory($jobRepository);
 
         self::expectException(InvalidUserException::class);
         self::expectExceptionMessage(InvalidUserException::MESSAGE_USER_IDENTIFIER_EMPTY);

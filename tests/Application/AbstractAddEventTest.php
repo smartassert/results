@@ -62,9 +62,9 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
     {
         self::assertSame(0, $this->eventRepository->count([]));
 
-        $token = $this->createToken((string) new Ulid());
+        $jobToken = $this->createJobToken((string) new Ulid());
 
-        $response = $this->applicationClient->makeAddEventRequest($token, $requestPayload);
+        $response = $this->applicationClient->makeAddEventRequest($jobToken, $requestPayload);
 
         self::assertSame(0, $this->eventRepository->count([]));
 
@@ -219,11 +219,11 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
      */
     public function testAddSuccess(string $jobLabel, array $requestPayload, array $expectedSerializedEvent): void
     {
-        $token = $this->createToken($jobLabel);
+        $jobToken = $this->createJobToken($jobLabel);
 
         self::assertSame(0, $this->eventRepository->count([]));
 
-        $response = $this->applicationClient->makeAddEventRequest($token, $requestPayload);
+        $response = $this->applicationClient->makeAddEventRequest($jobToken, $requestPayload);
 
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('application/json', $response->getHeaderLine('content-type'));
@@ -395,7 +395,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         array $firstRequestPayload,
         array $secondRequestPayload
     ): void {
-        $token = $this->createToken($jobLabel);
+        $jobToken = $this->createJobToken($jobLabel);
 
         self::assertSame(0, $this->eventRepository->count([]));
 
@@ -403,14 +403,14 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         $firstRequestPayloadHeader[AddEventRequest::KEY_SEQUENCE_NUMBER] = $sequenceNumber;
         $firstRequestPayload[AddEventRequest::KEY_HEADER_SECTION] = $firstRequestPayloadHeader;
 
-        $firstResponse = $this->applicationClient->makeAddEventRequest($token, $firstRequestPayload);
+        $firstResponse = $this->applicationClient->makeAddEventRequest($jobToken, $firstRequestPayload);
         self::assertSame(1, $this->eventRepository->count([]));
 
         $secondRequestPayloadHeader = $secondRequestPayload[AddEventRequest::KEY_HEADER_SECTION];
         $secondRequestPayloadHeader[AddEventRequest::KEY_SEQUENCE_NUMBER] = $sequenceNumber;
         $secondRequestPayload[AddEventRequest::KEY_HEADER_SECTION] = $secondRequestPayloadHeader;
 
-        $secondResponse = $this->applicationClient->makeAddEventRequest($token, $secondRequestPayload);
+        $secondResponse = $this->applicationClient->makeAddEventRequest($jobToken, $secondRequestPayload);
         self::assertSame(1, $this->eventRepository->count([]));
 
         self::assertSame($firstResponse->getBody()->getContents(), $secondResponse->getBody()->getContents());
@@ -521,13 +521,14 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         ];
     }
 
-    private function createToken(string $jobLabel): string
+    private function createJobToken(string $jobLabel): string
     {
-        $createTokenResponse = $this->applicationClient->makeCreateTokenRequest(
+        $createJobResponse = $this->applicationClient->makeCreateJobRequest(
             $this->authenticationConfiguration->validToken,
             $jobLabel
         );
-        $createTokenResponseData = json_decode($createTokenResponse->getBody()->getContents(), true);
+
+        $createTokenResponseData = json_decode($createJobResponse->getBody()->getContents(), true);
         self::assertIsArray($createTokenResponseData);
 
         return (string) $createTokenResponseData['token'];
