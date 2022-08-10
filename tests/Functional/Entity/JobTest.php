@@ -51,10 +51,10 @@ class JobTest extends WebTestCase
 
         $this->entityManager->clear();
 
-        $retrievedToken = $this->repository->findOneBy(['token' => $entity->token]);
+        $retrievedEntity = $this->repository->findOneBy(['token' => $entity->token]);
 
-        self::assertNotSame($entity, $retrievedToken);
-        self::assertEquals($entity, $retrievedToken);
+        self::assertNotSame($entity, $retrievedEntity);
+        self::assertEquals($entity, $retrievedEntity);
     }
 
     public function testJobLabelIsUnique(): void

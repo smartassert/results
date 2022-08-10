@@ -51,10 +51,10 @@ abstract class AbstractCreateJobTest extends AbstractApplicationTest
     /**
      * @dataProvider unauthorizedUserDataProvider
      */
-    public function testCreateUnauthorizedUser(callable $tokenCreator): void
+    public function testCreateUnauthorizedUser(callable $userTokenCreator): void
     {
         $response = $this->applicationClient->makeCreateJobRequest(
-            $tokenCreator($this->authenticationConfiguration),
+            $userTokenCreator($this->authenticationConfiguration),
             (string) new Ulid()
         );
 
@@ -67,18 +67,18 @@ abstract class AbstractCreateJobTest extends AbstractApplicationTest
     public function unauthorizedUserDataProvider(): array
     {
         return [
-            'no token' => [
-                'tokenCreator' => function () {
+            'no user token' => [
+                'userTokenCreator' => function () {
                     return null;
                 },
             ],
-            'empty token' => [
-                'tokenCreator' => function () {
+            'empty user token' => [
+                'userTokenCreator' => function () {
                     return '';
                 },
             ],
-            'non-empty invalid token' => [
-                'tokenCreator' => function (AuthenticationConfiguration $authenticationConfiguration) {
+            'non-empty invalid user token' => [
+                'userTokenCreator' => function (AuthenticationConfiguration $authenticationConfiguration) {
                     return $authenticationConfiguration->invalidToken;
                 },
             ],

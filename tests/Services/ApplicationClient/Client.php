@@ -31,11 +31,11 @@ class Client
     /**
      * @param array<string, array<mixed>|string> $payload
      */
-    public function makeAddEventRequest(string $token, array $payload, string $method = 'POST'): ResponseInterface
+    public function makeAddEventRequest(string $jobToken, array $payload, string $method = 'POST'): ResponseInterface
     {
         return $this->client->makeRequest(
             $method,
-            $this->router->generate('event_add', ['token' => $token]),
+            $this->router->generate('event_add', ['token' => $jobToken]),
             [
                 'content-type' => 'application/json',
             ],
