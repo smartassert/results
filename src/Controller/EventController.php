@@ -23,7 +23,10 @@ class EventController
         }
 
         if (null === $request->sequenceNumber) {
-            return $this->createInvalidAddEventRequestFieldResponse(AddEventRequest::KEY_SEQUENCE_NUMBER, 'an integer');
+            return $this->createInvalidAddEventRequestFieldResponse(
+                AddEventRequest::KEY_SEQUENCE_NUMBER,
+                'a positive integer'
+            );
         }
 
         if (null === $request->type) {
@@ -38,19 +41,12 @@ class EventController
             return $this->createInvalidAddEventRequestFieldResponse(AddEventRequest::KEY_REFERENCE, 'a string');
         }
 
-        if (null === $request->payload) {
-            return $this->createInvalidAddEventRequestFieldResponse(
-                AddEventRequest::KEY_PAYLOAD,
-                'a JSON string that decodes to an array'
-            );
-        }
-
         $event = $eventFactory->create(
             $tokenEntity->jobLabel,
             $request->sequenceNumber,
             $request->type,
             new Reference($request->label, $request->reference),
-            $request->payload
+            $request->body
         );
 
         return new JsonResponse($event);

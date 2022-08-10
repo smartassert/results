@@ -45,20 +45,20 @@ class EventTest extends WebTestCase
     /**
      * @dataProvider createDataProvider
      *
-     * @param array<mixed> $payload
+     * @param array<mixed> $body
      */
     public function testCreate(
         int $sequenceNumber,
         string $job,
         string $type,
-        array $payload,
+        array $body,
         Reference $referenceEntity,
     ): void {
         $this->referenceRepository->add($referenceEntity);
 
         self::assertSame(0, $this->eventRepository->count([]));
 
-        $event = new Event($sequenceNumber, $job, $type, $payload, $referenceEntity);
+        $event = new Event($sequenceNumber, $job, $type, $body, $referenceEntity);
 
         $this->eventRepository->add($event);
 
@@ -67,7 +67,7 @@ class EventTest extends WebTestCase
         self::assertSame($sequenceNumber, ObjectReflector::getProperty($event, 'sequenceNumber'));
         self::assertSame($job, ObjectReflector::getProperty($event, 'job'));
         self::assertSame($type, ObjectReflector::getProperty($event, 'type'));
-        self::assertSame($payload, ObjectReflector::getProperty($event, 'payload'));
+        self::assertSame($body, ObjectReflector::getProperty($event, 'body'));
     }
 
     /**
@@ -80,14 +80,14 @@ class EventTest extends WebTestCase
                 'sequence_number' => 1,
                 'job' => md5('empty payload job'),
                 'type' => 'job/started',
-                'payload' => [],
+                'body' => [],
                 'referenceEntity' => new Reference('empty payload label', 'empty payload reference'),
             ],
             'non-empty payload' => [
                 'sequence_number' => 2,
                 'job' => md5('job'),
                 'type' => 'job/finished',
-                'payload' => [
+                'body' => [
                     'key1' => 'value1',
                     'key2' => 'value2',
                     'key3' => [
