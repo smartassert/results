@@ -43,7 +43,8 @@ class Event implements \JsonSerializable
     private Collection $relatedReferences;
 
     /**
-     * @param array<mixed> $body
+     * @param array<mixed>     $body
+     * @param array<Reference> $relatedReferences
      */
     public function __construct(
         int $sequenceNumber,
@@ -51,6 +52,7 @@ class Event implements \JsonSerializable
         string $type,
         ?array $body,
         Reference $referenceEntity,
+        array $relatedReferences = [],
     ) {
         $this->id = (string) new Ulid();
         $this->sequenceNumber = $sequenceNumber;
@@ -58,7 +60,7 @@ class Event implements \JsonSerializable
         $this->type = $type;
         $this->body = $body;
         $this->reference = $referenceEntity;
-        $this->relatedReferences = new ArrayCollection();
+        $this->relatedReferences = new ArrayCollection($relatedReferences);
     }
 
     /**
