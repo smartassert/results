@@ -25,7 +25,8 @@ final class Version20220518132740 extends AbstractMigration
                 type VARCHAR(255) NOT NULL,
                 label TEXT NOT NULL, 
                 reference VARCHAR(32) NOT NULL, 
-                body JSON NOT NULL, PRIMARY KEY(id)
+                body JSON,
+                PRIMARY KEY(id)
             )
         ');
     }
