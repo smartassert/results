@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EventRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Ulid;
 
@@ -35,6 +37,12 @@ class Event implements \JsonSerializable
     private readonly Reference $reference;
 
     /**
+     * @var Collection<int, Reference>
+     */
+    #[ORM\ManyToMany(targetEntity: Reference::class)]
+    private Collection $relatedReferences;
+
+    /**
      * @param array<mixed> $body
      */
     public function __construct(
@@ -50,6 +58,7 @@ class Event implements \JsonSerializable
         $this->type = $type;
         $this->body = $body;
         $this->reference = $referenceEntity;
+        $this->relatedReferences = new ArrayCollection();
     }
 
     /**
