@@ -241,57 +241,56 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
      */
     public function addSuccessDataProvider(): array
     {
-        $bodyNotPresentJobLabel = (string) new Ulid();
-        $bodyEmptyJobLabel = (string) new Ulid();
-        $bodyNotEmptyJobLabel = (string) new Ulid();
+        $jobLabel = (string) new Ulid();
 
         return [
-            'body not present' => [
-                'jobLabel' => $bodyNotPresentJobLabel,
+            'body not present, related references not present' => [
+                'jobLabel' => $jobLabel,
                 'requestPayload' => [
                     AddEventRequest::KEY_HEADER_SECTION => [
                         AddEventRequest::KEY_SEQUENCE_NUMBER => 1,
                         AddEventRequest::KEY_TYPE => 'job/compiled',
-                        AddEventRequest::KEY_LABEL => $bodyNotPresentJobLabel,
-                        AddEventRequest::KEY_REFERENCE => md5($bodyNotPresentJobLabel),
+                        AddEventRequest::KEY_LABEL => $jobLabel,
+                        AddEventRequest::KEY_REFERENCE => md5($jobLabel),
                     ],
                 ],
                 'expectedSerializedEvent' => [
-                    'job' => $bodyNotPresentJobLabel,
+                    'job' => $jobLabel,
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 1,
                     AddEventRequest::KEY_TYPE => 'job/compiled',
-                    AddEventRequest::KEY_LABEL => $bodyNotPresentJobLabel,
-                    AddEventRequest::KEY_REFERENCE => md5($bodyNotPresentJobLabel),
+                    AddEventRequest::KEY_LABEL => $jobLabel,
+                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
                 ],
             ],
-            'body empty' => [
-                'jobLabel' => $bodyEmptyJobLabel,
+            'body empty, related references empty' => [
+                'jobLabel' => $jobLabel,
                 'requestPayload' => [
                     AddEventRequest::KEY_HEADER_SECTION => [
                         AddEventRequest::KEY_SEQUENCE_NUMBER => 2,
                         AddEventRequest::KEY_TYPE => 'job/compiled',
-                        AddEventRequest::KEY_LABEL => $bodyEmptyJobLabel,
-                        AddEventRequest::KEY_REFERENCE => md5($bodyEmptyJobLabel),
+                        AddEventRequest::KEY_LABEL => $jobLabel,
+                        AddEventRequest::KEY_REFERENCE => md5($jobLabel),
+                        AddEventRequest::KEY_RELATED_REFERENCES => [],
                     ],
                     AddEventRequest::KEY_BODY => [],
                 ],
                 'expectedSerializedEvent' => [
-                    'job' => $bodyEmptyJobLabel,
+                    'job' => $jobLabel,
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 2,
                     AddEventRequest::KEY_TYPE => 'job/compiled',
-                    AddEventRequest::KEY_LABEL => $bodyEmptyJobLabel,
-                    AddEventRequest::KEY_REFERENCE => md5($bodyEmptyJobLabel),
+                    AddEventRequest::KEY_LABEL => $jobLabel,
+                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
                     AddEventRequest::KEY_BODY => [],
                 ],
             ],
-            'body not empty' => [
-                'jobLabel' => $bodyNotEmptyJobLabel,
+            'body not empty, related references empty' => [
+                'jobLabel' => $jobLabel,
                 'requestPayload' => [
                     AddEventRequest::KEY_HEADER_SECTION => [
                         AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
                         AddEventRequest::KEY_TYPE => 'job/started',
-                        AddEventRequest::KEY_LABEL => $bodyNotEmptyJobLabel,
-                        AddEventRequest::KEY_REFERENCE => md5($bodyNotEmptyJobLabel),
+                        AddEventRequest::KEY_LABEL => $jobLabel,
+                        AddEventRequest::KEY_REFERENCE => md5($jobLabel),
                     ],
                     AddEventRequest::KEY_BODY => [
                         'tests' => [
@@ -301,15 +300,76 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                     ],
                 ],
                 'expectedSerializedEvent' => [
-                    'job' => $bodyNotEmptyJobLabel,
+                    'job' => $jobLabel,
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
                     AddEventRequest::KEY_TYPE => 'job/started',
-                    AddEventRequest::KEY_LABEL => $bodyNotEmptyJobLabel,
-                    AddEventRequest::KEY_REFERENCE => md5($bodyNotEmptyJobLabel),
+                    AddEventRequest::KEY_LABEL => $jobLabel,
+                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
                     AddEventRequest::KEY_BODY => [
                         'tests' => [
                             'Test/test1.yml',
                             'Test/test2.yml',
+                        ],
+                    ],
+                ],
+            ],
+            'related references invalid' => [
+                'jobLabel' => $jobLabel,
+                'requestPayload' => [
+                    AddEventRequest::KEY_HEADER_SECTION => [
+                        AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
+                        AddEventRequest::KEY_TYPE => 'job/started',
+                        AddEventRequest::KEY_LABEL => $jobLabel,
+                        AddEventRequest::KEY_REFERENCE => md5($jobLabel),
+                        AddEventRequest::KEY_RELATED_REFERENCES => [
+                            [
+                                'invalid-key' => 'value',
+                            ],
+                        ],
+                    ],
+                ],
+                'expectedSerializedEvent' => [
+                    'job' => $jobLabel,
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
+                    AddEventRequest::KEY_TYPE => 'job/started',
+                    AddEventRequest::KEY_LABEL => $jobLabel,
+                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
+                ],
+            ],
+            'related references valid' => [
+                'jobLabel' => $jobLabel,
+                'requestPayload' => [
+                    AddEventRequest::KEY_HEADER_SECTION => [
+                        AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
+                        AddEventRequest::KEY_TYPE => 'job/started',
+                        AddEventRequest::KEY_LABEL => $jobLabel,
+                        AddEventRequest::KEY_REFERENCE => md5($jobLabel),
+                        AddEventRequest::KEY_RELATED_REFERENCES => [
+                            [
+                                'label' => 'reference 1 label',
+                                'reference' => 'reference 1 reference',
+                            ],
+                            [
+                                'label' => 'reference 2 label',
+                                'reference' => 'reference 2 reference',
+                            ],
+                        ],
+                    ],
+                ],
+                'expectedSerializedEvent' => [
+                    'job' => $jobLabel,
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
+                    AddEventRequest::KEY_TYPE => 'job/started',
+                    AddEventRequest::KEY_LABEL => $jobLabel,
+                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
+                    AddEventRequest::KEY_RELATED_REFERENCES => [
+                        [
+                            'label' => 'reference 1 label',
+                            'reference' => 'reference 1 reference',
+                        ],
+                        [
+                            'label' => 'reference 2 label',
+                            'reference' => 'reference 2 reference',
                         ],
                     ],
                 ],

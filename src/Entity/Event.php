@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EventRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Ulid;
 
@@ -35,7 +37,14 @@ class Event implements \JsonSerializable
     private readonly Reference $reference;
 
     /**
-     * @param array<mixed> $body
+     * @var Collection<int, Reference>
+     */
+    #[ORM\ManyToMany(targetEntity: Reference::class)]
+    private Collection $relatedReferences;
+
+    /**
+     * @param array<mixed>     $body
+     * @param array<Reference> $relatedReferences
      */
     public function __construct(
         int $sequenceNumber,
@@ -43,6 +52,7 @@ class Event implements \JsonSerializable
         string $type,
         ?array $body,
         Reference $referenceEntity,
+        array $relatedReferences = [],
     ) {
         $this->id = (string) new Ulid();
         $this->sequenceNumber = $sequenceNumber;
@@ -50,6 +60,7 @@ class Event implements \JsonSerializable
         $this->type = $type;
         $this->body = $body;
         $this->reference = $referenceEntity;
+        $this->relatedReferences = new ArrayCollection($relatedReferences);
     }
 
     /**
@@ -65,6 +76,16 @@ class Event implements \JsonSerializable
 
         if (is_array($this->body)) {
             $data['body'] = $this->body;
+        }
+
+        if (0 !== count($this->relatedReferences)) {
+            $serializedRelatedReferences = [];
+
+            foreach ($this->relatedReferences as $relatedReference) {
+                $serializedRelatedReferences[] = $relatedReference->toArray();
+            }
+
+            $data['related_references'] = $serializedRelatedReferences;
         }
 
         return array_merge(

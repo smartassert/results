@@ -9,6 +9,7 @@ class AddEventRequest
     public const KEY_TYPE = 'type';
     public const KEY_LABEL = 'label';
     public const KEY_REFERENCE = 'reference';
+    public const KEY_RELATED_REFERENCES = 'related_references';
     public const KEY_BODY = 'body';
 
     /**
@@ -16,6 +17,7 @@ class AddEventRequest
      * @param null|non-empty-string $type
      * @param null|non-empty-string $label
      * @param null|non-empty-string $reference
+     * @param null|array<mixed>     $relatedReferences
      * @param null|array<mixed>     $body
      */
     public function __construct(
@@ -23,6 +25,7 @@ class AddEventRequest
         public readonly ?string $type,
         public readonly ?string $label,
         public readonly ?string $reference,
+        public readonly ?array $relatedReferences,
         public readonly ?array $body,
     ) {
     }
