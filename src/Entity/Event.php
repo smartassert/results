@@ -28,27 +28,27 @@ class Event implements \JsonSerializable
      * @var array<mixed>
      */
     #[ORM\Column(type: 'json')]
-    private readonly array $payload;
+    private readonly array $body;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private readonly Reference $reference;
 
     /**
-     * @param array<mixed> $payload
+     * @param array<mixed> $body
      */
     public function __construct(
         int $sequenceNumber,
         string $job,
         string $type,
-        array $payload,
+        array $body,
         Reference $referenceEntity,
     ) {
         $this->id = (string) new Ulid();
         $this->sequenceNumber = $sequenceNumber;
         $this->job = $job;
         $this->type = $type;
-        $this->payload = $payload;
+        $this->body = $body;
         $this->reference = $referenceEntity;
     }
 
@@ -63,7 +63,7 @@ class Event implements \JsonSerializable
             'type' => $this->type,
             'label' => $this->reference->getLabel(),
             'reference' => $this->reference->getReference(),
-            'payload' => $this->payload,
+            'body' => $this->body,
         ];
     }
 }

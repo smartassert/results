@@ -20,14 +20,14 @@ class EventFactory
      * @param non-empty-string $jobLabel
      * @param positive-int     $sequenceNumber
      * @param non-empty-string $type
-     * @param array<mixed>     $payload
+     * @param array<mixed>     $body
      */
     public function create(
         string $jobLabel,
         int $sequenceNumber,
         string $type,
         Reference $reference,
-        array $payload,
+        array $body,
     ): Event {
         $event = $this->repository->findOneBy([
             'job' => $jobLabel,
@@ -36,7 +36,7 @@ class EventFactory
 
         if (null === $event) {
             $reference = $this->referenceFactory->create($reference->getLabel(), $reference->getReference());
-            $event = new Event($sequenceNumber, $jobLabel, $type, $payload, $reference);
+            $event = new Event($sequenceNumber, $jobLabel, $type, $body, $reference);
 
             $this->repository->add($event);
         }

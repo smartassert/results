@@ -40,7 +40,7 @@ class EventTest extends TestCase
                     'type' => 'job/started',
                     'label' => 'empty payload label',
                     'reference' => md5('empty payload reference'),
-                    'payload' => [],
+                    'body' => [],
                 ],
             ],
             'non-empty payload' => [
@@ -64,7 +64,7 @@ class EventTest extends TestCase
                     'type' => 'job/finished',
                     'label' => 'non-empty payload label',
                     'reference' => md5('reference'),
-                    'payload' => [
+                    'body' => [
                         'key1' => 'value1',
                         'key2' => 'value2',
                         'key3' => [

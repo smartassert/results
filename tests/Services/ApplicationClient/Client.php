@@ -37,9 +37,9 @@ class Client
             $method,
             $this->router->generate('event_add', ['token' => $token]),
             [
-                'content-type' => 'application/x-www-form-urlencoded',
+                'content-type' => 'application/json',
             ],
-            http_build_query($payload)
+            (string) json_encode($payload)
         );
     }
 
