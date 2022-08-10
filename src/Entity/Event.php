@@ -21,13 +21,13 @@ class Event implements \JsonSerializable
     #[ORM\Column(type: 'string', length: self::ID_LENGTH)]
     private readonly string $job;
 
-    #[ORM\Column(type: 'string', length: self::ID_LENGTH)]
+    #[ORM\Column(type: 'string', length: 255)]
     private readonly string $type;
 
     /**
      * @var array<mixed>
      */
-    #[ORM\Column(type: 'json')]
+    #[ORM\Column(type: 'json', nullable: true)]
     private readonly array $body;
 
     #[ORM\ManyToOne]
