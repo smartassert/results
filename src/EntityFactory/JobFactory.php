@@ -9,7 +9,7 @@ use App\Exception\InvalidUserException;
 use App\Repository\JobRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class TokenFactory
+class JobFactory
 {
     public function __construct(
         private readonly JobRepository $repository,

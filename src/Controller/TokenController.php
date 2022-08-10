@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\EntityFactory\TokenFactory;
+use App\EntityFactory\JobFactory;
 use App\Exception\InvalidUserException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,11 +15,11 @@ class TokenController
      * @param non-empty-string $job_label
      */
     #[Route('/token/{job_label<[A-Z0-9]{26,32}>}', name: 'token_create', methods: ['POST'])]
-    public function create(TokenFactory $tokenFactory, UserInterface $user, string $job_label): Response
+    public function create(JobFactory $jobFactory, UserInterface $user, string $job_label): Response
     {
         try {
             return new JsonResponse([
-                'token' => $tokenFactory->createForUserAndJob($user, $job_label)->token,
+                'token' => $jobFactory->createForUserAndJob($user, $job_label)->token,
             ]);
         } catch (InvalidUserException) {
             return new JsonResponse(null, 403);
