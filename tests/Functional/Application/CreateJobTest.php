@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Application;
 
-use App\Tests\Application\AbstractCreateTokenTest;
+use App\Tests\Application\AbstractCreateJobTest;
 
-class CreateTokenTest extends AbstractCreateTokenTest
+class CreateJobTest extends AbstractCreateJobTest
 {
     use GetClientAdapterTrait;
 }

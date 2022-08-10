@@ -9,7 +9,7 @@ use App\Repository\JobRepository;
 use App\Tests\Services\AuthenticationConfiguration;
 use Symfony\Component\Uid\Ulid;
 
-abstract class AbstractCreateTokenTest extends AbstractApplicationTest
+abstract class AbstractCreateJobTest extends AbstractApplicationTest
 {
     /**
      * @dataProvider createBadMethodDataProvider
@@ -18,7 +18,7 @@ abstract class AbstractCreateTokenTest extends AbstractApplicationTest
     {
         $label = (string) new Ulid();
 
-        $response = $this->applicationClient->makeCreateTokenRequest(
+        $response = $this->applicationClient->makeCreateJobRequest(
             $this->authenticationConfiguration->validToken,
             $label,
             $method
@@ -53,7 +53,7 @@ abstract class AbstractCreateTokenTest extends AbstractApplicationTest
      */
     public function testCreateUnauthorizedUser(callable $tokenCreator): void
     {
-        $response = $this->applicationClient->makeCreateTokenRequest(
+        $response = $this->applicationClient->makeCreateJobRequest(
             $tokenCreator($this->authenticationConfiguration),
             (string) new Ulid()
         );
@@ -94,7 +94,7 @@ abstract class AbstractCreateTokenTest extends AbstractApplicationTest
 
         $jobLabel = (string) new Ulid();
 
-        $response = $this->applicationClient->makeCreateTokenRequest(
+        $response = $this->applicationClient->makeCreateJobRequest(
             $this->authenticationConfiguration->validToken,
             $jobLabel
         );
@@ -108,9 +108,9 @@ abstract class AbstractCreateTokenTest extends AbstractApplicationTest
         self::assertIsArray($responseData);
         self::assertArrayHasKey('token', $responseData);
 
-        $token = $jobRepository->findOneBy(['token' => $responseData['token']]);
-        self::assertInstanceOf(Job::class, $token);
-        self::assertSame($jobLabel, $token->jobLabel);
+        $job = $jobRepository->findOneBy(['token' => $responseData['token']]);
+        self::assertInstanceOf(Job::class, $job);
+        self::assertSame($jobLabel, $job->jobLabel);
     }
 
     public function testCreateIsIdempotent(): void
@@ -122,10 +122,10 @@ abstract class AbstractCreateTokenTest extends AbstractApplicationTest
 
         $jobLabel = (string) new Ulid();
 
-        $this->applicationClient->makeCreateTokenRequest($this->authenticationConfiguration->validToken, $jobLabel);
+        $this->applicationClient->makeCreateJobRequest($this->authenticationConfiguration->validToken, $jobLabel);
         self::assertSame(1, $jobRepository->count([]));
 
-        $this->applicationClient->makeCreateTokenRequest($this->authenticationConfiguration->validToken, $jobLabel);
+        $this->applicationClient->makeCreateJobRequest($this->authenticationConfiguration->validToken, $jobLabel);
         self::assertSame(1, $jobRepository->count([]));
     }
 }

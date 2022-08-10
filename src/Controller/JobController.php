@@ -9,12 +9,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class TokenController
+class JobController
 {
     /**
      * @param non-empty-string $job_label
      */
-    #[Route('/token/{job_label<[A-Z0-9]{26,32}>}', name: 'token_create', methods: ['POST'])]
+    #[Route('/job/{job_label<[A-Z0-9]{26,32}>}', name: 'job_create', methods: ['POST'])]
     public function create(JobFactory $jobFactory, UserInterface $user, string $job_label): Response
     {
         try {

@@ -16,14 +16,14 @@ class Client
     ) {
     }
 
-    public function makeCreateTokenRequest(
+    public function makeCreateJobRequest(
         ?string $authenticationToken,
         string $jobLabel,
         string $method = 'POST'
     ): ResponseInterface {
         return $this->client->makeRequest(
             $method,
-            $this->router->generate('token_create', ['job_label' => $jobLabel]),
+            $this->router->generate('job_create', ['job_label' => $jobLabel]),
             $this->createAuthorizationHeader($authenticationToken)
         );
     }
