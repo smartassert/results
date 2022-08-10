@@ -51,7 +51,7 @@ class EventTest extends WebTestCase
         int $sequenceNumber,
         string $job,
         string $type,
-        array $body,
+        ?array $body,
         Reference $referenceEntity,
     ): void {
         $this->referenceRepository->add($referenceEntity);
@@ -62,12 +62,19 @@ class EventTest extends WebTestCase
 
         $this->eventRepository->add($event);
 
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        \assert($entityManager instanceof EntityManagerInterface);
+        $entityManager->clear();
+
+        $events = $this->eventRepository->findAll();
+        $retrievedEvent = $events[0];
+
         self::assertSame(1, $this->eventRepository->count([]));
 
-        self::assertSame($sequenceNumber, ObjectReflector::getProperty($event, 'sequenceNumber'));
-        self::assertSame($job, ObjectReflector::getProperty($event, 'job'));
-        self::assertSame($type, ObjectReflector::getProperty($event, 'type'));
-        self::assertSame($body, ObjectReflector::getProperty($event, 'body'));
+        self::assertSame($sequenceNumber, ObjectReflector::getProperty($retrievedEvent, 'sequenceNumber'));
+        self::assertSame($job, ObjectReflector::getProperty($retrievedEvent, 'job'));
+        self::assertSame($type, ObjectReflector::getProperty($retrievedEvent, 'type'));
+        self::assertSame($body, ObjectReflector::getProperty($retrievedEvent, 'body'));
     }
 
     /**
@@ -76,15 +83,22 @@ class EventTest extends WebTestCase
     public function createDataProvider(): array
     {
         return [
-            'empty payload' => [
+            'null body' => [
                 'sequence_number' => 1,
-                'job' => md5('empty payload job'),
+                'job' => md5('null body job'),
+                'type' => 'job/started',
+                'body' => null,
+                'referenceEntity' => new Reference('null body label', 'null body reference'),
+            ],
+            'empty body' => [
+                'sequence_number' => 2,
+                'job' => md5('empty body job'),
                 'type' => 'job/started',
                 'body' => [],
-                'referenceEntity' => new Reference('empty payload label', 'empty payload reference'),
+                'referenceEntity' => new Reference('empty body label', 'empty body reference'),
             ],
-            'non-empty payload' => [
-                'sequence_number' => 2,
+            'non-empty body' => [
+                'sequence_number' => 3,
                 'job' => md5('job'),
                 'type' => 'job/finished',
                 'body' => [
@@ -95,7 +109,7 @@ class EventTest extends WebTestCase
                         'key32' => 'value 32',
                     ],
                 ],
-                'referenceEntity' => new Reference('non-empty payload label', 'non-empty payload reference'),
+                'referenceEntity' => new Reference('non-empty body label', 'non-empty body reference'),
             ],
         ];
     }

@@ -25,10 +25,10 @@ class Event implements \JsonSerializable
     private readonly string $type;
 
     /**
-     * @var array<mixed>
+     * @var null|array<mixed>
      */
     #[ORM\Column(type: 'json', nullable: true)]
-    private readonly array $body;
+    private readonly ?array $body;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -41,7 +41,7 @@ class Event implements \JsonSerializable
         int $sequenceNumber,
         string $job,
         string $type,
-        array $body,
+        ?array $body,
         Reference $referenceEntity,
     ) {
         $this->id = (string) new Ulid();
@@ -57,13 +57,18 @@ class Event implements \JsonSerializable
      */
     public function jsonSerialize(): array
     {
+        $data = [
+            'sequence_number' => $this->sequenceNumber,
+            'job' => $this->job,
+            'type' => $this->type,
+        ];
+
+        if (is_array($this->body)) {
+            $data['body'] = $this->body;
+        }
+
         return array_merge(
-            [
-                'sequence_number' => $this->sequenceNumber,
-                'job' => $this->job,
-                'type' => $this->type,
-                'body' => $this->body,
-            ],
+            $data,
             $this->reference->toArray(),
         );
     }

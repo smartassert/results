@@ -16,14 +16,14 @@ class AddEventRequest
      * @param null|non-empty-string $type
      * @param null|non-empty-string $label
      * @param null|non-empty-string $reference
-     * @param array<mixed>          $body
+     * @param null|array<mixed>     $body
      */
     public function __construct(
         public readonly ?int $sequenceNumber,
         public readonly ?string $type,
         public readonly ?string $label,
         public readonly ?string $reference,
-        public readonly array $body,
+        public readonly ?array $body,
     ) {
     }
 }

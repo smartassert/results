@@ -16,12 +16,12 @@ class EventFactory
     }
 
     /**
-     * @param non-empty-string $jobLabel
-     * @param positive-int     $sequenceNumber
-     * @param non-empty-string $type
-     * @param array<mixed>     $body
-     * @param non-empty-string $label
-     * @param non-empty-string $reference
+     * @param non-empty-string  $jobLabel
+     * @param positive-int      $sequenceNumber
+     * @param non-empty-string  $type
+     * @param null|array<mixed> $body
+     * @param non-empty-string  $label
+     * @param non-empty-string  $reference
      */
     public function create(
         string $jobLabel,
@@ -29,7 +29,7 @@ class EventFactory
         string $type,
         string $label,
         string $reference,
-        array $body,
+        ?array $body,
     ): Event {
         $event = $this->repository->findOneBy([
             'job' => $jobLabel,

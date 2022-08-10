@@ -210,35 +210,18 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         ];
     }
 
-    public function testAddSuccess(): void
+    /**
+     * @dataProvider addSuccessDataProvider
+     *
+     * @param non-empty-string                   $jobLabel
+     * @param array<string, array<mixed>|string> $requestPayload
+     * @param array<mixed>                       $expectedSerializedEvent
+     */
+    public function testAddSuccess(string $jobLabel, array $requestPayload, array $expectedSerializedEvent): void
     {
-        $jobLabel = (string) new Ulid();
         $token = $this->createToken($jobLabel);
 
         self::assertSame(0, $this->eventRepository->count([]));
-
-        $sequenceNumber = rand(1, 100);
-        $type = md5((string) rand());
-        $label = md5((string) rand());
-        $reference = md5((string) rand());
-        $body = [
-            'key1' => 'value1',
-            'key2' => 'value2',
-            'key3' => [
-                'key3.1' => 'value3.1',
-                'key3.2' => 'value3.2',
-            ],
-        ];
-
-        $requestPayload = [
-            AddEventRequest::KEY_HEADER_SECTION => [
-                AddEventRequest::KEY_SEQUENCE_NUMBER => $sequenceNumber,
-                AddEventRequest::KEY_TYPE => $type,
-                AddEventRequest::KEY_LABEL => $label,
-                AddEventRequest::KEY_REFERENCE => $reference,
-            ],
-            AddEventRequest::KEY_BODY => $body,
-        ];
 
         $response = $this->applicationClient->makeAddEventRequest($token, $requestPayload);
 
@@ -250,17 +233,88 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         $responseData = json_decode($response->getBody()->getContents(), true);
         self::assertIsArray($responseData);
 
-        self::assertEquals(
-            [
-                'sequence_number' => $sequenceNumber,
-                'job' => $jobLabel,
-                AddEventRequest::KEY_TYPE => $type,
-                AddEventRequest::KEY_LABEL => $label,
-                AddEventRequest::KEY_REFERENCE => $reference,
-                AddEventRequest::KEY_BODY => $body,
+        self::assertEquals($expectedSerializedEvent, $responseData);
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function addSuccessDataProvider(): array
+    {
+        $bodyNotPresentJobLabel = (string) new Ulid();
+        $bodyEmptyJobLabel = (string) new Ulid();
+        $bodyNotEmptyJobLabel = (string) new Ulid();
+
+        return [
+            'body not present' => [
+                'jobLabel' => $bodyNotPresentJobLabel,
+                'requestPayload' => [
+                    AddEventRequest::KEY_HEADER_SECTION => [
+                        AddEventRequest::KEY_SEQUENCE_NUMBER => 1,
+                        AddEventRequest::KEY_TYPE => 'job/compiled',
+                        AddEventRequest::KEY_LABEL => $bodyNotPresentJobLabel,
+                        AddEventRequest::KEY_REFERENCE => md5($bodyNotPresentJobLabel),
+                    ],
+                ],
+                'expectedSerializedEvent' => [
+                    'job' => $bodyNotPresentJobLabel,
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 1,
+                    AddEventRequest::KEY_TYPE => 'job/compiled',
+                    AddEventRequest::KEY_LABEL => $bodyNotPresentJobLabel,
+                    AddEventRequest::KEY_REFERENCE => md5($bodyNotPresentJobLabel),
+                ],
             ],
-            $responseData
-        );
+            'body empty' => [
+                'jobLabel' => $bodyEmptyJobLabel,
+                'requestPayload' => [
+                    AddEventRequest::KEY_HEADER_SECTION => [
+                        AddEventRequest::KEY_SEQUENCE_NUMBER => 2,
+                        AddEventRequest::KEY_TYPE => 'job/compiled',
+                        AddEventRequest::KEY_LABEL => $bodyEmptyJobLabel,
+                        AddEventRequest::KEY_REFERENCE => md5($bodyEmptyJobLabel),
+                    ],
+                    AddEventRequest::KEY_BODY => [],
+                ],
+                'expectedSerializedEvent' => [
+                    'job' => $bodyEmptyJobLabel,
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 2,
+                    AddEventRequest::KEY_TYPE => 'job/compiled',
+                    AddEventRequest::KEY_LABEL => $bodyEmptyJobLabel,
+                    AddEventRequest::KEY_REFERENCE => md5($bodyEmptyJobLabel),
+                    AddEventRequest::KEY_BODY => [],
+                ],
+            ],
+            'body not empty' => [
+                'jobLabel' => $bodyNotEmptyJobLabel,
+                'requestPayload' => [
+                    AddEventRequest::KEY_HEADER_SECTION => [
+                        AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
+                        AddEventRequest::KEY_TYPE => 'job/started',
+                        AddEventRequest::KEY_LABEL => $bodyNotEmptyJobLabel,
+                        AddEventRequest::KEY_REFERENCE => md5($bodyNotEmptyJobLabel),
+                    ],
+                    AddEventRequest::KEY_BODY => [
+                        'tests' => [
+                            'Test/test1.yml',
+                            'Test/test2.yml',
+                        ],
+                    ],
+                ],
+                'expectedSerializedEvent' => [
+                    'job' => $bodyNotEmptyJobLabel,
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
+                    AddEventRequest::KEY_TYPE => 'job/started',
+                    AddEventRequest::KEY_LABEL => $bodyNotEmptyJobLabel,
+                    AddEventRequest::KEY_REFERENCE => md5($bodyNotEmptyJobLabel),
+                    AddEventRequest::KEY_BODY => [
+                        'tests' => [
+                            'Test/test1.yml',
+                            'Test/test2.yml',
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
