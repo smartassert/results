@@ -57,13 +57,14 @@ class Event implements \JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return [
-            'sequence_number' => $this->sequenceNumber,
-            'job' => $this->job,
-            'type' => $this->type,
-            'label' => $this->reference->getLabel(),
-            'reference' => $this->reference->getReference(),
-            'body' => $this->body,
-        ];
+        return array_merge(
+            [
+                'sequence_number' => $this->sequenceNumber,
+                'job' => $this->job,
+                'type' => $this->type,
+                'body' => $this->body,
+            ],
+            $this->reference->toArray(),
+        );
     }
 }

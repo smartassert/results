@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Reference;
 use App\Entity\Token;
 use App\EntityFactory\EventFactory;
 use App\Request\AddEventRequest;
@@ -45,7 +44,8 @@ class EventController
             $tokenEntity->jobLabel,
             $request->sequenceNumber,
             $request->type,
-            new Reference($request->label, $request->reference),
+            $request->label,
+            $request->reference,
             $request->body
         );
 

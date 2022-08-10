@@ -38,18 +38,13 @@ class Reference
     }
 
     /**
-     * @return non-empty-string
+     * @return array{label: non-empty-string, reference: non-empty-string}
      */
-    public function getLabel(): string
+    public function toArray(): array
     {
-        return $this->label;
-    }
-
-    /**
-     * @return non-empty-string
-     */
-    public function getReference(): string
-    {
-        return $this->reference;
+        return [
+            'label' => $this->label,
+            'reference' => $this->reference,
+        ];
     }
 }

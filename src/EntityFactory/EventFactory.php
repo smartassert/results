@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\EntityFactory;
 
 use App\Entity\Event;
-use App\Entity\Reference;
 use App\Repository\EventRepository;
 
 class EventFactory
@@ -21,12 +20,15 @@ class EventFactory
      * @param positive-int     $sequenceNumber
      * @param non-empty-string $type
      * @param array<mixed>     $body
+     * @param non-empty-string $label
+     * @param non-empty-string $reference
      */
     public function create(
         string $jobLabel,
         int $sequenceNumber,
         string $type,
-        Reference $reference,
+        string $label,
+        string $reference,
         array $body,
     ): Event {
         $event = $this->repository->findOneBy([
@@ -35,8 +37,13 @@ class EventFactory
         ]);
 
         if (null === $event) {
-            $reference = $this->referenceFactory->create($reference->getLabel(), $reference->getReference());
-            $event = new Event($sequenceNumber, $jobLabel, $type, $body, $reference);
+            $event = new Event(
+                $sequenceNumber,
+                $jobLabel,
+                $type,
+                $body,
+                $this->referenceFactory->create($label, $reference)
+            );
 
             $this->repository->add($event);
         }
