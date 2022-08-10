@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Application;
 
-use App\Entity\Token;
+use App\Entity\Job;
 use App\Repository\JobRepository;
 use App\Tests\Services\AuthenticationConfiguration;
 use Symfony\Component\Uid\Ulid;
@@ -109,7 +109,7 @@ abstract class AbstractCreateTokenTest extends AbstractApplicationTest
         self::assertArrayHasKey('token', $responseData);
 
         $token = $jobRepository->findOneBy(['token' => $responseData['token']]);
-        self::assertInstanceOf(Token::class, $token);
+        self::assertInstanceOf(Job::class, $token);
         self::assertSame($jobLabel, $token->jobLabel);
     }
 

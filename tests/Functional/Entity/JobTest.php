@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Entity;
 
-use App\Entity\Token;
+use App\Entity\Job;
 use App\Repository\JobRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use webignition\ObjectReflector\ObjectReflector;
 
-class TokenTest extends WebTestCase
+class JobTest extends WebTestCase
 {
     private JobRepository $repository;
     private EntityManagerInterface $entityManager;
@@ -40,21 +40,21 @@ class TokenTest extends WebTestCase
         $jobLabel = md5((string) rand());
         $userId = md5((string) rand());
 
-        $token = new Token($jobLabel, $userId);
+        $entity = new Job($jobLabel, $userId);
 
-        $this->repository->add($token);
+        $this->repository->add($entity);
 
         self::assertSame(1, $this->repository->count([]));
 
-        self::assertSame($jobLabel, $token->jobLabel);
-        self::assertSame($userId, ObjectReflector::getProperty($token, 'userId'));
+        self::assertSame($jobLabel, $entity->jobLabel);
+        self::assertSame($userId, ObjectReflector::getProperty($entity, 'userId'));
 
         $this->entityManager->clear();
 
-        $retrievedToken = $this->repository->findOneBy(['token' => $token->token]);
+        $retrievedToken = $this->repository->findOneBy(['token' => $entity->token]);
 
-        self::assertNotSame($token, $retrievedToken);
-        self::assertEquals($token, $retrievedToken);
+        self::assertNotSame($entity, $retrievedToken);
+        self::assertEquals($entity, $retrievedToken);
     }
 
     public function testJobLabelIsUnique(): void
@@ -64,10 +64,10 @@ class TokenTest extends WebTestCase
         $jobLabel = md5((string) rand());
         $userId = md5((string) rand());
 
-        $this->entityManager->persist(new Token($jobLabel, $userId));
+        $this->entityManager->persist(new Job($jobLabel, $userId));
         $this->entityManager->flush();
         $this->entityManager->clear();
-        $this->entityManager->persist(new Token($jobLabel, $userId));
+        $this->entityManager->persist(new Job($jobLabel, $userId));
 
         self::expectException(UniqueConstraintViolationException::class);
 

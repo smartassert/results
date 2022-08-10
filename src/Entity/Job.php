@@ -9,7 +9,7 @@ use Symfony\Component\Uid\Ulid;
 #[ORM\Entity(repositoryClass: JobRepository::class)]
 #[ORM\UniqueConstraint(name: 'job_label_idx', columns: ['job_label'])]
 #[ORM\Index(name: 'user_id_idx', columns: ['user_id'])]
-class Token
+class Job
 {
     public const ID_LENGTH = 32;
 

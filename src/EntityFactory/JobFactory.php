@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\EntityFactory;
 
-use App\Entity\Token;
+use App\Entity\Job;
 use App\Exception\InvalidUserException;
 use App\Repository\JobRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -21,21 +21,21 @@ class JobFactory
      *
      * @throws InvalidUserException
      */
-    public function createForUserAndJob(UserInterface $user, string $jobLabel): Token
+    public function createForUserAndJob(UserInterface $user, string $jobLabel): Job
     {
-        $token = $this->repository->findOneBy(['jobLabel' => $jobLabel]);
+        $job = $this->repository->findOneBy(['jobLabel' => $jobLabel]);
 
-        if (null === $token) {
+        if (null === $job) {
             $userIdentifier = trim($user->getUserIdentifier());
 
             if ('' === $userIdentifier) {
                 throw InvalidUserException::createForEmptyUserIdentifier($user);
             }
 
-            $token = new Token($jobLabel, $userIdentifier);
-            $this->repository->add($token);
+            $job = new Job($jobLabel, $userIdentifier);
+            $this->repository->add($job);
         }
 
-        return $token;
+        return $job;
     }
 }
