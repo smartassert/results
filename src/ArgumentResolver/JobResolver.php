@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
-class TokenResolver implements ArgumentValueResolverInterface
+class JobResolver implements ArgumentValueResolverInterface
 {
     public function __construct(
         private readonly TokenRepository $tokenRepository,
