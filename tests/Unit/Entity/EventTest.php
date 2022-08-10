@@ -17,7 +17,7 @@ class EventTest extends TestCase
      */
     public function testJsonSerialize(Event $event, array $expected): void
     {
-        self::assertSame($expected, $event->jsonSerialize());
+        self::assertEquals($expected, $event->jsonSerialize());
     }
 
     /**

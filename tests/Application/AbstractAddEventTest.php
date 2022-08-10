@@ -250,7 +250,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         $responseData = json_decode($response->getBody()->getContents(), true);
         self::assertIsArray($responseData);
 
-        self::assertSame(
+        self::assertEquals(
             [
                 'sequence_number' => $sequenceNumber,
                 'job' => $jobLabel,
