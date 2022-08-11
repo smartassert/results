@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class EventController
 {
-    #[Route('/event/{token<[A-Z0-9]{26,32}>}', name: 'event_add', methods: ['POST'])]
+    #[Route('/event/add/{token<[A-Z0-9]{26,32}>}', name: 'event_add', methods: ['POST'])]
     public function add(EventFactory $eventFactory, ?Job $job, AddEventRequest $request): Response
     {
         if (null === $job) {
