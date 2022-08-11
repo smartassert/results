@@ -32,7 +32,12 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
      */
     public function testListBadMethod(string $method): void
     {
-        $response = $this->applicationClient->makeListEventRequest((string) new Ulid(), (string) new Ulid(), $method);
+        $response = $this->applicationClient->makeListEventRequest(
+            (string) new Ulid(),
+            (string) new Ulid(),
+            md5((string) rand()),
+            $method
+        );
 
         self::assertSame(405, $response->getStatusCode());
     }
@@ -71,6 +76,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
         callable $jobsCreator,
         array $eventDataCollection,
         string $jobLabel,
+        string $eventReference,
         array $expectedResponseData,
     ): void {
         $jobs = $jobsCreator($this->authenticationConfiguration->authenticatedUserId);
@@ -93,7 +99,8 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
 
         $response = $this->applicationClient->makeListEventRequest(
             $this->authenticationConfiguration->validToken,
-            $jobLabel
+            $jobLabel,
+            $eventReference,
         );
 
         self::assertSame(200, $response->getStatusCode());
@@ -122,7 +129,8 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                     return [];
                 },
                 'eventDataCollection' => [],
-                'job' => $requestJobLabel,
+                'jobLabel' => $requestJobLabel,
+                'eventReference' => md5((string) rand()),
                 'expectedResponseData' => [],
             ],
             'no jobs for user' => [
@@ -148,7 +156,38 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                         'reference' => md5('job_1_test.yml'),
                     ],
                 ],
-                'job' => $nonUserJobLabels[0],
+                'jobLabel' => $nonUserJobLabels[0],
+                'eventReference' => md5('job_0_test.yml'),
+                'expectedResponseData' => [],
+            ],
+            'no events for reference' => [
+                'jobsCreator' => function (string $userId) use ($requestJobLabel) {
+                    if ('' === $userId) {
+                        return [];
+                    }
+
+                    return [
+                        new Job($requestJobLabel, $userId),
+                    ];
+                },
+                'eventDataCollection' => [
+                    [
+                        'jobLabel' => $requestJobLabel,
+                        'sequenceNumber' => 1,
+                        'type' => 'test/started',
+                        'label' => 'test.yml',
+                        'reference' => md5('test.yml'),
+                    ],
+                    [
+                        'jobLabel' => $requestJobLabel,
+                        'sequenceNumber' => 2,
+                        'type' => 'test/passed',
+                        'label' => 'test.yml',
+                        'reference' => md5('test.yml'),
+                    ],
+                ],
+                'jobLabel' => $requestJobLabel,
+                'eventReference' => md5((string) rand()),
                 'expectedResponseData' => [],
             ],
             'single job for user, single event for user' => [
@@ -170,7 +209,8 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                         'reference' => md5('test.yml'),
                     ],
                 ],
-                'job' => $requestJobLabel,
+                'jobLabel' => $requestJobLabel,
+                'eventReference' => md5('test.yml'),
                 'expectedResponseData' => [
                     [
                         'sequence_number' => 1,
@@ -181,7 +221,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                     ],
                 ],
             ],
-            'multiple jobs, multiple events some for user, events are ordered by sequence number asc' => [
+            'multiple jobs, multiple events for user, events are ordered by sequence number asc' => [
                 'jobsCreator' => function (string $userId) use ($requestJobLabel, $nonUserJobLabels) {
                     if ('' === $userId) {
                         return [];
@@ -198,8 +238,8 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                         'jobLabel' => $requestJobLabel,
                         'sequenceNumber' => 1,
                         'type' => 'test/started',
-                        'label' => 'test1.yml',
-                        'reference' => md5('test1.yml'),
+                        'label' => 'test.yml',
+                        'reference' => md5('test.yml'),
                     ],
                     [
                         'jobLabel' => $nonUserJobLabels[0],
@@ -211,9 +251,9 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                     [
                         'jobLabel' => $requestJobLabel,
                         'sequenceNumber' => 2,
-                        'type' => 'test/started',
-                        'label' => 'test2.yml',
-                        'reference' => md5('test2.yml'),
+                        'type' => 'test/passed',
+                        'label' => 'test.yml',
+                        'reference' => md5('test.yml'),
                     ],
                     [
                         'jobLabel' => $nonUserJobLabels[1],
@@ -223,21 +263,22 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                         'reference' => md5('job_1_test.yml'),
                     ],
                 ],
-                'job' => $requestJobLabel,
+                'jobLabel' => $requestJobLabel,
+                'eventReference' => md5('test.yml'),
                 'expectedResponseData' => [
                     [
                         'sequence_number' => 1,
                         'job' => $requestJobLabel,
                         'type' => 'test/started',
-                        'label' => 'test1.yml',
-                        'reference' => md5('test1.yml'),
+                        'label' => 'test.yml',
+                        'reference' => md5('test.yml'),
                     ],
                     [
                         'sequence_number' => 2,
                         'job' => $requestJobLabel,
-                        'type' => 'test/started',
-                        'label' => 'test2.yml',
-                        'reference' => md5('test2.yml'),
+                        'type' => 'test/passed',
+                        'label' => 'test.yml',
+                        'reference' => md5('test.yml'),
                     ],
                 ],
             ],

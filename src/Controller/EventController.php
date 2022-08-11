@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Job;
+use App\Entity\Reference;
 use App\EntityFactory\EventFactory;
 use App\Repository\EventRepository;
 use App\Request\AddEventRequest;
@@ -52,18 +53,25 @@ class EventController
         return new JsonResponse($event);
     }
 
-    #[Route('/event/list/{label<[A-Z0-9]{26,32}>}', name: 'event_list', methods: ['GET'])]
+    #[Route('/event/list/{label<[A-Z0-9]{26,32}>}/{reference}', name: 'event_list', methods: ['GET'])]
     public function list(
         UserInterface $user,
         EventRepository $eventRepository,
-        ?Job $job
+        ?Reference $referenceEntity,
+        ?Job $job,
     ): JsonResponse {
-        if (null === $job || $job->userId !== $user->getUserIdentifier()) {
+        if (null === $job || $job->userId !== $user->getUserIdentifier() || null === $referenceEntity) {
             return new JsonResponse([]);
         }
 
         return new JsonResponse(
-            $eventRepository->findBy(['job' => $job->label], ['sequenceNumber' => 'ASC'])
+            $eventRepository->findBy(
+                [
+                    'job' => $job->label,
+                    'reference' => $referenceEntity,
+                ],
+                ['sequenceNumber' => 'ASC']
+            )
         );
     }
 
