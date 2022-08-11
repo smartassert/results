@@ -28,7 +28,7 @@ final class Version20220518154358 extends AbstractMigration
                 PRIMARY KEY(token, job_label)
             )
         ');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_5F37A13B5F37A13B ON job (token)');
+        $this->addSql('CREATE UNIQUE INDEX job_token_idx ON job (token)');
         $this->addSql('CREATE INDEX user_id_idx ON job (user_id)');
         $this->addSql('CREATE UNIQUE INDEX job_label_idx ON job (job_label)');
     }
