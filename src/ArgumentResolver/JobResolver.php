@@ -19,7 +19,9 @@ class JobResolver implements ArgumentValueResolverInterface
 
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
-        return Job::class === $argument->getType() && $request->attributes->has('token');
+        return
+            Job::class === $argument->getType()
+            && ($request->attributes->has('token') || $request->attributes->has('label'));
     }
 
     /**
@@ -30,6 +32,17 @@ class JobResolver implements ArgumentValueResolverInterface
         $requestToken = $request->attributes->get('token');
         $requestToken = is_string($requestToken) ? trim($requestToken) : '';
 
-        yield '' === $requestToken ? null : $this->jobRepository->findOneBy(['token' => $requestToken]);
+        if ('' !== $requestToken) {
+            yield $this->jobRepository->findOneBy(['token' => $requestToken]);
+        }
+
+        $requestJob = $request->attributes->get('label');
+        $requestJob = is_string($requestJob) ? trim($requestJob) : '';
+
+        if ('' !== $requestJob) {
+            yield $this->jobRepository->findOneBy(['label' => $requestJob]);
+        }
+
+        yield null;
     }
 }
