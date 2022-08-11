@@ -6,20 +6,27 @@ namespace App\ArgumentResolver;
 
 use App\Entity\Job;
 use App\Repository\JobRepository;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
 class JobResolver implements ArgumentValueResolverInterface
 {
+    /**
+     * @param non-empty-string[] $jobIdentifiers
+     */
     public function __construct(
         private readonly JobRepository $jobRepository,
+        private readonly array $jobIdentifiers = ['token', 'label'],
     ) {
     }
 
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
-        return Job::class === $argument->getType() && $request->attributes->has('token');
+        return
+            Job::class === $argument->getType()
+            && $this->requestAttributesContainJobIdentifier($request->attributes);
     }
 
     /**
@@ -27,9 +34,28 @@ class JobResolver implements ArgumentValueResolverInterface
      */
     public function resolve(Request $request, ArgumentMetadata $argument): \Traversable
     {
-        $requestToken = $request->attributes->get('token');
-        $requestToken = is_string($requestToken) ? trim($requestToken) : '';
+        foreach ($this->jobIdentifiers as $identifier) {
+            if ($request->attributes->has($identifier)) {
+                $value = $request->attributes->get($identifier);
+                $value = is_string($value) ? trim($value) : '';
 
-        yield '' === $requestToken ? null : $this->jobRepository->findOneBy(['token' => $requestToken]);
+                if ('' !== $value) {
+                    yield $this->jobRepository->findOneBy([$identifier => $value]);
+                }
+            }
+        }
+
+        yield null;
+    }
+
+    private function requestAttributesContainJobIdentifier(ParameterBag $attributes): bool
+    {
+        foreach ($this->jobIdentifiers as $identifier) {
+            if ($attributes->has($identifier)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

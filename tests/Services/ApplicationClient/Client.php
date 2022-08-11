@@ -43,6 +43,19 @@ class Client
         );
     }
 
+    public function makeListEventRequest(
+        ?string $authenticationToken,
+        string $label,
+        string $reference,
+        string $method = 'GET'
+    ): ResponseInterface {
+        return $this->client->makeRequest(
+            $method,
+            $this->router->generate('event_list', ['label' => $label, 'reference' => $reference]),
+            $this->createAuthorizationHeader($authenticationToken)
+        );
+    }
+
     /**
      * @return array<string, string>
      */
