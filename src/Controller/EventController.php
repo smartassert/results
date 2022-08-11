@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Job;
 use App\EntityFactory\EventFactory;
+use App\Repository\EventRepository;
 use App\Request\AddEventRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,9 +52,11 @@ class EventController
     }
 
     #[Route('/event/list/{job<[A-Z0-9]{26,32}>}', name: 'event_list', methods: ['GET'])]
-    public function list(string $job): JsonResponse
+    public function list(EventRepository $eventRepository, string $job): JsonResponse
     {
-        return new JsonResponse();
+        return new JsonResponse(
+            $eventRepository->findBy(['job' => $job], ['sequenceNumber' => 'ASC'])
+        );
     }
 
     private function createInvalidAddEventRequestFieldResponse(string $field, string $expectedFormat): JsonResponse
