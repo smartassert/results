@@ -38,7 +38,7 @@ class EventController
         }
 
         $event = $eventFactory->create(
-            $job->jobLabel,
+            $job->label,
             $request->sequenceNumber,
             $request->type,
             $request->label,

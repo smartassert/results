@@ -17,13 +17,13 @@ class JobFactory
     }
 
     /**
-     * @param non-empty-string $jobLabel
+     * @param non-empty-string $label
      *
      * @throws InvalidUserException
      */
-    public function createForUserAndJob(UserInterface $user, string $jobLabel): Job
+    public function createForUserAndJob(UserInterface $user, string $label): Job
     {
-        $job = $this->repository->findOneBy(['jobLabel' => $jobLabel]);
+        $job = $this->repository->findOneBy(['label' => $label]);
 
         if (null === $job) {
             $userIdentifier = trim($user->getUserIdentifier());
@@ -32,7 +32,7 @@ class JobFactory
                 throw InvalidUserException::createForEmptyUserIdentifier($user);
             }
 
-            $job = new Job($jobLabel, $userIdentifier);
+            $job = new Job($label, $userIdentifier);
             $this->repository->add($job);
         }
 
