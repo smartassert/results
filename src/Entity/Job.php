@@ -8,6 +8,7 @@ use Symfony\Component\Uid\Ulid;
 
 #[ORM\Entity(repositoryClass: JobRepository::class)]
 #[ORM\UniqueConstraint(name: 'job_label_idx', columns: ['job_label'])]
+#[ORM\UniqueConstraint(name: 'job_token_idx', columns: ['token'])]
 #[ORM\Index(name: 'user_id_idx', columns: ['user_id'])]
 class Job
 {
