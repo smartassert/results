@@ -19,7 +19,7 @@ class JobFactoryTest extends TestCase
         $jobRepository = \Mockery::mock(JobRepository::class);
         $jobRepository
             ->shouldReceive('findOneBy')
-            ->with(['jobLabel' => $jobLabel])
+            ->with(['label' => $jobLabel])
             ->andReturnNull()
         ;
 

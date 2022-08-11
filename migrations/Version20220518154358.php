@@ -23,14 +23,14 @@ final class Version20220518154358 extends AbstractMigration
         $this->addSql('
             CREATE TABLE job (
                 token VARCHAR(32) NOT NULL, 
-                job_label VARCHAR(32) NOT NULL, 
+                label VARCHAR(32) NOT NULL, 
                 user_id VARCHAR(32) NOT NULL, 
-                PRIMARY KEY(token, job_label)
+                PRIMARY KEY(token, label)
             )
         ');
         $this->addSql('CREATE UNIQUE INDEX job_token_idx ON job (token)');
         $this->addSql('CREATE INDEX user_id_idx ON job (user_id)');
-        $this->addSql('CREATE UNIQUE INDEX job_label_idx ON job (job_label)');
+        $this->addSql('CREATE UNIQUE INDEX label_idx ON job (label)');
     }
 
     public function down(Schema $schema): void
