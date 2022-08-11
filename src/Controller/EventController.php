@@ -9,6 +9,7 @@ use App\Request\AddEventRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class EventController
 {
@@ -52,13 +53,18 @@ class EventController
     }
 
     #[Route('/event/list/{label<[A-Z0-9]{26,32}>}', name: 'event_list', methods: ['GET'])]
-    public function list(EventRepository $eventRepository, ?Job $job): JsonResponse
-    {
-        $events = null === $job
-            ? []
-            : $eventRepository->findBy(['job' => $job->label], ['sequenceNumber' => 'ASC']);
+    public function list(
+        UserInterface $user,
+        EventRepository $eventRepository,
+        ?Job $job
+    ): JsonResponse {
+        if (null === $job || $job->userId !== $user->getUserIdentifier()) {
+            return new JsonResponse([]);
+        }
 
-        return new JsonResponse($events);
+        return new JsonResponse(
+            $eventRepository->findBy(['job' => $job->label], ['sequenceNumber' => 'ASC'])
+        );
     }
 
     private function createInvalidAddEventRequestFieldResponse(string $field, string $expectedFormat): JsonResponse

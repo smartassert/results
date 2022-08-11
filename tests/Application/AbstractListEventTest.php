@@ -58,7 +58,6 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
     /**
      * @dataProvider listSuccessDataProvider
      *
-     * @param Job[] $jobs
      * @param array<array{
      *     jobLabel: non-empty-string,
      *     sequenceNumber: positive-int,
@@ -69,11 +68,13 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
      * @param array<mixed> $expectedResponseData
      */
     public function testListSuccess(
-        array $jobs,
+        callable $jobsCreator,
         array $eventDataCollection,
         string $jobLabel,
         array $expectedResponseData,
     ): void {
+        $jobs = $jobsCreator($this->authenticationConfiguration->authenticatedUserId);
+
         foreach ($jobs as $job) {
             $this->jobRepository->add($job);
         }
@@ -117,16 +118,20 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
 
         return [
             'no jobs' => [
-                'jobs' => [],
+                'jobsCreator' => function () {
+                    return [];
+                },
                 'eventDataCollection' => [],
                 'job' => $requestJobLabel,
                 'expectedResponseData' => [],
             ],
             'no jobs for user' => [
-                'jobs' => [
-                    new Job($nonUserJobLabels[0], md5((string) rand())),
-                    new Job($nonUserJobLabels[1], md5((string) rand())),
-                ],
+                'jobsCreator' => function () use ($nonUserJobLabels) {
+                    return [
+                        new Job($nonUserJobLabels[0], md5((string) rand())),
+                        new Job($nonUserJobLabels[1], md5((string) rand())),
+                    ];
+                },
                 'eventDataCollection' => [
                     [
                         'jobLabel' => $nonUserJobLabels[0],
@@ -143,13 +148,19 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                         'reference' => md5('job_1_test.yml'),
                     ],
                 ],
-                'job' => $requestJobLabel,
+                'job' => $nonUserJobLabels[0],
                 'expectedResponseData' => [],
             ],
             'single job for user, single event for user' => [
-                'jobs' => [
-                    new Job($requestJobLabel, md5((string) rand())),
-                ],
+                'jobsCreator' => function (string $userId) use ($requestJobLabel) {
+                    if ('' === $userId) {
+                        return [];
+                    }
+
+                    return [
+                        new Job($requestJobLabel, $userId),
+                    ];
+                },
                 'eventDataCollection' => [
                     [
                         'jobLabel' => $requestJobLabel,
@@ -171,11 +182,17 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                 ],
             ],
             'multiple jobs, multiple events some for user, events are ordered by sequence number asc' => [
-                'jobs' => [
-                    new Job($requestJobLabel, md5((string) rand())),
-                    new Job($nonUserJobLabels[0], md5((string) rand())),
-                    new Job($nonUserJobLabels[1], md5((string) rand())),
-                ],
+                'jobsCreator' => function (string $userId) use ($requestJobLabel, $nonUserJobLabels) {
+                    if ('' === $userId) {
+                        return [];
+                    }
+
+                    return [
+                        new Job($requestJobLabel, $userId),
+                        new Job($nonUserJobLabels[0], md5((string) rand())),
+                        new Job($nonUserJobLabels[1], md5((string) rand())),
+                    ];
+                },
                 'eventDataCollection' => [
                     [
                         'jobLabel' => $requestJobLabel,

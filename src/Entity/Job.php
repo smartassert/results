@@ -29,7 +29,7 @@ class Job
      * @var non-empty-string
      */
     #[ORM\Column(type: 'string', length: 32)]
-    private readonly string $userId;
+    public readonly string $userId;
 
     /**
      * @param non-empty-string $label
