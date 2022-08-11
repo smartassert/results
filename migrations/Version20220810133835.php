@@ -38,12 +38,10 @@ final class Version20220810133835 extends AbstractMigration
                 ADD CONSTRAINT FK_2836772E1645DEA9 FOREIGN KEY (reference_id) 
                 REFERENCES reference (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE
        ');
-        $this->addSql('ALTER TABLE event ALTER type TYPE VARCHAR(32)');
     }
 
     public function down(Schema $schema): void
     {
         $this->addSql('DROP TABLE event_reference');
-        $this->addSql('ALTER TABLE event ALTER type TYPE VARCHAR(255)');
     }
 }
