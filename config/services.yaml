@@ -6,8 +6,8 @@
 parameters:
     users_security_bundle_base_url: '%env(AUTHENTICATION_BASE_URL)%'
     users_security_bundle_public_pattern: '^/(status)|(health-check)|(event/add)'
-    users_security_bundle_secured_pattern: '^/job/*'
-    users_security_bundle_access_control_path: '^/job/*'
+    users_security_bundle_secured_pattern: '^/(job/*)|(event/list/*)'
+    users_security_bundle_access_control_path: '^/(job/*)|(event/list/*)'
 
 services:
     # default configuration for services in *this* file
