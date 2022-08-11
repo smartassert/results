@@ -50,6 +50,12 @@ class EventController
         return new JsonResponse($event);
     }
 
+    #[Route('/event/list/{job<[A-Z0-9]{26,32}>}', name: 'event_list', methods: ['GET'])]
+    public function list(string $job): JsonResponse
+    {
+        return new JsonResponse();
+    }
+
     private function createInvalidAddEventRequestFieldResponse(string $field, string $expectedFormat): JsonResponse
     {
         return new JsonResponse(
