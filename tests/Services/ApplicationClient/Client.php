@@ -50,7 +50,7 @@ class Client
     ): ResponseInterface {
         return $this->client->makeRequest(
             $method,
-            $this->router->generate('event_list', ['job' => $label]),
+            $this->router->generate('event_list', ['label' => $label]),
             $this->createAuthorizationHeader($authenticationToken)
         );
     }
