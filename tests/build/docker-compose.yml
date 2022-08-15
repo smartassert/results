@@ -43,7 +43,7 @@ services:
       args:
         DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/results?serverVersion=12&charset=utf8
         AUTHENTICATION_BASE_URL: http://users-service
-    container_name: smartassert-sources
+    container_name: smartassert-results
     restart: unless-stopped
     links:
       - users-service:users-service
