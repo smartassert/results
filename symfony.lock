@@ -229,6 +229,9 @@
     "sebastian/version": {
         "version": "3.0.2"
     },
+    "smartassert/health-check-bundle": {
+        "version": "2.0"
+    },
     "smartassert/symfony-test-client": {
         "version": "0.1"
     },
