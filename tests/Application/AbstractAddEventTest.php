@@ -40,9 +40,6 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             'GET' => [
                 'method' => 'GET',
             ],
-            'HEAD' => [
-                'method' => 'HEAD',
-            ],
             'PUT' => [
                 'method' => 'PUT',
             ],
