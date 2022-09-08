@@ -79,7 +79,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
         string $eventReference,
         array $expectedResponseData,
     ): void {
-        $jobs = $jobsCreator($this->authenticationConfiguration->authenticatedUserId);
+        $jobs = $jobsCreator(self::$authenticationConfiguration->getUser()->id);
 
         foreach ($jobs as $job) {
             $this->jobRepository->add($job);
@@ -98,7 +98,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
         }
 
         $response = $this->applicationClient->makeListEventRequest(
-            $this->authenticationConfiguration->validToken,
+            self::$authenticationConfiguration->getValidApiToken(),
             $jobLabel,
             $eventReference,
         );

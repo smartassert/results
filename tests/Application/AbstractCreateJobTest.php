@@ -19,7 +19,7 @@ abstract class AbstractCreateJobTest extends AbstractApplicationTest
         $label = (string) new Ulid();
 
         $response = $this->applicationClient->makeCreateJobRequest(
-            $this->authenticationConfiguration->validToken,
+            self::$authenticationConfiguration->getValidApiToken(),
             $label,
             $method
         );
@@ -54,7 +54,7 @@ abstract class AbstractCreateJobTest extends AbstractApplicationTest
     public function testCreateUnauthorizedUser(callable $userTokenCreator): void
     {
         $response = $this->applicationClient->makeCreateJobRequest(
-            $userTokenCreator($this->authenticationConfiguration),
+            $userTokenCreator(self::$authenticationConfiguration),
             (string) new Ulid()
         );
 
@@ -79,7 +79,7 @@ abstract class AbstractCreateJobTest extends AbstractApplicationTest
             ],
             'non-empty invalid user token' => [
                 'userTokenCreator' => function (AuthenticationConfiguration $authenticationConfiguration) {
-                    return $authenticationConfiguration->invalidToken;
+                    return $authenticationConfiguration->getInvalidApiToken();
                 },
             ],
         ];
@@ -95,7 +95,7 @@ abstract class AbstractCreateJobTest extends AbstractApplicationTest
         $jobLabel = (string) new Ulid();
 
         $response = $this->applicationClient->makeCreateJobRequest(
-            $this->authenticationConfiguration->validToken,
+            self::$authenticationConfiguration->getValidApiToken(),
             $jobLabel
         );
 
@@ -122,10 +122,16 @@ abstract class AbstractCreateJobTest extends AbstractApplicationTest
 
         $jobLabel = (string) new Ulid();
 
-        $this->applicationClient->makeCreateJobRequest($this->authenticationConfiguration->validToken, $jobLabel);
+        $this->applicationClient->makeCreateJobRequest(
+            self::$authenticationConfiguration->getValidApiToken(),
+            $jobLabel
+        );
         self::assertSame(1, $jobRepository->count([]));
 
-        $this->applicationClient->makeCreateJobRequest($this->authenticationConfiguration->validToken, $jobLabel);
+        $this->applicationClient->makeCreateJobRequest(
+            self::$authenticationConfiguration->getValidApiToken(),
+            $jobLabel
+        );
         self::assertSame(1, $jobRepository->count([]));
     }
 }
