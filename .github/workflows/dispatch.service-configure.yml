@@ -1,0 +1,20 @@
+name: dispatch.service-configure
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version
+        required: true
+
+jobs:
+  setup:
+    name: Set service id
+    runs-on: ubuntu-latest
+    outputs:
+      service_id: ${{ steps.service_id.outputs.value }}
+
+    steps:
+      - id: service_id
+        run: |
+          echo "::set-output name=value::results"
