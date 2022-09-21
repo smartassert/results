@@ -6,6 +6,7 @@ namespace App\Tests\Application;
 
 use App\Entity\Job;
 use App\EntityFactory\EventFactory;
+use App\ObjectFactory\UlidFactory;
 use App\Repository\JobRepository;
 use Symfony\Component\Uid\Ulid;
 
@@ -123,6 +124,8 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
             $this->createJobLabel(),
         ];
 
+        $ulidFactory = new UlidFactory();
+
         return [
             'no jobs' => [
                 'jobsCreator' => function () {
@@ -134,10 +137,10 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                 'expectedResponseData' => [],
             ],
             'no jobs for user' => [
-                'jobsCreator' => function () use ($nonUserJobLabels) {
+                'jobsCreator' => function () use ($ulidFactory, $nonUserJobLabels) {
                     return [
-                        new Job($nonUserJobLabels[0], md5((string) rand())),
-                        new Job($nonUserJobLabels[1], md5((string) rand())),
+                        new Job($ulidFactory->create(), $nonUserJobLabels[0], md5((string) rand())),
+                        new Job($ulidFactory->create(), $nonUserJobLabels[1], md5((string) rand())),
                     ];
                 },
                 'eventDataCollection' => [
@@ -161,13 +164,13 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                 'expectedResponseData' => [],
             ],
             'no events for reference' => [
-                'jobsCreator' => function (string $userId) use ($requestJobLabel) {
+                'jobsCreator' => function (string $userId) use ($ulidFactory, $requestJobLabel) {
                     if ('' === $userId) {
                         return [];
                     }
 
                     return [
-                        new Job($requestJobLabel, $userId),
+                        new Job($ulidFactory->create(), $requestJobLabel, $userId),
                     ];
                 },
                 'eventDataCollection' => [
@@ -191,13 +194,13 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                 'expectedResponseData' => [],
             ],
             'single job for user, single event for user' => [
-                'jobsCreator' => function (string $userId) use ($requestJobLabel) {
+                'jobsCreator' => function (string $userId) use ($ulidFactory, $requestJobLabel) {
                     if ('' === $userId) {
                         return [];
                     }
 
                     return [
-                        new Job($requestJobLabel, $userId),
+                        new Job($ulidFactory->create(), $requestJobLabel, $userId),
                     ];
                 },
                 'eventDataCollection' => [
@@ -222,15 +225,15 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                 ],
             ],
             'multiple jobs, multiple events for user, events are ordered by sequence number asc' => [
-                'jobsCreator' => function (string $userId) use ($requestJobLabel, $nonUserJobLabels) {
+                'jobsCreator' => function (string $userId) use ($ulidFactory, $requestJobLabel, $nonUserJobLabels) {
                     if ('' === $userId) {
                         return [];
                     }
 
                     return [
-                        new Job($requestJobLabel, $userId),
-                        new Job($nonUserJobLabels[0], md5((string) rand())),
-                        new Job($nonUserJobLabels[1], md5((string) rand())),
+                        new Job($ulidFactory->create(), $requestJobLabel, $userId),
+                        new Job($ulidFactory->create(), $nonUserJobLabels[0], md5((string) rand())),
+                        new Job($ulidFactory->create(), $nonUserJobLabels[1], md5((string) rand())),
                     ];
                 },
                 'eventDataCollection' => [
