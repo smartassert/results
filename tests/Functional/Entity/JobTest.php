@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Entity;
 
 use App\Entity\Job;
+use App\ObjectFactory\UlidFactory;
 use App\Repository\JobRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,6 +16,7 @@ class JobTest extends WebTestCase
 {
     private JobRepository $repository;
     private EntityManagerInterface $entityManager;
+    private UlidFactory $ulidFactory;
 
     protected function setUp(): void
     {
@@ -23,6 +25,8 @@ class JobTest extends WebTestCase
         $repository = self::getContainer()->get(JobRepository::class);
         \assert($repository instanceof JobRepository);
         $this->repository = $repository;
+
+        $this->ulidFactory = new UlidFactory();
 
         $entityManager = self::getContainer()->get(EntityManagerInterface::class);
         \assert($entityManager instanceof EntityManagerInterface);
@@ -40,7 +44,7 @@ class JobTest extends WebTestCase
         $jobLabel = md5((string) rand());
         $userId = md5((string) rand());
 
-        $entity = new Job($jobLabel, $userId);
+        $entity = new Job($this->ulidFactory->create(), $jobLabel, $userId);
 
         $this->repository->add($entity);
 
@@ -64,10 +68,10 @@ class JobTest extends WebTestCase
         $jobLabel = md5((string) rand());
         $userId = md5((string) rand());
 
-        $this->entityManager->persist(new Job($jobLabel, $userId));
+        $this->entityManager->persist(new Job($this->ulidFactory->create(), $jobLabel, $userId));
         $this->entityManager->flush();
         $this->entityManager->clear();
-        $this->entityManager->persist(new Job($jobLabel, $userId));
+        $this->entityManager->persist(new Job($this->ulidFactory->create(), $jobLabel, $userId));
 
         self::expectException(UniqueConstraintViolationException::class);
 
