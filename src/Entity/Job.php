@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\UniqueConstraint(name: 'label_idx', columns: ['label'])]
 #[ORM\UniqueConstraint(name: 'token_idx', columns: ['token'])]
 #[ORM\Index(name: 'user_id_idx', columns: ['user_id'])]
-class Job
+class Job implements \JsonSerializable
 {
     public const ID_LENGTH = 32;
 
@@ -43,5 +43,16 @@ class Job
         $this->token = $token;
         $this->label = $label;
         $this->userId = $userId;
+    }
+
+    /**
+     * @return array{label: non-empty-string, token: non-empty-string}
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'label' => $this->label,
+            'token' => $this->token,
+        ];
     }
 }

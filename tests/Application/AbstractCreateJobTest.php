@@ -106,6 +106,8 @@ abstract class AbstractCreateJobTest extends AbstractApplicationTest
 
         $responseData = json_decode($response->getBody()->getContents(), true);
         self::assertIsArray($responseData);
+        self::assertArrayHasKey('label', $responseData);
+        self::assertSame($jobLabel, $responseData['label']);
         self::assertArrayHasKey('token', $responseData);
 
         $job = $jobRepository->findOneBy(['token' => $responseData['token']]);
