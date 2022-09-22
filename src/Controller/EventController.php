@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Job;
 use App\Entity\Reference;
 use App\EntityFactory\EventFactory;
+use App\Exception\EmptyUlidException;
 use App\Repository\EventRepository;
 use App\Request\AddEventRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,6 +15,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class EventController
 {
+    /**
+     * @throws EmptyUlidException
+     */
     #[Route('/event/add/{token<[A-Z0-9]{26,32}>}', name: 'event_add', methods: ['POST'])]
     public function add(EventFactory $eventFactory, AddEventRequest $request, ?Job $job): Response
     {

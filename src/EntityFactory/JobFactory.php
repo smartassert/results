@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\EntityFactory;
 
 use App\Entity\Job;
+use App\Exception\EmptyUlidException;
 use App\Exception\InvalidUserException;
+use App\ObjectFactory\UlidFactory;
 use App\Repository\JobRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -13,6 +15,7 @@ class JobFactory
 {
     public function __construct(
         private readonly JobRepository $repository,
+        private readonly UlidFactory $ulidFactory,
     ) {
     }
 
@@ -20,6 +23,7 @@ class JobFactory
      * @param non-empty-string $label
      *
      * @throws InvalidUserException
+     * @throws EmptyUlidException
      */
     public function createForUserAndJob(UserInterface $user, string $label): Job
     {
@@ -32,7 +36,7 @@ class JobFactory
                 throw InvalidUserException::createForEmptyUserIdentifier($user);
             }
 
-            $job = new Job($label, $userIdentifier);
+            $job = new Job($this->ulidFactory->create(), $label, $userIdentifier);
             $this->repository->add($job);
         }
 

@@ -6,7 +6,6 @@ use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Uid\Ulid;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 class Event implements \JsonSerializable
@@ -43,10 +42,12 @@ class Event implements \JsonSerializable
     private Collection $relatedReferences;
 
     /**
+     * @param non-empty-string $id
      * @param array<mixed>     $body
      * @param array<Reference> $relatedReferences
      */
     public function __construct(
+        string $id,
         int $sequenceNumber,
         string $job,
         string $type,
@@ -54,7 +55,7 @@ class Event implements \JsonSerializable
         Reference $referenceEntity,
         array $relatedReferences = [],
     ) {
-        $this->id = (string) new Ulid();
+        $this->id = $id;
         $this->sequenceNumber = $sequenceNumber;
         $this->job = $job;
         $this->type = $type;

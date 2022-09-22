@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Services;
 
 use App\EntityFactory\JobFactory;
 use App\Exception\InvalidUserException;
+use App\ObjectFactory\UlidFactory;
 use App\Repository\JobRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -29,7 +30,7 @@ class JobFactoryTest extends TestCase
             ->andReturn('')
         ;
 
-        $factory = new JobFactory($jobRepository);
+        $factory = new JobFactory($jobRepository, new UlidFactory());
 
         self::expectException(InvalidUserException::class);
         self::expectExceptionMessage(InvalidUserException::MESSAGE_USER_IDENTIFIER_EMPTY);
