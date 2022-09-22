@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\EntityFactory\JobFactory;
+use App\Exception\EmptyUlidException;
 use App\Exception\InvalidUserException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,14 +14,14 @@ class JobController
 {
     /**
      * @param non-empty-string $label
+     *
+     * @throws EmptyUlidException
      */
     #[Route('/job/{label<[A-Z0-9]{26,32}>}', name: 'job_create', methods: ['POST'])]
     public function create(JobFactory $jobFactory, UserInterface $user, string $label): Response
     {
         try {
-            return new JsonResponse([
-                'token' => $jobFactory->createForUserAndJob($user, $label)->token,
-            ]);
+            return new JsonResponse($jobFactory->createForUserAndJob($user, $label));
         } catch (InvalidUserException) {
             return new JsonResponse(null, 403);
         }
