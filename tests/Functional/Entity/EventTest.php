@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Entity;
 
 use App\Entity\Event;
 use App\Entity\Reference;
+use App\ObjectFactory\UlidFactory;
 use App\Repository\EventRepository;
 use App\Repository\ReferenceRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -45,9 +46,11 @@ class EventTest extends WebTestCase
     /**
      * @dataProvider createDataProvider
      *
-     * @param array<mixed> $body
+     * @param non-empty-string $id
+     * @param array<mixed>     $body
      */
     public function testCreate(
+        string $id,
         int $sequenceNumber,
         string $job,
         string $type,
@@ -58,7 +61,7 @@ class EventTest extends WebTestCase
 
         self::assertSame(0, $this->eventRepository->count([]));
 
-        $event = new Event($sequenceNumber, $job, $type, $body, $referenceEntity);
+        $event = new Event($id, $sequenceNumber, $job, $type, $body, $referenceEntity);
 
         $this->eventRepository->add($event);
 
@@ -71,6 +74,7 @@ class EventTest extends WebTestCase
 
         self::assertSame(1, $this->eventRepository->count([]));
 
+        self::assertSame($id, ObjectReflector::getProperty($retrievedEvent, 'id'));
         self::assertSame($sequenceNumber, ObjectReflector::getProperty($retrievedEvent, 'sequenceNumber'));
         self::assertSame($job, ObjectReflector::getProperty($retrievedEvent, 'job'));
         self::assertSame($type, ObjectReflector::getProperty($retrievedEvent, 'type'));
@@ -82,8 +86,11 @@ class EventTest extends WebTestCase
      */
     public function createDataProvider(): array
     {
+        $ulidFactory = new UlidFactory();
+
         return [
             'null body' => [
+                'id' => $ulidFactory->create(),
                 'sequence_number' => 1,
                 'job' => md5('null body job'),
                 'type' => 'job/started',
@@ -91,6 +98,7 @@ class EventTest extends WebTestCase
                 'referenceEntity' => new Reference('null body label', 'null body reference'),
             ],
             'empty body' => [
+                'id' => $ulidFactory->create(),
                 'sequence_number' => 2,
                 'job' => md5('empty body job'),
                 'type' => 'job/started',
@@ -98,6 +106,7 @@ class EventTest extends WebTestCase
                 'referenceEntity' => new Reference('empty body label', 'empty body reference'),
             ],
             'non-empty body' => [
+                'id' => $ulidFactory->create(),
                 'sequence_number' => 3,
                 'job' => md5('job'),
                 'type' => 'job/finished',

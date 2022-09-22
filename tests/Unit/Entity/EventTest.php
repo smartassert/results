@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Entity;
 
 use App\Entity\Event;
 use App\Entity\Reference;
+use App\ObjectFactory\UlidFactory;
 use PHPUnit\Framework\TestCase;
 
 class EventTest extends TestCase
@@ -25,9 +26,12 @@ class EventTest extends TestCase
      */
     public function jsonSerializeDataProvider(): array
     {
+        $ulidFactory = new UlidFactory();
+
         return [
             'empty payload' => [
                 'event' => new Event(
+                    $ulidFactory->create(),
                     1,
                     md5('empty payload job'),
                     'job/started',
@@ -45,6 +49,7 @@ class EventTest extends TestCase
             ],
             'non-empty payload' => [
                 'event' => new Event(
+                    $ulidFactory->create(),
                     2,
                     md5('job'),
                     'job/finished',
