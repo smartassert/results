@@ -29,7 +29,7 @@ class Client
     }
 
     /**
-     * @param array<string, array<mixed>|string> $payload
+     * @param array<mixed> $payload
      */
     public function makeAddEventRequest(string $jobToken, array $payload, string $method = 'POST'): ResponseInterface
     {

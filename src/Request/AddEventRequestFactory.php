@@ -9,17 +9,14 @@ class AddEventRequestFactory
      */
     public function create(array $data): AddEventRequest
     {
-        $headerSection = $data[AddEventRequest::KEY_HEADER_SECTION] ?? [];
-        $headerSection = is_array($headerSection) ? $headerSection : [];
-
-        $sequenceNumber = $headerSection[AddEventRequest::KEY_SEQUENCE_NUMBER] ?? null;
+        $sequenceNumber = $data[AddEventRequest::KEY_SEQUENCE_NUMBER] ?? null;
         $sequenceNumber = is_int($sequenceNumber) && $sequenceNumber > 0 ? $sequenceNumber : null;
 
-        $type = $this->getNonEmptyStringFromArray($headerSection, AddEventRequest::KEY_TYPE);
-        $label = $this->getNonEmptyStringFromArray($headerSection, AddEventRequest::KEY_LABEL);
-        $reference = $this->getNonEmptyStringFromArray($headerSection, AddEventRequest::KEY_REFERENCE);
+        $type = $this->getNonEmptyStringFromArray($data, AddEventRequest::KEY_TYPE);
+        $label = $this->getNonEmptyStringFromArray($data, AddEventRequest::KEY_LABEL);
+        $reference = $this->getNonEmptyStringFromArray($data, AddEventRequest::KEY_REFERENCE);
 
-        $relatedReferences = $headerSection[AddEventRequest::KEY_RELATED_REFERENCES] ?? null;
+        $relatedReferences = $data[AddEventRequest::KEY_RELATED_REFERENCES] ?? null;
         $relatedReferences = is_array($relatedReferences) ? $relatedReferences : null;
 
         $body = $data[AddEventRequest::KEY_BODY] ?? null;

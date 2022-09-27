@@ -95,58 +95,48 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         return [
             'sequence number missing' => [
                 'requestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
-                        AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
-                        AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
-                    ],
+                    AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
+                    AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
+                    AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
                     AddEventRequest::KEY_BODY => json_encode([]),
                 ],
                 'expectedResponseData' => $expectedInvalidSequenceNumberResponseData,
             ],
             'sequence number not an integer' => [
                 'requestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => 'not an integer',
-                        AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
-                        AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
-                        AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
-                    ],
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 'not an integer',
+                    AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
+                    AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
+                    AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
                     AddEventRequest::KEY_BODY => json_encode([]),
                 ],
                 'expectedResponseData' => $expectedInvalidSequenceNumberResponseData,
             ],
             'sequence number is zero' => [
                 'requestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => 0,
-                        AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
-                        AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
-                        AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
-                    ],
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 0,
+                    AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
+                    AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
+                    AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
                     AddEventRequest::KEY_BODY => json_encode([]),
                 ],
                 'expectedResponseData' => $expectedInvalidSequenceNumberResponseData,
             ],
             'sequence number is negative' => [
                 'requestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => -1,
-                        AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
-                        AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
-                        AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
-                    ],
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => -1,
+                    AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
+                    AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
+                    AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
                     AddEventRequest::KEY_BODY => json_encode([]),
                 ],
                 'expectedResponseData' => $expectedInvalidSequenceNumberResponseData,
             ],
             'type missing' => [
                 'requestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => 123,
-                        AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
-                        AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
-                    ],
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 123,
+                    AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
+                    AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
                     AddEventRequest::KEY_BODY => json_encode([]),
                 ],
                 'expectedResponseData' => [
@@ -163,11 +153,9 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             ],
             'label missing' => [
                 'requestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => 123,
-                        AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
-                        AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
-                    ],
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 123,
+                    AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
+                    AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
                     AddEventRequest::KEY_BODY => json_encode([]),
                 ],
                 'expectedResponseData' => [
@@ -184,11 +172,9 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             ],
             'reference missing' => [
                 'requestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => 123,
-                        AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
-                        AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
-                    ],
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 123,
+                    AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
+                    AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
                     AddEventRequest::KEY_BODY => json_encode([]),
                 ],
                 'expectedResponseData' => [
@@ -244,12 +230,10 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             'body not present, related references not present' => [
                 'jobLabel' => $jobLabel,
                 'requestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => 1,
-                        AddEventRequest::KEY_TYPE => 'job/compiled',
-                        AddEventRequest::KEY_LABEL => $jobLabel,
-                        AddEventRequest::KEY_REFERENCE => md5($jobLabel),
-                    ],
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 1,
+                    AddEventRequest::KEY_TYPE => 'job/compiled',
+                    AddEventRequest::KEY_LABEL => $jobLabel,
+                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
                 ],
                 'expectedSerializedEvent' => [
                     'job' => $jobLabel,
@@ -262,13 +246,11 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             'body empty, related references empty' => [
                 'jobLabel' => $jobLabel,
                 'requestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => 2,
-                        AddEventRequest::KEY_TYPE => 'job/compiled',
-                        AddEventRequest::KEY_LABEL => $jobLabel,
-                        AddEventRequest::KEY_REFERENCE => md5($jobLabel),
-                        AddEventRequest::KEY_RELATED_REFERENCES => [],
-                    ],
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 2,
+                    AddEventRequest::KEY_TYPE => 'job/compiled',
+                    AddEventRequest::KEY_LABEL => $jobLabel,
+                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
+                    AddEventRequest::KEY_RELATED_REFERENCES => [],
                     AddEventRequest::KEY_BODY => [],
                 ],
                 'expectedSerializedEvent' => [
@@ -283,12 +265,10 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             'body not empty, related references empty' => [
                 'jobLabel' => $jobLabel,
                 'requestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
-                        AddEventRequest::KEY_TYPE => 'job/started',
-                        AddEventRequest::KEY_LABEL => $jobLabel,
-                        AddEventRequest::KEY_REFERENCE => md5($jobLabel),
-                    ],
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
+                    AddEventRequest::KEY_TYPE => 'job/started',
+                    AddEventRequest::KEY_LABEL => $jobLabel,
+                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
                     AddEventRequest::KEY_BODY => [
                         'tests' => [
                             'Test/test1.yml',
@@ -313,15 +293,13 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             'related references invalid' => [
                 'jobLabel' => $jobLabel,
                 'requestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
-                        AddEventRequest::KEY_TYPE => 'job/started',
-                        AddEventRequest::KEY_LABEL => $jobLabel,
-                        AddEventRequest::KEY_REFERENCE => md5($jobLabel),
-                        AddEventRequest::KEY_RELATED_REFERENCES => [
-                            [
-                                'invalid-key' => 'value',
-                            ],
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
+                    AddEventRequest::KEY_TYPE => 'job/started',
+                    AddEventRequest::KEY_LABEL => $jobLabel,
+                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
+                    AddEventRequest::KEY_RELATED_REFERENCES => [
+                        [
+                            'invalid-key' => 'value',
                         ],
                     ],
                 ],
@@ -336,20 +314,18 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             'related references valid' => [
                 'jobLabel' => $jobLabel,
                 'requestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
-                        AddEventRequest::KEY_TYPE => 'job/started',
-                        AddEventRequest::KEY_LABEL => $jobLabel,
-                        AddEventRequest::KEY_REFERENCE => md5($jobLabel),
-                        AddEventRequest::KEY_RELATED_REFERENCES => [
-                            [
-                                'label' => 'reference 1 label',
-                                'reference' => 'reference 1 reference',
-                            ],
-                            [
-                                'label' => 'reference 2 label',
-                                'reference' => 'reference 2 reference',
-                            ],
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
+                    AddEventRequest::KEY_TYPE => 'job/started',
+                    AddEventRequest::KEY_LABEL => $jobLabel,
+                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
+                    AddEventRequest::KEY_RELATED_REFERENCES => [
+                        [
+                            'label' => 'reference 1 label',
+                            'reference' => 'reference 1 reference',
+                        ],
+                        [
+                            'label' => 'reference 2 label',
+                            'reference' => 'reference 2 reference',
                         ],
                     ],
                 ],
@@ -396,16 +372,12 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
 
         self::assertSame(0, $this->eventRepository->count([]));
 
-        $firstRequestPayloadHeader = $firstRequestPayload[AddEventRequest::KEY_HEADER_SECTION];
-        $firstRequestPayloadHeader[AddEventRequest::KEY_SEQUENCE_NUMBER] = $sequenceNumber;
-        $firstRequestPayload[AddEventRequest::KEY_HEADER_SECTION] = $firstRequestPayloadHeader;
+        $firstRequestPayload[AddEventRequest::KEY_SEQUENCE_NUMBER] = $sequenceNumber;
 
         $firstResponse = $this->applicationClient->makeAddEventRequest($jobToken, $firstRequestPayload);
         self::assertSame(1, $this->eventRepository->count([]));
 
-        $secondRequestPayloadHeader = $secondRequestPayload[AddEventRequest::KEY_HEADER_SECTION];
-        $secondRequestPayloadHeader[AddEventRequest::KEY_SEQUENCE_NUMBER] = $sequenceNumber;
-        $secondRequestPayload[AddEventRequest::KEY_HEADER_SECTION] = $secondRequestPayloadHeader;
+        $secondRequestPayload[AddEventRequest::KEY_SEQUENCE_NUMBER] = $sequenceNumber;
 
         $secondResponse = $this->applicationClient->makeAddEventRequest($jobToken, $secondRequestPayload);
         self::assertSame(1, $this->eventRepository->count([]));
@@ -423,21 +395,17 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                 'jobLabel' => (string) new Ulid(),
                 'sequence_number' => rand(),
                 'firstRequestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_TYPE => 'first request type',
-                        AddEventRequest::KEY_LABEL => 'first request label',
-                        AddEventRequest::KEY_REFERENCE => 'first request reference',
-                    ],
+                    AddEventRequest::KEY_TYPE => 'first request type',
+                    AddEventRequest::KEY_LABEL => 'first request label',
+                    AddEventRequest::KEY_REFERENCE => 'first request reference',
                     AddEventRequest::KEY_BODY => [
                         'first request key' => 'first request value',
                     ],
                 ],
                 'secondRequestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_TYPE => 'second request type',
-                        AddEventRequest::KEY_REFERENCE => 'first request reference',
-                        AddEventRequest::KEY_LABEL => 'first request label',
-                    ],
+                    AddEventRequest::KEY_TYPE => 'second request type',
+                    AddEventRequest::KEY_REFERENCE => 'first request reference',
+                    AddEventRequest::KEY_LABEL => 'first request label',
                     AddEventRequest::KEY_BODY => [
                         'first request key' => 'first request value',
                     ],
@@ -447,21 +415,17 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                 'jobLabel' => (string) new Ulid(),
                 'sequence_number' => rand(),
                 'firstRequestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_TYPE => 'first request type',
-                        AddEventRequest::KEY_LABEL => 'first request label',
-                        AddEventRequest::KEY_REFERENCE => 'first request reference',
-                    ],
+                    AddEventRequest::KEY_TYPE => 'first request type',
+                    AddEventRequest::KEY_LABEL => 'first request label',
+                    AddEventRequest::KEY_REFERENCE => 'first request reference',
                     AddEventRequest::KEY_BODY => [
                         'first request key' => 'first request value',
                     ],
                 ],
                 'secondRequestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_TYPE => 'first request type',
-                        AddEventRequest::KEY_REFERENCE => 'second request reference',
-                        AddEventRequest::KEY_LABEL => 'first request label',
-                    ],
+                    AddEventRequest::KEY_TYPE => 'first request type',
+                    AddEventRequest::KEY_REFERENCE => 'second request reference',
+                    AddEventRequest::KEY_LABEL => 'first request label',
                     AddEventRequest::KEY_BODY => [
                         'first request key' => 'first request value',
                     ],
@@ -471,21 +435,17 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                 'jobLabel' => (string) new Ulid(),
                 'sequence_number' => rand(),
                 'firstRequestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_TYPE => 'first request type',
-                        AddEventRequest::KEY_LABEL => 'first request label',
-                        AddEventRequest::KEY_REFERENCE => 'first request reference',
-                    ],
+                    AddEventRequest::KEY_TYPE => 'first request type',
+                    AddEventRequest::KEY_LABEL => 'first request label',
+                    AddEventRequest::KEY_REFERENCE => 'first request reference',
                     AddEventRequest::KEY_BODY => [
                         'first request key' => 'first request value',
                     ],
                 ],
                 'secondRequestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_TYPE => 'first request type',
-                        AddEventRequest::KEY_LABEL => 'first request label',
-                        AddEventRequest::KEY_REFERENCE => 'second request reference',
-                    ],
+                    AddEventRequest::KEY_TYPE => 'first request type',
+                    AddEventRequest::KEY_LABEL => 'first request label',
+                    AddEventRequest::KEY_REFERENCE => 'second request reference',
                     AddEventRequest::KEY_BODY => [
                         'first request key' => 'first request value',
                     ],
@@ -495,21 +455,17 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                 'jobLabel' => (string) new Ulid(),
                 'sequence_number' => rand(),
                 'firstRequestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_TYPE => 'first request type',
-                        AddEventRequest::KEY_LABEL => 'first request label',
-                        AddEventRequest::KEY_REFERENCE => 'first request reference',
-                    ],
+                    AddEventRequest::KEY_TYPE => 'first request type',
+                    AddEventRequest::KEY_LABEL => 'first request label',
+                    AddEventRequest::KEY_REFERENCE => 'first request reference',
                     AddEventRequest::KEY_BODY => [
                         'first request key' => 'first request value',
                     ],
                 ],
                 'secondRequestPayload' => [
-                    AddEventRequest::KEY_HEADER_SECTION => [
-                        AddEventRequest::KEY_TYPE => 'first request type',
-                        AddEventRequest::KEY_LABEL => 'first request label',
-                        AddEventRequest::KEY_REFERENCE => 'first request reference',
-                    ],
+                    AddEventRequest::KEY_TYPE => 'first request type',
+                    AddEventRequest::KEY_LABEL => 'first request label',
+                    AddEventRequest::KEY_REFERENCE => 'first request reference',
                     AddEventRequest::KEY_BODY => [
                         'second request key' => 'second request value',
                     ],
