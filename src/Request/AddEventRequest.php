@@ -4,7 +4,6 @@ namespace App\Request;
 
 class AddEventRequest
 {
-    public const KEY_HEADER_SECTION = 'header';
     public const KEY_SEQUENCE_NUMBER = 'sequence_number';
     public const KEY_TYPE = 'type';
     public const KEY_LABEL = 'label';
