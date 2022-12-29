@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Event;
+use App\Entity\Job;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -25,5 +26,36 @@ class EventRepository extends ServiceEntityRepository
     {
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @param non-empty-string $typeScope
+     *
+     * @return Event[]
+     */
+    public function findByTypeScope(Job $job, string $typeScope): array
+    {
+        $queryBuilder = $this->createQueryBuilder('Event');
+        $queryBuilder
+            ->select()
+            ->where('Event.job = :JobLabel')
+            ->andWhere('Event.type LIKE :Foo')
+            ->setParameter('JobLabel', $job->label)
+            ->setParameter('Foo', $typeScope . '%')
+        ;
+
+        $query = $queryBuilder->getQuery();
+
+        $result = $query->getResult();
+        $result = is_array($result) ? $result : [];
+
+        $filteredResults = [];
+        foreach ($result as $entity) {
+            if ($entity instanceof Event) {
+                $filteredResults[] = $entity;
+            }
+        }
+
+        return $filteredResults;
     }
 }
