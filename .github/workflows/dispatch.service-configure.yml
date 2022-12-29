@@ -12,12 +12,11 @@ jobs:
     name: Set service id
     runs-on: ubuntu-latest
     outputs:
-      service_id: ${{ steps.service_id.outputs.value }}
+      service_id: ${{ env.service_id }}
 
     steps:
-      - id: service_id
-        run: |
-          echo "::set-output name=value::results"
+      - name: Set env.service_id
+        run: echo "service_id=results" >> "$GITHUB_ENV"
 
   image-builder-service-configure:
     needs: setup
@@ -62,9 +61,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - id: service_set_env_env_vars
-        run: |
-          echo "::set-output name=value::$(jq -R . < ./build/instance-manager/env.json | tr -d '\n' | sed 's/""//g')"        
+      - name: Set env.service_env_vars
+        run: echo "service_env_vars=$(jq -R . < ./build/instance-manager/env.json | tr -d '\n' | sed 's/""//g')" >> "$GITHUB_ENV"
 
       - uses: peter-evans/repository-dispatch@v1
         with:
@@ -74,5 +72,5 @@ jobs:
           client-payload: |
             {
               "service_id": "${{ needs.setup.outputs.service_id }}",
-              "env_vars": ${{ steps.service_set_env_env_vars.outputs.value }}
+              "env_vars": ${{ env.service_env_vars }}
             }
