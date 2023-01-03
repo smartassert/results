@@ -50,3 +50,6 @@ services:
         public: true
         arguments:
             $httpClient: '@app.tests.integration.http.client'
+
+    App\Tests\Services\EventFactory:
+        public: true
