@@ -6,7 +6,7 @@ namespace App\Tests\Application;
 
 use PHPUnit\Framework\Assert;
 
-abstract class AbstractStatusTest extends AbstractApplicationTest
+abstract class AbstractServiceStatusTest extends AbstractApplicationTest
 {
     public function testGetStatus(): void
     {

@@ -9,7 +9,7 @@ use App\Repository\JobRepository;
 use App\Tests\Services\AuthenticationConfiguration;
 use Symfony\Component\Uid\Ulid;
 
-abstract class AbstractCreateJobTest extends AbstractApplicationTest
+abstract class AbstractJobCreationTest extends AbstractApplicationTest
 {
     /**
      * @dataProvider createBadMethodDataProvider
