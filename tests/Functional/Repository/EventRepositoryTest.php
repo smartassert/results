@@ -235,38 +235,14 @@ class EventRepositoryTest extends WebTestCase
         $reflectionEvent = $reflectionClass->newInstanceWithoutConstructor();
         \assert($reflectionEvent instanceof Event);
 
-        // id
-        // sequenceNumber
-        // job
-        // type
-        // body
-        // reference
-        // relatedReferences
-
         $referenceProperty = $reflectionClass->getProperty('reference');
         $referenceProperty->setValue($reflectionEvent, $reference);
-//
-//        $sequenceNumberProperty = $reflectionClass->getProperty('sequenceNumber');
-//        $sequenceNumberProperty->setValue($reflectionEvent, ObjectReflector::getProperty($event, 'sequenceNumber'));
 
         $propertyNames = ['id', 'sequenceNumber', 'job', 'type', 'body', 'relatedReferences'];
         foreach ($propertyNames as $propertyName) {
             $property = $reflectionClass->getProperty($propertyName);
             $property->setValue($reflectionEvent, ObjectReflector::getProperty($event, $propertyName));
         }
-
-//
-//        $labelProperty = $reflectionClass->getProperty('label');
-//        $labelProperty->setValue($reflectionEvent, $job->label);
-//
-//        $eventDeliveryUrlProperty = $reflectionClass->getProperty('eventDeliveryUrl');
-//        $eventDeliveryUrlProperty->setValue($reflectionEvent, $job->eventDeliveryUrl);
-//
-//        $testPathsProperty = $reflectionClass->getProperty('testPaths');
-//        $testPathsProperty->setValue($reflectionEvent, $job->testPaths);
-//
-//        $endStateProperty = $reflectionClass->getProperty('endState');
-//        $endStateProperty->setValue($reflectionEvent, null);
 
         return $reflectionEvent;
     }
