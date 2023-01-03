@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Event;
 use App\Entity\Job;
+use App\Enum\JobEventLabel;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +18,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class EventRepository extends ServiceEntityRepository
 {
+    private const QUERY_WILDCARD = '%';
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Event::class);
@@ -35,13 +38,32 @@ class EventRepository extends ServiceEntityRepository
      */
     public function findByTypeScope(Job $job, string $typeScope): array
     {
+        return $this->findByType($job, $typeScope . self::QUERY_WILDCARD);
+    }
+
+    /**
+     * @return Event[]
+     */
+    public function findByJobEventType(Job $job, JobEventLabel $jobEventLabel): array
+    {
+        return $this->findByType($job, $jobEventLabel->value);
+    }
+
+    /**
+     * @return Event[]
+     */
+    private function findByType(Job $job, string $type): array
+    {
+        $isPartialTypeMatch = str_ends_with($type, self::QUERY_WILDCARD);
+        $typeOperator = $isPartialTypeMatch ? 'LIKE' : '=';
+
         $queryBuilder = $this->createQueryBuilder('Event');
         $queryBuilder
             ->select()
             ->where('Event.job = :JobLabel')
-            ->andWhere('Event.type LIKE :EventType')
+            ->andWhere('Event.type ' . $typeOperator . ' :EventType')
             ->setParameter('JobLabel', $job->label)
-            ->setParameter('EventType', $typeScope . '%')
+            ->setParameter('EventType', $type)
         ;
 
         $query = $queryBuilder->getQuery();

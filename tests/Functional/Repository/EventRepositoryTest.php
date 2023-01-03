@@ -7,6 +7,7 @@ namespace App\Tests\Functional\Repository;
 use App\Entity\Event;
 use App\Entity\Job;
 use App\Entity\Reference;
+use App\Enum\JobEventLabel;
 use App\Repository\EventRepository;
 use App\Repository\JobRepository;
 use App\Repository\ReferenceRepository;
@@ -185,6 +186,143 @@ class EventRepositoryTest extends WebTestCase
                 'jobLabel' => self::JOB1_LABEL,
                 'scope' => 'job/',
                 'expectedEventIds' => ['eventId1', 'eventId4'],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider findByJobEventTypeDataProvider
+     *
+     * @param Event[]  $events
+     * @param string[] $expectedEventIds
+     */
+    public function testFindByJobEventType(
+        array $events,
+        string $jobLabel,
+        JobEventLabel $jobEventLabel,
+        array $expectedEventIds
+    ): void {
+        foreach ($events as $event) {
+            $this->eventFactory->persist($event);
+        }
+
+        $job = $this->jobRepository->findOneBy(['label' => $jobLabel]);
+        \assert($job instanceof Job);
+
+        $foundEvents = $this->eventRepository->findByJobEventType($job, $jobEventLabel);
+        $foundEventIds = [];
+
+        foreach ($foundEvents as $foundEvent) {
+            $foundEventIds[] = ObjectReflector::getProperty($foundEvent, 'id');
+        }
+
+        self::assertSame($expectedEventIds, $foundEventIds);
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function findByJobEventTypeDataProvider(): array
+    {
+        return [
+            'no events' => [
+                'events' => [],
+                'jobLabel' => self::JOB1_LABEL,
+                'jobEventType' => JobEventLabel::STARTED,
+                'expectedEventIds' => [],
+            ],
+            'no matching events' => [
+                'events' => [
+                    new Event(
+                        'eventId1',
+                        1,
+                        self::JOB1_LABEL,
+                        'test/started',
+                        [],
+                        new Reference(self::JOB1_LABEL, 'reference 1')
+                    ),
+                    new Event(
+                        'eventId2',
+                        2,
+                        self::JOB1_LABEL,
+                        'test/passed',
+                        [],
+                        new Reference(self::JOB1_LABEL, 'reference 1')
+                    ),
+                ],
+                'jobLabel' => self::JOB1_LABEL,
+                'jobEventType' => JobEventLabel::STARTED,
+                'expectedEventIds' => [],
+            ],
+            'single matching event' => [
+                'events' => [
+                    new Event(
+                        'eventId1',
+                        1,
+                        self::JOB1_LABEL,
+                        'job/started',
+                        [],
+                        new Reference(self::JOB1_LABEL, 'reference 1')
+                    ),
+                    new Event(
+                        'eventId2',
+                        2,
+                        self::JOB1_LABEL,
+                        'test/started',
+                        [],
+                        new Reference(self::JOB1_LABEL, 'reference 2')
+                    ),
+                ],
+                'jobLabel' => self::JOB1_LABEL,
+                'jobEventType' => JobEventLabel::STARTED,
+                'expectedEventIds' => ['eventId1'],
+            ],
+            'multiple matching events' => [
+                'events' => [
+                    new Event(
+                        'eventId1',
+                        1,
+                        self::JOB1_LABEL,
+                        'job/started',
+                        [],
+                        new Reference(self::JOB1_LABEL, 'reference 1')
+                    ),
+                    new Event(
+                        'eventId2',
+                        1,
+                        self::JOB2_LABEL,
+                        'job/started',
+                        [],
+                        new Reference(self::JOB1_LABEL, 'reference 1')
+                    ),
+                    new Event(
+                        'eventId3',
+                        2,
+                        self::JOB1_LABEL,
+                        'test/started',
+                        [],
+                        new Reference(self::JOB1_LABEL, 'reference 2')
+                    ),
+                    new Event(
+                        'eventId4',
+                        1,
+                        self::JOB1_LABEL,
+                        'job/ended',
+                        [],
+                        new Reference(self::JOB1_LABEL, 'reference 1')
+                    ),
+                    new Event(
+                        'eventId5',
+                        5,
+                        self::JOB1_LABEL,
+                        'job/started',
+                        [],
+                        new Reference(self::JOB1_LABEL, 'reference 1')
+                    ),
+                ],
+                'jobLabel' => self::JOB1_LABEL,
+                'jobEventType' => JobEventLabel::STARTED,
+                'expectedEventIds' => ['eventId1', 'eventId5'],
             ],
         ];
     }
