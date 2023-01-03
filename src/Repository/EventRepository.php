@@ -39,9 +39,9 @@ class EventRepository extends ServiceEntityRepository
         $queryBuilder
             ->select()
             ->where('Event.job = :JobLabel')
-            ->andWhere('Event.type LIKE :Foo')
+            ->andWhere('Event.type LIKE :EventType')
             ->setParameter('JobLabel', $job->label)
-            ->setParameter('Foo', $typeScope . '%')
+            ->setParameter('EventType', $typeScope . '%')
         ;
 
         $query = $queryBuilder->getQuery();
