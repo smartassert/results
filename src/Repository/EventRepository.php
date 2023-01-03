@@ -5,6 +5,9 @@ namespace App\Repository;
 use App\Entity\Event;
 use App\Entity\Job;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -36,21 +39,7 @@ class EventRepository extends ServiceEntityRepository
      */
     public function findByType(Job $job, string $type): array
     {
-        $isPartialTypeMatch = str_ends_with($type, self::TYPE_WILDCARD);
-        $typeOperator = $isPartialTypeMatch ? 'LIKE' : '=';
-
-        if ($isPartialTypeMatch) {
-            $type = str_replace(self::TYPE_WILDCARD, self::QUERY_WILDCARD, $type);
-        }
-
-        $queryBuilder = $this->createQueryBuilder('Event');
-        $queryBuilder
-            ->select()
-            ->where('Event.job = :JobLabel')
-            ->andWhere('Event.type ' . $typeOperator . ' :EventType')
-            ->setParameter('JobLabel', $job->label)
-            ->setParameter('EventType', $type)
-        ;
+        $queryBuilder = $this->createFindOrHasQueryBuilder($job, $type);
 
         $query = $queryBuilder->getQuery();
 
@@ -65,5 +54,44 @@ class EventRepository extends ServiceEntityRepository
         }
 
         return $filteredResults;
+    }
+
+    public function hasForType(Job $job, string $type): bool
+    {
+        $queryBuilder = $this->createFindOrHasQueryBuilder($job, $type);
+        $queryBuilder
+            ->select('count(Event.id)')
+            ->setMaxResults(1)
+        ;
+
+        $query = $queryBuilder->getQuery();
+
+        try {
+            $result = $query->getSingleScalarResult();
+        } catch (NoResultException | NonUniqueResultException $e) {
+            return false;
+        }
+
+        return 0 !== $result;
+    }
+
+    private function createFindOrHasQueryBuilder(Job $job, string $type): QueryBuilder
+    {
+        $isPartialTypeMatch = str_ends_with($type, self::TYPE_WILDCARD);
+        $typeOperator = $isPartialTypeMatch ? 'LIKE' : '=';
+
+        if ($isPartialTypeMatch) {
+            $type = str_replace(self::TYPE_WILDCARD, self::QUERY_WILDCARD, $type);
+        }
+
+        $queryBuilder = $this->createQueryBuilder('Event');
+        $queryBuilder
+            ->where('Event.job = :JobLabel')
+            ->andWhere('Event.type ' . $typeOperator . ' :EventType')
+            ->setParameter('JobLabel', $job->label)
+            ->setParameter('EventType', $type)
+        ;
+
+        return $queryBuilder;
     }
 }
