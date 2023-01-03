@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Event;
 use App\Entity\Job;
-use App\Enum\JobEventLabel;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -44,9 +43,9 @@ class EventRepository extends ServiceEntityRepository
     /**
      * @return Event[]
      */
-    public function findByJobEventType(Job $job, JobEventLabel $jobEventLabel): array
+    public function findByJobEventType(Job $job, string $type): array
     {
-        return $this->findByType($job, $jobEventLabel->value);
+        return $this->findByType($job, $type);
     }
 
     /**

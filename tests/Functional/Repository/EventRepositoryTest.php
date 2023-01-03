@@ -209,7 +209,7 @@ class EventRepositoryTest extends WebTestCase
         $job = $this->jobRepository->findOneBy(['label' => $jobLabel]);
         \assert($job instanceof Job);
 
-        $foundEvents = $this->eventRepository->findByJobEventType($job, $jobEventLabel);
+        $foundEvents = $this->eventRepository->findByJobEventType($job, $jobEventLabel->value);
         $foundEventIds = [];
 
         foreach ($foundEvents as $foundEvent) {
