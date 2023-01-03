@@ -17,6 +17,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class EventRepository extends ServiceEntityRepository
 {
+    public const TYPE_WILDCARD = '*';
     private const QUERY_WILDCARD = '%';
 
     public function __construct(ManagerRegistry $registry)
@@ -31,30 +32,16 @@ class EventRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param non-empty-string $typeScope
-     *
      * @return Event[]
      */
-    public function findByTypeScope(Job $job, string $typeScope): array
+    public function findByType(Job $job, string $type): array
     {
-        return $this->findByType($job, $typeScope . self::QUERY_WILDCARD);
-    }
-
-    /**
-     * @return Event[]
-     */
-    public function findByJobEventType(Job $job, string $type): array
-    {
-        return $this->findByType($job, $type);
-    }
-
-    /**
-     * @return Event[]
-     */
-    private function findByType(Job $job, string $type): array
-    {
-        $isPartialTypeMatch = str_ends_with($type, self::QUERY_WILDCARD);
+        $isPartialTypeMatch = str_ends_with($type, self::TYPE_WILDCARD);
         $typeOperator = $isPartialTypeMatch ? 'LIKE' : '=';
+
+        if ($isPartialTypeMatch) {
+            $type = str_replace(self::TYPE_WILDCARD, self::QUERY_WILDCARD, $type);
+        }
 
         $queryBuilder = $this->createQueryBuilder('Event');
         $queryBuilder

@@ -67,10 +67,10 @@ class EventRepositoryTest extends WebTestCase
      * @dataProvider findByTypeScopeDataProvider
      *
      * @param Event[]          $events
-     * @param non-empty-string $scope
+     * @param non-empty-string $type
      * @param string[]         $expectedEventIds
      */
-    public function testFindByTypeScope(array $events, string $jobLabel, string $scope, array $expectedEventIds): void
+    public function testFindByType(array $events, string $jobLabel, string $type, array $expectedEventIds): void
     {
         foreach ($events as $event) {
             $this->eventFactory->persist($event);
@@ -79,7 +79,7 @@ class EventRepositoryTest extends WebTestCase
         $job = $this->jobRepository->findOneBy(['label' => $jobLabel]);
         \assert($job instanceof Job);
 
-        $foundEvents = $this->eventRepository->findByTypeScope($job, $scope);
+        $foundEvents = $this->eventRepository->findByType($job, $type);
         $foundEventIds = [];
 
         foreach ($foundEvents as $foundEvent) {
@@ -95,13 +95,13 @@ class EventRepositoryTest extends WebTestCase
     public function findByTypeScopeDataProvider(): array
     {
         return [
-            'no events' => [
+            'no events, wildcard type' => [
                 'events' => [],
                 'jobLabel' => self::JOB1_LABEL,
-                'scope' => 'job/',
+                'type' => 'job/*',
                 'expectedEventIds' => [],
             ],
-            'no matching events' => [
+            'no matching events, wildcard type' => [
                 'events' => [
                     new Event(
                         'eventId1',
@@ -121,10 +121,10 @@ class EventRepositoryTest extends WebTestCase
                     ),
                 ],
                 'jobLabel' => self::JOB1_LABEL,
-                'scope' => 'job/',
+                'type' => 'job/*',
                 'expectedEventIds' => [],
             ],
-            'single matching event' => [
+            'single matching event, wildcard type' => [
                 'events' => [
                     new Event(
                         'eventId1',
@@ -144,10 +144,10 @@ class EventRepositoryTest extends WebTestCase
                     ),
                 ],
                 'jobLabel' => self::JOB1_LABEL,
-                'scope' => 'job/',
+                'type' => 'job/*',
                 'expectedEventIds' => ['eventId1'],
             ],
-            'multiple matching events' => [
+            'multiple matching events, wildcard type' => [
                 'events' => [
                     new Event(
                         'eventId1',
@@ -183,54 +183,16 @@ class EventRepositoryTest extends WebTestCase
                     ),
                 ],
                 'jobLabel' => self::JOB1_LABEL,
-                'scope' => 'job/',
+                'type' => 'job/*',
                 'expectedEventIds' => ['eventId1', 'eventId4'],
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider findByJobEventTypeDataProvider
-     *
-     * @param Event[]  $events
-     * @param string[] $expectedEventIds
-     */
-    public function testFindByJobEventType(
-        array $events,
-        string $jobLabel,
-        string $jobEventLabel,
-        array $expectedEventIds
-    ): void {
-        foreach ($events as $event) {
-            $this->eventFactory->persist($event);
-        }
-
-        $job = $this->jobRepository->findOneBy(['label' => $jobLabel]);
-        \assert($job instanceof Job);
-
-        $foundEvents = $this->eventRepository->findByJobEventType($job, $jobEventLabel);
-        $foundEventIds = [];
-
-        foreach ($foundEvents as $foundEvent) {
-            $foundEventIds[] = ObjectReflector::getProperty($foundEvent, 'id');
-        }
-
-        self::assertSame($expectedEventIds, $foundEventIds);
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function findByJobEventTypeDataProvider(): array
-    {
-        return [
-            'no events' => [
+            'no events, full type' => [
                 'events' => [],
                 'jobLabel' => self::JOB1_LABEL,
-                'jobEventType' => 'job/started',
+                'type' => 'job/started',
                 'expectedEventIds' => [],
             ],
-            'no matching events' => [
+            'no matching events, full type' => [
                 'events' => [
                     new Event(
                         'eventId1',
@@ -250,10 +212,10 @@ class EventRepositoryTest extends WebTestCase
                     ),
                 ],
                 'jobLabel' => self::JOB1_LABEL,
-                'jobEventType' => 'job/started',
+                'type' => 'job/started',
                 'expectedEventIds' => [],
             ],
-            'single matching event' => [
+            'single matching event, full type' => [
                 'events' => [
                     new Event(
                         'eventId1',
@@ -273,10 +235,10 @@ class EventRepositoryTest extends WebTestCase
                     ),
                 ],
                 'jobLabel' => self::JOB1_LABEL,
-                'jobEventType' => 'job/started',
+                'type' => 'job/started',
                 'expectedEventIds' => ['eventId1'],
             ],
-            'multiple matching events' => [
+            'multiple matching events, full type' => [
                 'events' => [
                     new Event(
                         'eventId1',
@@ -320,7 +282,7 @@ class EventRepositoryTest extends WebTestCase
                     ),
                 ],
                 'jobLabel' => self::JOB1_LABEL,
-                'jobEventType' => 'job/started',
+                'type' => 'job/started',
                 'expectedEventIds' => ['eventId1', 'eventId5'],
             ],
         ];
