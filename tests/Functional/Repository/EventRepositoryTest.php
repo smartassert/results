@@ -7,7 +7,6 @@ namespace App\Tests\Functional\Repository;
 use App\Entity\Event;
 use App\Entity\Job;
 use App\Entity\Reference;
-use App\Enum\JobEventLabel;
 use App\Repository\EventRepository;
 use App\Repository\JobRepository;
 use App\Repository\ReferenceRepository;
@@ -199,7 +198,7 @@ class EventRepositoryTest extends WebTestCase
     public function testFindByJobEventType(
         array $events,
         string $jobLabel,
-        JobEventLabel $jobEventLabel,
+        string $jobEventLabel,
         array $expectedEventIds
     ): void {
         foreach ($events as $event) {
@@ -209,7 +208,7 @@ class EventRepositoryTest extends WebTestCase
         $job = $this->jobRepository->findOneBy(['label' => $jobLabel]);
         \assert($job instanceof Job);
 
-        $foundEvents = $this->eventRepository->findByJobEventType($job, $jobEventLabel->value);
+        $foundEvents = $this->eventRepository->findByJobEventType($job, $jobEventLabel);
         $foundEventIds = [];
 
         foreach ($foundEvents as $foundEvent) {
@@ -228,7 +227,7 @@ class EventRepositoryTest extends WebTestCase
             'no events' => [
                 'events' => [],
                 'jobLabel' => self::JOB1_LABEL,
-                'jobEventType' => JobEventLabel::STARTED,
+                'jobEventType' => 'job/started',
                 'expectedEventIds' => [],
             ],
             'no matching events' => [
@@ -251,7 +250,7 @@ class EventRepositoryTest extends WebTestCase
                     ),
                 ],
                 'jobLabel' => self::JOB1_LABEL,
-                'jobEventType' => JobEventLabel::STARTED,
+                'jobEventType' => 'job/started',
                 'expectedEventIds' => [],
             ],
             'single matching event' => [
@@ -274,7 +273,7 @@ class EventRepositoryTest extends WebTestCase
                     ),
                 ],
                 'jobLabel' => self::JOB1_LABEL,
-                'jobEventType' => JobEventLabel::STARTED,
+                'jobEventType' => 'job/started',
                 'expectedEventIds' => ['eventId1'],
             ],
             'multiple matching events' => [
@@ -321,7 +320,7 @@ class EventRepositoryTest extends WebTestCase
                     ),
                 ],
                 'jobLabel' => self::JOB1_LABEL,
-                'jobEventType' => JobEventLabel::STARTED,
+                'jobEventType' => 'job/started',
                 'expectedEventIds' => ['eventId1', 'eventId5'],
             ],
         ];
