@@ -23,7 +23,6 @@ class EventRepositoryTest extends WebTestCase
 
     private EventRepository $eventRepository;
     private JobRepository $jobRepository;
-    private ReferenceRepository $referenceRepository;
     private ReferenceFactory $referenceFactory;
 
     protected function setUp(): void
@@ -47,7 +46,6 @@ class EventRepositoryTest extends WebTestCase
 
         $referenceRepository = self::getContainer()->get(ReferenceRepository::class);
         \assert($referenceRepository instanceof ReferenceRepository);
-        $this->referenceRepository = $referenceRepository;
         foreach ($referenceRepository->findAll() as $entity) {
             $entityManager->remove($entity);
             $entityManager->flush();
@@ -204,29 +202,11 @@ class EventRepositoryTest extends WebTestCase
         \assert(is_string($referenceReference));
         \assert('' !== $referenceReference);
 
-        $referenceEntity = $this->createReferenceEntity($referenceLabel, $referenceReference);
+        $referenceEntity = $this->referenceFactory->create($referenceLabel, $referenceReference);
 
         $event = $this->createEventWithReference($event, $referenceEntity);
 
         $this->eventRepository->add($event);
-    }
-
-    /**
-     * @param non-empty-string $label
-     * @param non-empty-string $reference
-     */
-    private function createReferenceEntity(string $label, string $reference): Reference
-    {
-        $entity = $this->referenceRepository->findOneBy([
-            'label' => $label,
-            'reference' => $reference,
-        ]);
-
-        if (null === $entity) {
-            $entity = $this->referenceFactory->create($label, $reference);
-        }
-
-        return $entity;
     }
 
     private function createEventWithReference(Event $event, Reference $reference): Event
