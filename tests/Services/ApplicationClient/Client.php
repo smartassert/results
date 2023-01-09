@@ -16,7 +16,7 @@ class Client
     ) {
     }
 
-    public function makeCreateJobRequest(
+    public function makeJobCreateRequest(
         ?string $authenticationToken,
         string $label,
         string $method = 'POST'
@@ -31,7 +31,7 @@ class Client
     /**
      * @param array<mixed> $payload
      */
-    public function makeAddEventRequest(string $jobToken, array $payload, string $method = 'POST'): ResponseInterface
+    public function makeEventAddRequest(string $jobToken, array $payload, string $method = 'POST'): ResponseInterface
     {
         return $this->client->makeRequest(
             $method,
@@ -43,7 +43,7 @@ class Client
         );
     }
 
-    public function makeListEventRequest(
+    public function makeEventListRequest(
         ?string $authenticationToken,
         string $label,
         string $reference,
@@ -56,7 +56,7 @@ class Client
         );
     }
 
-    public function makeStatusRequest(): ResponseInterface
+    public function makeServiceStatusRequest(): ResponseInterface
     {
         return $this->client->makeRequest('GET', $this->router->generate('status'));
     }

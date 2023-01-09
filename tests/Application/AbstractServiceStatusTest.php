@@ -10,7 +10,7 @@ abstract class AbstractServiceStatusTest extends AbstractApplicationTest
 {
     public function testGetStatus(): void
     {
-        $response = $this->applicationClient->makeStatusRequest();
+        $response = $this->applicationClient->makeServiceStatusRequest();
 
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('application/json', $response->getHeaderLine('content-type'));
