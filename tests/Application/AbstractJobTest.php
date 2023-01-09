@@ -30,12 +30,6 @@ abstract class AbstractJobTest extends AbstractApplicationTest
     public function createBadMethodDataProvider(): array
     {
         return [
-            'GET' => [
-                'method' => 'GET',
-            ],
-            'HEAD' => [
-                'method' => 'HEAD',
-            ],
             'PUT' => [
                 'method' => 'PUT',
             ],

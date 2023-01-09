@@ -28,6 +28,18 @@ class Client
         );
     }
 
+    public function makeJobStatusRequest(
+        ?string $authenticationToken,
+        string $label,
+        string $method = 'GET'
+    ): ResponseInterface {
+        return $this->client->makeRequest(
+            $method,
+            $this->router->generate('job_create', ['label' => $label]),
+            $this->createAuthorizationHeader($authenticationToken)
+        );
+    }
+
     /**
      * @param array<mixed> $payload
      */
