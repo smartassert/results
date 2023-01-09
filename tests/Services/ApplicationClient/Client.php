@@ -16,11 +16,8 @@ class Client
     ) {
     }
 
-    public function makeJobCreateRequest(
-        ?string $authenticationToken,
-        string $label,
-        string $method = 'POST'
-    ): ResponseInterface {
+    public function makeJobRequest(?string $authenticationToken, string $label, string $method): ResponseInterface
+    {
         return $this->client->makeRequest(
             $method,
             $this->router->generate('job_create', ['label' => $label]),

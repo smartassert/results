@@ -94,4 +94,12 @@ class Event implements \JsonSerializable
             $this->reference->toArray(),
         );
     }
+
+    /**
+     * @return null|array<mixed>
+     */
+    public function getBody(): ?array
+    {
+        return $this->body;
+    }
 }

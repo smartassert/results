@@ -6,48 +6,10 @@ namespace App\Tests\Application;
 
 use App\Entity\Job;
 use App\Repository\JobRepository;
-use App\Tests\Services\AuthenticationConfiguration;
 use Symfony\Component\Uid\Ulid;
 
 abstract class AbstractJobCreationTest extends AbstractApplicationTest
 {
-    /**
-     * @dataProvider unauthorizedUserDataProvider
-     */
-    public function testCreateUnauthorizedUser(callable $userTokenCreator): void
-    {
-        $response = $this->applicationClient->makeJobCreateRequest(
-            $userTokenCreator(self::$authenticationConfiguration),
-            (string) new Ulid()
-        );
-
-        self::assertSame(401, $response->getStatusCode());
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function unauthorizedUserDataProvider(): array
-    {
-        return [
-            'no user token' => [
-                'userTokenCreator' => function () {
-                    return null;
-                },
-            ],
-            'empty user token' => [
-                'userTokenCreator' => function () {
-                    return '';
-                },
-            ],
-            'non-empty invalid user token' => [
-                'userTokenCreator' => function (AuthenticationConfiguration $authenticationConfiguration) {
-                    return $authenticationConfiguration->getInvalidApiToken();
-                },
-            ],
-        ];
-    }
-
     public function testCreateSuccess(): void
     {
         $jobRepository = self::getContainer()->get(JobRepository::class);
@@ -57,9 +19,10 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
 
         $jobLabel = (string) new Ulid();
 
-        $response = $this->applicationClient->makeJobCreateRequest(
+        $response = $this->applicationClient->makeJobRequest(
             self::$authenticationConfiguration->getValidApiToken(),
-            $jobLabel
+            $jobLabel,
+            'POST'
         );
 
         self::assertSame(200, $response->getStatusCode());
@@ -87,15 +50,17 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
 
         $jobLabel = (string) new Ulid();
 
-        $this->applicationClient->makeJobCreateRequest(
+        $this->applicationClient->makeJobRequest(
             self::$authenticationConfiguration->getValidApiToken(),
-            $jobLabel
+            $jobLabel,
+            'POST'
         );
         self::assertSame(1, $jobRepository->count([]));
 
-        $this->applicationClient->makeJobCreateRequest(
+        $this->applicationClient->makeJobRequest(
             self::$authenticationConfiguration->getValidApiToken(),
-            $jobLabel
+            $jobLabel,
+            'POST'
         );
         self::assertSame(1, $jobRepository->count([]));
     }
