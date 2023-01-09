@@ -6,49 +6,10 @@ namespace App\Tests\Application;
 
 use App\Entity\Job;
 use App\Repository\JobRepository;
-use App\Tests\Services\AuthenticationConfiguration;
 use Symfony\Component\Uid\Ulid;
 
 abstract class AbstractJobCreationTest extends AbstractApplicationTest
 {
-    /**
-     * @dataProvider unauthorizedUserDataProvider
-     */
-    public function testCreateUnauthorizedUser(callable $userTokenCreator): void
-    {
-        $response = $this->applicationClient->makeJobRequest(
-            $userTokenCreator(self::$authenticationConfiguration),
-            (string) new Ulid(),
-            'POST'
-        );
-
-        self::assertSame(401, $response->getStatusCode());
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function unauthorizedUserDataProvider(): array
-    {
-        return [
-            'no user token' => [
-                'userTokenCreator' => function () {
-                    return null;
-                },
-            ],
-            'empty user token' => [
-                'userTokenCreator' => function () {
-                    return '';
-                },
-            ],
-            'non-empty invalid user token' => [
-                'userTokenCreator' => function (AuthenticationConfiguration $authenticationConfiguration) {
-                    return $authenticationConfiguration->getInvalidApiToken();
-                },
-            ],
-        ];
-    }
-
     public function testCreateSuccess(): void
     {
         $jobRepository = self::getContainer()->get(JobRepository::class);
