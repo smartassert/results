@@ -15,7 +15,7 @@ abstract class AbstractJobTest extends AbstractApplicationTest
     {
         $label = (string) new Ulid();
 
-        $response = $this->applicationClient->makeJobCreateRequest(
+        $response = $this->applicationClient->makeJobRequest(
             self::$authenticationConfiguration->getValidApiToken(),
             $label,
             $method
