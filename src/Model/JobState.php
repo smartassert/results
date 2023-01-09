@@ -7,11 +7,11 @@ use App\Enum\JobState as State;
 class JobState implements \JsonSerializable
 {
     /**
-     * @param null|non-empty-string $endsState
+     * @param null|non-empty-string $endState
      */
     public function __construct(
         public readonly State $state,
-        public readonly ?string $endsState = null,
+        public readonly ?string $endState = null,
     ) {
     }
 
@@ -24,8 +24,8 @@ class JobState implements \JsonSerializable
             'state' => $this->state->value,
         ];
 
-        if (State::ENDED === $this->state && is_string($this->endsState) && '' !== $this->endsState) {
-            $data['end_state'] = $this->endsState;
+        if (State::ENDED === $this->state && is_string($this->endState) && '' !== $this->endState) {
+            $data['end_state'] = $this->endState;
         }
 
         return $data;
