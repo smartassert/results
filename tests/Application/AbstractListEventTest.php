@@ -33,7 +33,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
      */
     public function testListBadMethod(string $method): void
     {
-        $response = $this->applicationClient->makeListEventRequest(
+        $response = $this->applicationClient->makeEventListRequest(
             (string) new Ulid(),
             (string) new Ulid(),
             md5((string) rand()),
@@ -98,7 +98,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
             );
         }
 
-        $response = $this->applicationClient->makeListEventRequest(
+        $response = $this->applicationClient->makeEventListRequest(
             self::$authenticationConfiguration->getValidApiToken(),
             $jobLabel,
             $eventReference,

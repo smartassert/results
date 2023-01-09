@@ -18,7 +18,7 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
     {
         $label = (string) new Ulid();
 
-        $response = $this->applicationClient->makeCreateJobRequest(
+        $response = $this->applicationClient->makeJobCreateRequest(
             self::$authenticationConfiguration->getValidApiToken(),
             $label,
             $method
@@ -53,7 +53,7 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
      */
     public function testCreateUnauthorizedUser(callable $userTokenCreator): void
     {
-        $response = $this->applicationClient->makeCreateJobRequest(
+        $response = $this->applicationClient->makeJobCreateRequest(
             $userTokenCreator(self::$authenticationConfiguration),
             (string) new Ulid()
         );
@@ -94,7 +94,7 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
 
         $jobLabel = (string) new Ulid();
 
-        $response = $this->applicationClient->makeCreateJobRequest(
+        $response = $this->applicationClient->makeJobCreateRequest(
             self::$authenticationConfiguration->getValidApiToken(),
             $jobLabel
         );
@@ -124,13 +124,13 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
 
         $jobLabel = (string) new Ulid();
 
-        $this->applicationClient->makeCreateJobRequest(
+        $this->applicationClient->makeJobCreateRequest(
             self::$authenticationConfiguration->getValidApiToken(),
             $jobLabel
         );
         self::assertSame(1, $jobRepository->count([]));
 
-        $this->applicationClient->makeCreateJobRequest(
+        $this->applicationClient->makeJobCreateRequest(
             self::$authenticationConfiguration->getValidApiToken(),
             $jobLabel
         );
