@@ -6,6 +6,7 @@ namespace App\Enum;
 
 enum JobState: string
 {
+    case AWAITING_EVENTS = 'awaiting-events';
     case STARTED = 'started';
     case COMPILING = 'compiling';
     case COMPILED = 'compiled';
