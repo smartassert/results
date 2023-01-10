@@ -41,6 +41,6 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
         self::assertIsArray($responseData);
 
         self::assertArrayHasKey('state', $responseData);
-        self::assertSame('unknown', $responseData['state']);
+        self::assertSame('awaiting-events', $responseData['state']);
     }
 }

@@ -17,6 +17,10 @@ class JobStateFactory
 
     public function create(Job $job): JobState
     {
+        if (false === $this->eventRepository->hasForJob($job)) {
+            return new JobState(State::AWAITING_EVENTS);
+        }
+
         $jobEndedEvents = $this->eventRepository->findByType($job, 'job/ended');
 
         if ([] !== $jobEndedEvents) {

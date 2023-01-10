@@ -90,7 +90,7 @@ class JobStateFactoryTest extends WebTestCase
             'no events' => [
                 'events' => [],
                 'jobLabel' => self::JOB_LABEL,
-                'expected' => new JobState(JobStateEnum::UNKNOWN),
+                'expected' => new JobState(JobStateEnum::AWAITING_EVENTS),
             ],
             'job/ended only, no end state' => [
                 'events' => $this->createFoo(['job/ended']),
