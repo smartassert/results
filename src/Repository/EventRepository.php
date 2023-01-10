@@ -68,7 +68,7 @@ class EventRepository extends ServiceEntityRepository
 
         try {
             $result = $query->getSingleScalarResult();
-        } catch (NoResultException | NonUniqueResultException $e) {
+        } catch (NoResultException | NonUniqueResultException) {
             return false;
         }
 
@@ -77,11 +77,9 @@ class EventRepository extends ServiceEntityRepository
 
     public function hasForJob(Job $job): bool
     {
-        $queryBuilder = $this->createQueryBuilder('Event');
+        $queryBuilder = $this->createJobQueryBuilder($job);
         $queryBuilder
             ->select('count(Event.id)')
-            ->where('Event.job = :JobLabel')
-            ->setParameter('JobLabel', $job->label)
             ->setMaxResults(1)
         ;
 
@@ -105,12 +103,21 @@ class EventRepository extends ServiceEntityRepository
             $type = str_replace(self::TYPE_WILDCARD, self::QUERY_WILDCARD, $type);
         }
 
+        $queryBuilder = $this->createJobQueryBuilder($job);
+        $queryBuilder
+            ->andWhere('Event.type ' . $typeOperator . ' :EventType')
+            ->setParameter('EventType', $type)
+        ;
+
+        return $queryBuilder;
+    }
+
+    private function createJobQueryBuilder(Job $job): QueryBuilder
+    {
         $queryBuilder = $this->createQueryBuilder('Event');
         $queryBuilder
             ->where('Event.job = :JobLabel')
-            ->andWhere('Event.type ' . $typeOperator . ' :EventType')
             ->setParameter('JobLabel', $job->label)
-            ->setParameter('EventType', $type)
         ;
 
         return $queryBuilder;
