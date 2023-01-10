@@ -7,6 +7,7 @@ use App\Entity\Job;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -63,15 +64,7 @@ class EventRepository extends ServiceEntityRepository
         $queryBuilder = $this->addQueryBuilderTypeConstraint($queryBuilder, $type);
         $queryBuilder = $this->addQueryBuilderCountConstraint($queryBuilder);
 
-        $query = $queryBuilder->getQuery();
-
-        try {
-            $result = $query->getSingleScalarResult();
-        } catch (NoResultException | NonUniqueResultException) {
-            return false;
-        }
-
-        return 0 !== $result;
+        return $this->resultHasIntegerScalarGreaterThanZero($queryBuilder->getQuery());
     }
 
     public function hasForJob(Job $job): bool
@@ -79,8 +72,11 @@ class EventRepository extends ServiceEntityRepository
         $queryBuilder = $this->createJobQueryBuilder($job);
         $queryBuilder = $this->addQueryBuilderCountConstraint($queryBuilder);
 
-        $query = $queryBuilder->getQuery();
+        return $this->resultHasIntegerScalarGreaterThanZero($queryBuilder->getQuery());
+    }
 
+    private function resultHasIntegerScalarGreaterThanZero(Query $query): bool
+    {
         try {
             $result = $query->getSingleScalarResult();
         } catch (NoResultException | NonUniqueResultException) {
