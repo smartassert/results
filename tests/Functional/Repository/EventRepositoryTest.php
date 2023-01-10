@@ -504,4 +504,72 @@ class EventRepositoryTest extends WebTestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider hasForJobDataProvider
+     *
+     * @param Event[] $events
+     */
+    public function testHasForJob(array $events, string $jobLabel, bool $expected): void
+    {
+        foreach ($events as $event) {
+            $this->eventFactory->persist($event);
+        }
+
+        $job = $this->jobRepository->findOneBy(['label' => $jobLabel]);
+        \assert($job instanceof Job);
+
+        self::assertSame(
+            $expected,
+            $this->eventRepository->hasForJob($job)
+        );
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function hasForJobDataProvider(): array
+    {
+        $job1Events = [
+            new Event(
+                'eventId1',
+                1,
+                self::JOB1_LABEL,
+                'test/started',
+                [],
+                new Reference(self::JOB1_LABEL, 'reference 1')
+            ),
+            new Event(
+                'eventId2',
+                2,
+                self::JOB1_LABEL,
+                'test/passed',
+                [],
+                new Reference(self::JOB1_LABEL, 'reference 1')
+            ),
+        ];
+
+        return [
+            'no events, job 1' => [
+                'events' => [],
+                'jobLabel' => self::JOB1_LABEL,
+                'expected' => false,
+            ],
+            'no events, job 2' => [
+                'events' => [],
+                'jobLabel' => self::JOB2_LABEL,
+                'expected' => false,
+            ],
+            'events for job 1, check has events for job 2' => [
+                'events' => $job1Events,
+                'jobLabel' => self::JOB2_LABEL,
+                'expected' => false,
+            ],
+            'events for job 1, check has events for job 1' => [
+                'events' => $job1Events,
+                'jobLabel' => self::JOB1_LABEL,
+                'expected' => true,
+            ],
+        ];
+    }
 }

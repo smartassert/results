@@ -75,6 +75,27 @@ class EventRepository extends ServiceEntityRepository
         return 0 !== $result;
     }
 
+    public function hasForJob(Job $job): bool
+    {
+        $queryBuilder = $this->createQueryBuilder('Event');
+        $queryBuilder
+            ->select('count(Event.id)')
+            ->where('Event.job = :JobLabel')
+            ->setParameter('JobLabel', $job->label)
+            ->setMaxResults(1)
+        ;
+
+        $query = $queryBuilder->getQuery();
+
+        try {
+            $result = $query->getSingleScalarResult();
+        } catch (NoResultException | NonUniqueResultException) {
+            return false;
+        }
+
+        return 0 !== $result;
+    }
+
     private function createFindOrHasQueryBuilder(Job $job, string $type): QueryBuilder
     {
         $isPartialTypeMatch = str_ends_with($type, self::TYPE_WILDCARD);
