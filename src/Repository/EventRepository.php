@@ -39,7 +39,8 @@ class EventRepository extends ServiceEntityRepository
      */
     public function findByType(Job $job, string $type): array
     {
-        $queryBuilder = $this->createFindOrHasQueryBuilder($job, $type);
+        $queryBuilder = $this->createJobQueryBuilder($job);
+        $queryBuilder = $this->addQueryBuilderTypeConstraint($queryBuilder, $type);
 
         $query = $queryBuilder->getQuery();
 
@@ -58,7 +59,8 @@ class EventRepository extends ServiceEntityRepository
 
     public function hasForType(Job $job, string $type): bool
     {
-        $queryBuilder = $this->createFindOrHasQueryBuilder($job, $type);
+        $queryBuilder = $this->createJobQueryBuilder($job);
+        $queryBuilder = $this->addQueryBuilderTypeConstraint($queryBuilder, $type);
         $queryBuilder
             ->select('count(Event.id)')
             ->setMaxResults(1)
@@ -94,7 +96,7 @@ class EventRepository extends ServiceEntityRepository
         return 0 !== $result;
     }
 
-    private function createFindOrHasQueryBuilder(Job $job, string $type): QueryBuilder
+    private function addQueryBuilderTypeConstraint(QueryBuilder $queryBuilder, string $type): QueryBuilder
     {
         $isPartialTypeMatch = str_ends_with($type, self::TYPE_WILDCARD);
         $typeOperator = $isPartialTypeMatch ? 'LIKE' : '=';
@@ -103,7 +105,6 @@ class EventRepository extends ServiceEntityRepository
             $type = str_replace(self::TYPE_WILDCARD, self::QUERY_WILDCARD, $type);
         }
 
-        $queryBuilder = $this->createJobQueryBuilder($job);
         $queryBuilder
             ->andWhere('Event.type ' . $typeOperator . ' :EventType')
             ->setParameter('EventType', $type)
