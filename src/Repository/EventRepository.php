@@ -61,10 +61,7 @@ class EventRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createJobQueryBuilder($job);
         $queryBuilder = $this->addQueryBuilderTypeConstraint($queryBuilder, $type);
-        $queryBuilder
-            ->select('count(Event.id)')
-            ->setMaxResults(1)
-        ;
+        $queryBuilder = $this->addQueryBuilderCountConstraint($queryBuilder);
 
         $query = $queryBuilder->getQuery();
 
@@ -80,10 +77,7 @@ class EventRepository extends ServiceEntityRepository
     public function hasForJob(Job $job): bool
     {
         $queryBuilder = $this->createJobQueryBuilder($job);
-        $queryBuilder
-            ->select('count(Event.id)')
-            ->setMaxResults(1)
-        ;
+        $queryBuilder = $this->addQueryBuilderCountConstraint($queryBuilder);
 
         $query = $queryBuilder->getQuery();
 
@@ -108,6 +102,16 @@ class EventRepository extends ServiceEntityRepository
         $queryBuilder
             ->andWhere('Event.type ' . $typeOperator . ' :EventType')
             ->setParameter('EventType', $type)
+        ;
+
+        return $queryBuilder;
+    }
+
+    private function addQueryBuilderCountConstraint(QueryBuilder $queryBuilder): QueryBuilder
+    {
+        $queryBuilder
+            ->select('count(Event.id)')
+            ->setMaxResults(1)
         ;
 
         return $queryBuilder;
