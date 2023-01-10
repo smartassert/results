@@ -7,6 +7,7 @@ use App\Entity\Job;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -39,7 +40,8 @@ class EventRepository extends ServiceEntityRepository
      */
     public function findByType(Job $job, string $type): array
     {
-        $queryBuilder = $this->createFindOrHasQueryBuilder($job, $type);
+        $queryBuilder = $this->createJobQueryBuilder($job);
+        $queryBuilder = $this->addQueryBuilderTypeConstraint($queryBuilder, $type);
 
         $query = $queryBuilder->getQuery();
 
@@ -58,24 +60,33 @@ class EventRepository extends ServiceEntityRepository
 
     public function hasForType(Job $job, string $type): bool
     {
-        $queryBuilder = $this->createFindOrHasQueryBuilder($job, $type);
-        $queryBuilder
-            ->select('count(Event.id)')
-            ->setMaxResults(1)
-        ;
+        $queryBuilder = $this->createJobQueryBuilder($job);
+        $queryBuilder = $this->addQueryBuilderTypeConstraint($queryBuilder, $type);
+        $queryBuilder = $this->addQueryBuilderCountConstraint($queryBuilder);
 
-        $query = $queryBuilder->getQuery();
+        return $this->resultHasIntegerScalarGreaterThanZero($queryBuilder->getQuery());
+    }
 
+    public function hasForJob(Job $job): bool
+    {
+        $queryBuilder = $this->createJobQueryBuilder($job);
+        $queryBuilder = $this->addQueryBuilderCountConstraint($queryBuilder);
+
+        return $this->resultHasIntegerScalarGreaterThanZero($queryBuilder->getQuery());
+    }
+
+    private function resultHasIntegerScalarGreaterThanZero(Query $query): bool
+    {
         try {
             $result = $query->getSingleScalarResult();
-        } catch (NoResultException | NonUniqueResultException $e) {
+        } catch (NoResultException | NonUniqueResultException) {
             return false;
         }
 
         return 0 !== $result;
     }
 
-    private function createFindOrHasQueryBuilder(Job $job, string $type): QueryBuilder
+    private function addQueryBuilderTypeConstraint(QueryBuilder $queryBuilder, string $type): QueryBuilder
     {
         $isPartialTypeMatch = str_ends_with($type, self::TYPE_WILDCARD);
         $typeOperator = $isPartialTypeMatch ? 'LIKE' : '=';
@@ -84,12 +95,30 @@ class EventRepository extends ServiceEntityRepository
             $type = str_replace(self::TYPE_WILDCARD, self::QUERY_WILDCARD, $type);
         }
 
+        $queryBuilder
+            ->andWhere('Event.type ' . $typeOperator . ' :EventType')
+            ->setParameter('EventType', $type)
+        ;
+
+        return $queryBuilder;
+    }
+
+    private function addQueryBuilderCountConstraint(QueryBuilder $queryBuilder): QueryBuilder
+    {
+        $queryBuilder
+            ->select('count(Event.id)')
+            ->setMaxResults(1)
+        ;
+
+        return $queryBuilder;
+    }
+
+    private function createJobQueryBuilder(Job $job): QueryBuilder
+    {
         $queryBuilder = $this->createQueryBuilder('Event');
         $queryBuilder
             ->where('Event.job = :JobLabel')
-            ->andWhere('Event.type ' . $typeOperator . ' :EventType')
             ->setParameter('JobLabel', $job->label)
-            ->setParameter('EventType', $type)
         ;
 
         return $queryBuilder;
