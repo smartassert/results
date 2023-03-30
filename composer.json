@@ -12,15 +12,15 @@
         "doctrine/orm": "^2.12",
         "guzzlehttp/guzzle": "^7.4",
         "smartassert/health-check-bundle": "^2.0",
-        "smartassert/users-security-bundle": "~1.1",
+        "smartassert/users-security-bundle": "~5.0",
         "symfony/console": "6.2.*",
         "symfony/dotenv": "6.2.*",
         "symfony/flex": "^2",
-        "symfony/framework-bundle": "6.1.*",
+        "symfony/framework-bundle": "6.2.*",
         "symfony/monolog-bundle": "^3.8",
-        "symfony/proxy-manager-bridge": "6.1.*",
+        "symfony/proxy-manager-bridge": "6.2.*",
         "symfony/runtime": "6.2.*",
-        "symfony/security-bundle": "6.1.*",
+        "symfony/security-bundle": "6.2.*",
         "symfony/uid": "6.2.*",
         "symfony/yaml": "6.2.*"
     },
@@ -138,7 +138,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "6.1.*"
+            "require": "6.2.*"
         }
     }
 }

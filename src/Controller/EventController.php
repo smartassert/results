@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Job;
-use App\Entity\Reference;
 use App\EntityFactory\EventFactory;
 use App\Exception\EmptyUlidException;
 use App\Repository\EventRepository;
+use App\Repository\ReferenceRepository;
 use App\Request\AddEventRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,10 +60,13 @@ class EventController
     #[Route('/event/list/{label<[A-Z0-9]{26,32}>}/{reference}', name: 'event_list', methods: ['GET'])]
     public function list(
         UserInterface $user,
+        ReferenceRepository $referenceRepository,
         EventRepository $eventRepository,
-        ?Reference $referenceEntity,
+        string $reference,
         ?Job $job,
     ): JsonResponse {
+        $referenceEntity = $referenceRepository->findOneBy(['reference' => $reference]);
+
         if (null === $job || $job->userId !== $user->getUserIdentifier() || null === $referenceEntity) {
             return new JsonResponse([]);
         }

@@ -8,10 +8,10 @@ use App\Entity\Job;
 use App\Repository\JobRepository;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
+use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
-class JobResolver implements ArgumentValueResolverInterface
+class JobResolver implements ValueResolverInterface
 {
     /**
      * @param non-empty-string[] $jobIdentifiers
@@ -22,30 +22,30 @@ class JobResolver implements ArgumentValueResolverInterface
     ) {
     }
 
-    public function supports(Request $request, ArgumentMetadata $argument): bool
-    {
-        return
-            Job::class === $argument->getType()
-            && $this->requestAttributesContainJobIdentifier($request->attributes);
-    }
-
     /**
-     * @return \Traversable<?Job>
+     * @return array<null|Job>
      */
-    public function resolve(Request $request, ArgumentMetadata $argument): \Traversable
+    public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
+        if (
+            Job::class !== $argument->getType()
+            || !$this->requestAttributesContainJobIdentifier($request->attributes)
+        ) {
+            return [];
+        }
+
         foreach ($this->jobIdentifiers as $identifier) {
             if ($request->attributes->has($identifier)) {
                 $value = $request->attributes->get($identifier);
                 $value = is_string($value) ? trim($value) : '';
 
                 if ('' !== $value) {
-                    yield $this->jobRepository->findOneBy([$identifier => $value]);
+                    return [$this->jobRepository->findOneBy([$identifier => $value])];
                 }
             }
         }
 
-        yield null;
+        return [];
     }
 
     private function requestAttributesContainJobIdentifier(ParameterBag $attributes): bool
