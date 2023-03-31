@@ -37,6 +37,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
             (string) new Ulid(),
             (string) new Ulid(),
             md5((string) rand()),
+            null,
             $method
         );
 
@@ -78,6 +79,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
         array $eventDataCollection,
         string $jobLabel,
         string $eventReference,
+        ?string $eventType,
         array $expectedResponseData,
     ): void {
         $jobs = $jobsCreator(self::$users->get('user@example.com')->id);
@@ -102,6 +104,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
             self::$apiTokens->get('user@example.com'),
             $jobLabel,
             $eventReference,
+            $eventType,
         );
 
         self::assertSame(200, $response->getStatusCode());
@@ -134,6 +137,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                 'eventDataCollection' => [],
                 'jobLabel' => $requestJobLabel,
                 'eventReference' => md5((string) rand()),
+                'eventType' => null,
                 'expectedResponseData' => [],
             ],
             'no jobs for user' => [
@@ -161,6 +165,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                 ],
                 'jobLabel' => $nonUserJobLabels[0],
                 'eventReference' => md5('job_0_test.yml'),
+                'eventType' => null,
                 'expectedResponseData' => [],
             ],
             'no events for reference' => [
@@ -191,6 +196,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                 ],
                 'jobLabel' => $requestJobLabel,
                 'eventReference' => md5((string) rand()),
+                'eventType' => null,
                 'expectedResponseData' => [],
             ],
             'single job for user, single event for user' => [
@@ -214,6 +220,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                 ],
                 'jobLabel' => $requestJobLabel,
                 'eventReference' => md5('test.yml'),
+                'eventType' => null,
                 'expectedResponseData' => [
                     [
                         'sequence_number' => 1,
@@ -268,6 +275,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                 ],
                 'jobLabel' => $requestJobLabel,
                 'eventReference' => md5('test.yml'),
+                'eventType' => null,
                 'expectedResponseData' => [
                     [
                         'sequence_number' => 1,
@@ -280,6 +288,83 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                         'sequence_number' => 2,
                         'job' => $requestJobLabel,
                         'type' => 'test/passed',
+                        'label' => 'test.yml',
+                        'reference' => md5('test.yml'),
+                    ],
+                ],
+            ],
+            'no events for type' => [
+                'jobsCreator' => function (string $userId) use ($ulidFactory, $requestJobLabel) {
+                    if ('' === $userId) {
+                        return [];
+                    }
+
+                    return [
+                        new Job($ulidFactory->create(), $requestJobLabel, $userId),
+                    ];
+                },
+                'eventDataCollection' => [
+                    [
+                        'jobLabel' => $requestJobLabel,
+                        'sequenceNumber' => 1,
+                        'type' => 'job/started',
+                        'label' => 'test.yml',
+                        'reference' => md5('test.yml'),
+                    ],
+                ],
+                'jobLabel' => $requestJobLabel,
+                'eventReference' => md5('test.yml'),
+                'eventType' => 'job/ended',
+                'expectedResponseData' => [],
+            ],
+            'filter events by type' => [
+                'jobsCreator' => function (string $userId) use ($ulidFactory, $requestJobLabel) {
+                    if ('' === $userId) {
+                        return [];
+                    }
+
+                    return [
+                        new Job($ulidFactory->create(), $requestJobLabel, $userId),
+                    ];
+                },
+                'eventDataCollection' => [
+                    [
+                        'jobLabel' => $requestJobLabel,
+                        'sequenceNumber' => 1,
+                        'type' => 'test/started',
+                        'label' => 'test.yml',
+                        'reference' => md5('test.yml'),
+                    ],
+                    [
+                        'jobLabel' => $requestJobLabel,
+                        'sequenceNumber' => 1,
+                        'type' => 'job/started',
+                        'label' => 'job_0_test.yml',
+                        'reference' => md5('job_0_test.yml'),
+                    ],
+                    [
+                        'jobLabel' => $requestJobLabel,
+                        'sequenceNumber' => 2,
+                        'type' => 'test/passed',
+                        'label' => 'test.yml',
+                        'reference' => md5('test.yml'),
+                    ],
+                    [
+                        'jobLabel' => $requestJobLabel,
+                        'sequenceNumber' => 1,
+                        'type' => 'job/started',
+                        'label' => 'job_1_test.yml',
+                        'reference' => md5('job_1_test.yml'),
+                    ],
+                ],
+                'jobLabel' => $requestJobLabel,
+                'eventReference' => md5('test.yml'),
+                'eventType' => 'test/started',
+                'expectedResponseData' => [
+                    [
+                        'sequence_number' => 1,
+                        'job' => $requestJobLabel,
+                        'type' => 'test/started',
                         'label' => 'test.yml',
                         'reference' => md5('test.yml'),
                     ],

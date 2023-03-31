@@ -57,13 +57,14 @@ class EventController
         return new JsonResponse($event);
     }
 
-    #[Route('/event/list/{label<[A-Z0-9]{26,32}>}/{reference}', name: 'event_list', methods: ['GET'])]
+    #[Route('/event/list/{label<[A-Z0-9]{26,32}>}/{reference}/{type<.+>?}', name: 'event_list', methods: ['GET'])]
     public function list(
         UserInterface $user,
         ReferenceRepository $referenceRepository,
         EventRepository $eventRepository,
         string $reference,
         ?Job $job,
+        ?string $type,
     ): JsonResponse {
         $referenceEntity = $referenceRepository->findOneBy(['reference' => $reference]);
 
@@ -71,14 +72,17 @@ class EventController
             return new JsonResponse([]);
         }
 
+        $findCriteria = [
+            'job' => $job->label,
+            'reference' => $referenceEntity,
+        ];
+
+        if (is_string($type)) {
+            $findCriteria['type'] = $type;
+        }
+
         return new JsonResponse(
-            $eventRepository->findBy(
-                [
-                    'job' => $job->label,
-                    'reference' => $referenceEntity,
-                ],
-                ['sequenceNumber' => 'ASC']
-            )
+            $eventRepository->findBy($findCriteria, ['sequenceNumber' => 'ASC'])
         );
     }
 
