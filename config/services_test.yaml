@@ -36,12 +36,6 @@ services:
     SmartAssert\SymfonyTestClient\SymfonyClient:
         public: true
 
-    App\Tests\Services\AuthenticationConfiguration:
-        public: true
-        arguments:
-            $userEmail: 'user@example.com'
-            $userPassword: 'password'
-
     app.tests.integration.http.client:
         public: true
         class: GuzzleHttp\Client

@@ -99,7 +99,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
         }
 
         $response = $this->applicationClient->makeEventListRequest(
-            self::$authenticationConfiguration->getValidApiToken(),
+            self::$apiTokens->get('user@example.com'),
             $jobLabel,
             $eventReference,
         );

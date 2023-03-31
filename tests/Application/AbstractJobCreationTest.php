@@ -20,7 +20,7 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
         $jobLabel = (string) new Ulid();
 
         $response = $this->applicationClient->makeJobRequest(
-            self::$authenticationConfiguration->getValidApiToken(),
+            self::$apiTokens->get('user@example.com'),
             $jobLabel,
             'POST'
         );
@@ -51,14 +51,14 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
         $jobLabel = (string) new Ulid();
 
         $this->applicationClient->makeJobRequest(
-            self::$authenticationConfiguration->getValidApiToken(),
+            self::$apiTokens->get('user@example.com'),
             $jobLabel,
             'POST'
         );
         self::assertSame(1, $jobRepository->count([]));
 
         $this->applicationClient->makeJobRequest(
-            self::$authenticationConfiguration->getValidApiToken(),
+            self::$apiTokens->get('user@example.com'),
             $jobLabel,
             'POST'
         );
