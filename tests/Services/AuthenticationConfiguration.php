@@ -36,11 +36,6 @@ class AuthenticationConfiguration
         return $this->apiToken->token;
     }
 
-    public function getInvalidApiToken(): string
-    {
-        return 'invalid api token value';
-    }
-
     private function getFrontendToken(): RefreshableToken
     {
         if (!isset($this->frontendToken)) {
