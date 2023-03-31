@@ -9,6 +9,7 @@ use App\Repository\EventRepository;
 use App\Repository\ReferenceRepository;
 use App\Request\AddEventRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -57,15 +58,15 @@ class EventController
         return new JsonResponse($event);
     }
 
-    #[Route('/event/list/{label<[A-Z0-9]{26,32}>}/{reference}/{type<.+>?}', name: 'event_list', methods: ['GET'])]
+    #[Route('/event/list/{label<[A-Z0-9]{26,32}>}', name: 'event_list', methods: ['GET'])]
     public function list(
+        Request $request,
         UserInterface $user,
         ReferenceRepository $referenceRepository,
         EventRepository $eventRepository,
-        string $reference,
         ?Job $job,
-        ?string $type,
     ): JsonResponse {
+        $reference = (string) $request->query->get('reference');
         $referenceEntity = $referenceRepository->findOneBy(['reference' => $reference]);
 
         if (null === $job || $job->userId !== $user->getUserIdentifier() || null === $referenceEntity) {
@@ -77,6 +78,7 @@ class EventController
             'reference' => $referenceEntity,
         ];
 
+        $type = $request->query->get('type');
         if (is_string($type)) {
             $findCriteria['type'] = $type;
         }
