@@ -43,7 +43,7 @@ class Client
     public function makeEventListRequest(
         ?string $authenticationToken,
         string $label,
-        string $reference,
+        ?string $reference,
         ?string $type = null,
         string $method = 'GET'
     ): ResponseInterface {

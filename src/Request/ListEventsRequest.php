@@ -11,6 +11,7 @@ class ListEventsRequest
         public readonly ?Job $job,
         public readonly ?Reference $reference,
         public readonly ?string $type,
+        public readonly bool $hasReferenceFilter,
     ) {
     }
 }

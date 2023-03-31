@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Job;
+use App\Entity\Reference;
 use App\EntityFactory\EventFactory;
 use App\Exception\EmptyUlidException;
 use App\Repository\EventRepository;
@@ -63,15 +64,18 @@ class EventController
         if (
             null === $request->job
             || $request->job->userId !== $user->getUserIdentifier()
-            || null === $request->reference
+            || $request->hasReferenceFilter && null === $request->reference
         ) {
             return new JsonResponse([]);
         }
 
         $findCriteria = [
             'job' => $request->job->label,
-            'reference' => $request->reference,
         ];
+
+        if ($request->reference instanceof Reference) {
+            $findCriteria['reference'] = $request->reference;
+        }
 
         if (is_string($request->type)) {
             $findCriteria['type'] = $request->type;

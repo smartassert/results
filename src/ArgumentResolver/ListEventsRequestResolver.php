@@ -38,7 +38,12 @@ class ListEventsRequestResolver implements ValueResolverInterface
         $eventType = is_string($eventType) ? $eventType : null;
 
         return [
-            new ListEventsRequest($job, $reference, $eventType),
+            new ListEventsRequest(
+                $job,
+                $reference,
+                $eventType,
+                $request->query->has('reference'),
+            ),
         ];
     }
 }
