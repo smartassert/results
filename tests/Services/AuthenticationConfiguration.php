@@ -8,14 +8,12 @@ use SmartAssert\UsersClient\Client;
 use SmartAssert\UsersClient\Model\ApiKey;
 use SmartAssert\UsersClient\Model\RefreshableToken;
 use SmartAssert\UsersClient\Model\Token;
-use SmartAssert\UsersClient\Model\User;
 
 class AuthenticationConfiguration
 {
     private RefreshableToken $frontendToken;
     private ApiKey $apiKey;
     private Token $apiToken;
-    private User $user;
 
     public function __construct(
         public readonly string $userEmail,
@@ -41,20 +39,6 @@ class AuthenticationConfiguration
     public function getInvalidApiToken(): string
     {
         return 'invalid api token value';
-    }
-
-    public function getUser(): User
-    {
-        if (!isset($this->user)) {
-            $user = $this->usersClient->verifyFrontendToken($this->getFrontendToken());
-            if (null === $user) {
-                throw new \RuntimeException('User is null');
-            }
-
-            $this->user = $user;
-        }
-
-        return $this->user;
     }
 
     private function getFrontendToken(): RefreshableToken
