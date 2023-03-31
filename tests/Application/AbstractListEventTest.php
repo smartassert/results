@@ -78,7 +78,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
         callable $jobsCreator,
         array $eventDataCollection,
         string $jobLabel,
-        string $eventReference,
+        ?string $eventReference,
         ?string $eventType,
         array $expectedResponseData,
     ): void {
@@ -167,6 +167,52 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                 'eventReference' => md5('job_0_test.yml'),
                 'eventType' => null,
                 'expectedResponseData' => [],
+            ],
+            'no reference' => [
+                'jobsCreator' => function (string $userId) use ($ulidFactory, $requestJobLabel) {
+                    if ('' === $userId) {
+                        return [];
+                    }
+
+                    return [
+                        new Job($ulidFactory->create(), $requestJobLabel, $userId),
+                    ];
+                },
+                'eventDataCollection' => [
+                    [
+                        'jobLabel' => $requestJobLabel,
+                        'sequenceNumber' => 1,
+                        'type' => 'test/started',
+                        'label' => 'test.yml',
+                        'reference' => md5('test.yml'),
+                    ],
+                    [
+                        'jobLabel' => $requestJobLabel,
+                        'sequenceNumber' => 2,
+                        'type' => 'test/passed',
+                        'label' => 'test.yml',
+                        'reference' => md5('test.yml'),
+                    ],
+                ],
+                'jobLabel' => $requestJobLabel,
+                'eventReference' => null,
+                'eventType' => null,
+                'expectedResponseData' => [
+                    [
+                        'sequence_number' => 1,
+                        'job' => $requestJobLabel,
+                        'type' => 'test/started',
+                        'label' => 'test.yml',
+                        'reference' => md5('test.yml'),
+                    ],
+                    [
+                        'sequence_number' => 2,
+                        'job' => $requestJobLabel,
+                        'type' => 'test/passed',
+                        'label' => 'test.yml',
+                        'reference' => md5('test.yml'),
+                    ],
+                ],
             ],
             'no events for reference' => [
                 'jobsCreator' => function (string $userId) use ($ulidFactory, $requestJobLabel) {

@@ -3,11 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Job;
+use App\Entity\Reference;
 use App\EntityFactory\EventFactory;
 use App\Exception\EmptyUlidException;
 use App\Repository\EventRepository;
-use App\Repository\ReferenceRepository;
 use App\Request\AddEventRequest;
+use App\Request\ListEventsRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -57,32 +58,31 @@ class EventController
         return new JsonResponse($event);
     }
 
-    #[Route('/event/list/{label<[A-Z0-9]{26,32}>}/{reference}/{type<.+>?}', name: 'event_list', methods: ['GET'])]
-    public function list(
-        UserInterface $user,
-        ReferenceRepository $referenceRepository,
-        EventRepository $eventRepository,
-        string $reference,
-        ?Job $job,
-        ?string $type,
-    ): JsonResponse {
-        $referenceEntity = $referenceRepository->findOneBy(['reference' => $reference]);
-
-        if (null === $job || $job->userId !== $user->getUserIdentifier() || null === $referenceEntity) {
+    #[Route('/event/list/{label<[A-Z0-9]{26,32}>}', name: 'event_list', methods: ['GET'])]
+    public function list(UserInterface $user, EventRepository $repository, ListEventsRequest $request): JsonResponse
+    {
+        if (
+            null === $request->job
+            || $request->job->userId !== $user->getUserIdentifier()
+            || $request->hasReferenceFilter && null === $request->reference
+        ) {
             return new JsonResponse([]);
         }
 
         $findCriteria = [
-            'job' => $job->label,
-            'reference' => $referenceEntity,
+            'job' => $request->job->label,
         ];
 
-        if (is_string($type)) {
-            $findCriteria['type'] = $type;
+        if ($request->reference instanceof Reference) {
+            $findCriteria['reference'] = $request->reference;
+        }
+
+        if (is_string($request->type)) {
+            $findCriteria['type'] = $request->type;
         }
 
         return new JsonResponse(
-            $eventRepository->findBy($findCriteria, ['sequenceNumber' => 'ASC'])
+            $repository->findBy($findCriteria, ['sequenceNumber' => 'ASC'])
         );
     }
 
