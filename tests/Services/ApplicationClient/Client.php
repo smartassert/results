@@ -44,11 +44,12 @@ class Client
         ?string $authenticationToken,
         string $label,
         string $reference,
+        ?string $type = null,
         string $method = 'GET'
     ): ResponseInterface {
         return $this->client->makeRequest(
             $method,
-            $this->router->generate('event_list', ['label' => $label, 'reference' => $reference]),
+            $this->router->generate('event_list', ['label' => $label, 'reference' => $reference, 'type' => $type]),
             $this->createAuthorizationHeader($authenticationToken)
         );
     }
