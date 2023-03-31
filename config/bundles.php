@@ -9,4 +9,5 @@ return [
     Symfony\Bundle\SecurityBundle\SecurityBundle::class => ['all' => true],
     SmartAssert\UsersSecurityBundle\UsersSecurityBundle::class => ['all' => true],
     SmartAssert\HealthCheckBundle\HealthCheckBundle::class => ['all' => true],
+    SmartAssert\TestAuthenticationProviderBundle\TestAuthenticationProviderBundle::class => ['test' => true],
 ];
