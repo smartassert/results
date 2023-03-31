@@ -6,10 +6,9 @@ use App\Entity\Job;
 use App\EntityFactory\EventFactory;
 use App\Exception\EmptyUlidException;
 use App\Repository\EventRepository;
-use App\Repository\ReferenceRepository;
 use App\Request\AddEventRequest;
+use App\Request\ListEventsRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -59,32 +58,27 @@ class EventController
     }
 
     #[Route('/event/list/{label<[A-Z0-9]{26,32}>}', name: 'event_list', methods: ['GET'])]
-    public function list(
-        Request $request,
-        UserInterface $user,
-        ReferenceRepository $referenceRepository,
-        EventRepository $eventRepository,
-        ?Job $job,
-    ): JsonResponse {
-        $reference = (string) $request->query->get('reference');
-        $referenceEntity = $referenceRepository->findOneBy(['reference' => $reference]);
-
-        if (null === $job || $job->userId !== $user->getUserIdentifier() || null === $referenceEntity) {
+    public function list(UserInterface $user, EventRepository $repository, ListEventsRequest $request): JsonResponse
+    {
+        if (
+            null === $request->job
+            || $request->job->userId !== $user->getUserIdentifier()
+            || null === $request->reference
+        ) {
             return new JsonResponse([]);
         }
 
         $findCriteria = [
-            'job' => $job->label,
-            'reference' => $referenceEntity,
+            'job' => $request->job->label,
+            'reference' => $request->reference,
         ];
 
-        $type = $request->query->get('type');
-        if (is_string($type)) {
-            $findCriteria['type'] = $type;
+        if (is_string($request->type)) {
+            $findCriteria['type'] = $request->type;
         }
 
         return new JsonResponse(
-            $eventRepository->findBy($findCriteria, ['sequenceNumber' => 'ASC'])
+            $repository->findBy($findCriteria, ['sequenceNumber' => 'ASC'])
         );
     }
 
