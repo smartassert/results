@@ -17,22 +17,10 @@ class JobControllerTest extends WebTestCase
 {
     use MockeryPHPUnitIntegration;
 
-    private JobController $jobController;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->jobController = new JobController();
-    }
-
     public function testStatusNoJob(): void
     {
-        $response = $this->jobController->status(
-            \Mockery::mock(UserInterface::class),
-            \Mockery::mock(JobStateFactory::class),
-            null,
-        );
+        $controller = new JobController(\Mockery::mock(JobStateFactory::class));
+        $response = $controller->status(\Mockery::mock(UserInterface::class), null);
 
         self::assertSame(404, $response->getStatusCode());
     }
@@ -47,7 +35,9 @@ class JobControllerTest extends WebTestCase
             ->andReturn('user-id')
         ;
 
-        $response = $this->jobController->status($user, \Mockery::mock(JobStateFactory::class), $job);
+        $controller = new JobController(\Mockery::mock(JobStateFactory::class));
+
+        $response = $controller->status($user, $job);
 
         self::assertSame(404, $response->getStatusCode());
     }
@@ -72,7 +62,8 @@ class JobControllerTest extends WebTestCase
             ))
         ;
 
-        $response = $this->jobController->status($user, $jobStateFactory, $job);
+        $controller = new JobController($jobStateFactory);
+        $response = $controller->status($user, $job);
 
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('application/json', $response->headers->get('content-type'));
