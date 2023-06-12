@@ -4,7 +4,7 @@ namespace App\Model;
 
 use App\Enum\JobState as State;
 
-class JobState implements \JsonSerializable
+class JobState
 {
     /**
      * @param null|non-empty-string $endState
@@ -18,7 +18,7 @@ class JobState implements \JsonSerializable
     /**
      * @return array{state: non-empty-string, end_state?: non-empty-string}
      */
-    public function jsonSerialize(): array
+    public function toArray(): array
     {
         $data = [
             'state' => $this->state->value,

@@ -36,6 +36,6 @@ class JobController
             return new Response(null, 404);
         }
 
-        return new JsonResponse($jobStateFactory->create($job));
+        return new JsonResponse($jobStateFactory->create($job)->toArray());
     }
 }
