@@ -23,7 +23,7 @@ class JobController
     public function create(JobFactory $jobFactory, UserInterface $user, string $label): Response
     {
         try {
-            return new JsonResponse($jobFactory->createForUserAndJob($user, $label));
+            return new JsonResponse($jobFactory->createForUserAndJob($user, $label)->toArray());
         } catch (InvalidUserException) {
             return new JsonResponse(null, 403);
         }
