@@ -51,6 +51,6 @@ class JobStateFactory
 
         $hasJobStartedEvent = $this->eventRepository->hasForType($job, 'job/started');
 
-        return new JobState($hasJobStartedEvent ? State::STARTED : State::UNKNOWN);
+        return new JobState($hasJobStartedEvent ? State::STARTED : State::AWAITING_EVENTS);
     }
 }

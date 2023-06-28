@@ -13,5 +13,4 @@ enum JobState: string
     case EXECUTING = 'executing';
     case EXECUTED = 'executed';
     case ENDED = 'ended';
-    case UNKNOWN = 'unknown';
 }
