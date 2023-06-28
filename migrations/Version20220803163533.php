@@ -19,13 +19,12 @@ final class Version20220803163533 extends AbstractMigration
     {
         $this->addSql('
             CREATE TABLE reference (
-                id BIGSERIAL NOT NULL, 
+                id VARCHAR(32) NOT NULL, 
                 label TEXT NOT NULL, 
                 reference VARCHAR(255) NOT NULL,
-                 PRIMARY KEY(id)
+                PRIMARY KEY(id)
             )
         ');
-        $this->addSql('CREATE UNIQUE INDEX label_reference_unique ON reference (label, reference)');
     }
 
     public function down(Schema $schema): void
