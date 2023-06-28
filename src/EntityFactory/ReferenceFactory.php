@@ -18,14 +18,9 @@ class ReferenceFactory
      * @param non-empty-string $label
      * @param non-empty-string $reference
      */
-    public function create(
-        string $label,
-        string $reference,
-    ): Reference {
-        $entity = $this->repository->findOneBy([
-            'label' => $label,
-            'reference' => $reference,
-        ]);
+    public function create(string $label, string $reference): Reference
+    {
+        $entity = $this->repository->find(Reference::generateId($label, $reference));
 
         if (null === $entity) {
             $entity = new Reference($label, $reference);
