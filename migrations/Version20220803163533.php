@@ -25,7 +25,6 @@ final class Version20220803163533 extends AbstractMigration
                 PRIMARY KEY(id)
             )
         ');
-        $this->addSql('CREATE UNIQUE INDEX label_reference_unique ON reference (label, reference)');
     }
 
     public function down(Schema $schema): void
