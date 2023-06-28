@@ -19,7 +19,7 @@ final class Version20220810133835 extends AbstractMigration
         $this->addSql('
             CREATE TABLE event_reference (
                 event_id VARCHAR(32) NOT NULL, 
-                reference_id BIGINT NOT NULL, 
+                reference_id VARCHAR(32) NOT NULL, 
                 PRIMARY KEY(event_id, reference_id)
             )
         ');

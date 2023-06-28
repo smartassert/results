@@ -16,7 +16,7 @@ final class Version20220809171039 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE event ADD reference_id BIGINT NOT NULL');
+        $this->addSql('ALTER TABLE event ADD reference_id VARCHAR(32) NOT NULL');
         $this->addSql('ALTER TABLE event DROP label');
         $this->addSql('ALTER TABLE event DROP reference');
         $this->addSql('

@@ -10,6 +10,10 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\UniqueConstraint(name: 'label_reference_unique', columns: ['label', 'reference'])]
 class Reference
 {
+    #[ORM\Id]
+    #[ORM\Column(length: 32, unique: true, nullable: false)]
+    private string $id;
+
     /**
      * @var non-empty-string
      */
@@ -22,17 +26,13 @@ class Reference
     #[ORM\Column(length: 255)]
     private string $reference;
 
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'bigint')]
-    private int $id;
-
     /**
      * @param non-empty-string $label
      * @param non-empty-string $reference
      */
     public function __construct(string $label, string $reference)
     {
+        $this->id = md5($label . $reference);
         $this->label = $label;
         $this->reference = $reference;
     }
