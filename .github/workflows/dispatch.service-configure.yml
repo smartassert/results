@@ -19,6 +19,7 @@ jobs:
         run: echo "service_id=results" >> "$GITHUB_ENV"
 
   image-builder-service-configure:
+    needs: setup
     name: Dispatch service-configure event to image builder
     runs-on: ubuntu-latest
 
@@ -30,11 +31,12 @@ jobs:
           event-type: service-configure
           client-payload: |
             {
-              "service_id": "${{ env.service_id }}",
+              "service_id": "${{ needs.setup.outputs.service_id }}",
               "build_configuration": "{\"version\": \"${{ github.event.inputs.version }}\"}"
             }
 
   instance-manager-service-configure:
+    needs: setup
     name: Dispatch service-configure event to instance manager
     runs-on: ubuntu-latest
 
@@ -46,12 +48,13 @@ jobs:
           event-type: service-configure
           client-payload: |
             {
-              "service_id": "${{ env.service_id }}",
+              "service_id": "${{ needs.setup.outputs.service_id }}",
               "state_url": "http://{{ host }}/status",
               "health_check_url": "http://{{ host }}/health-check"
             }
 
   instance-manager-service-set-env:
+    needs: setup
     name: Dispatch service-set-env event to instance manager
     runs-on: ubuntu-latest
 
@@ -68,6 +71,6 @@ jobs:
           event-type: service-set-env
           client-payload: |
             {
-              "service_id": "${{ env.service_id }}",
+              "service_id": "${{ needs.setup.outputs.service_id }}",
               "env_vars": ${{ env.service_env_vars }}
             }
