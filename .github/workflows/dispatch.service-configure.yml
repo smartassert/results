@@ -19,7 +19,6 @@ jobs:
         run: echo "service_id=results" >> "$GITHUB_ENV"
 
   image-builder-service-configure:
-    needs: setup
     name: Dispatch service-configure event to image builder
     runs-on: ubuntu-latest
 
@@ -36,7 +35,6 @@ jobs:
             }
 
   instance-manager-service-configure:
-    needs: setup
     name: Dispatch service-configure event to instance manager
     runs-on: ubuntu-latest
 
@@ -54,7 +52,6 @@ jobs:
             }
 
   instance-manager-service-set-env:
-    needs: setup
     name: Dispatch service-set-env event to instance manager
     runs-on: ubuntu-latest
 
