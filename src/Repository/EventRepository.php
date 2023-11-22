@@ -79,7 +79,7 @@ class EventRepository extends ServiceEntityRepository
     {
         try {
             $result = $query->getSingleScalarResult();
-        } catch (NoResultException | NonUniqueResultException) {
+        } catch (NonUniqueResultException | NoResultException) {
             return false;
         }
 
