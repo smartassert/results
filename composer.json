@@ -33,7 +33,7 @@
         "phpstan/phpstan-phpunit": "^1.1",
         "phpstan/phpstan-symfony": "^1.1",
         "phpunit/phpunit": "^9.5",
-        "smartassert/symfony-test-client": "^1.0",
+        "smartassert/symfony-test-client": "^2.1",
         "smartassert/test-authenticaton-provider-bundle": "^3.0",
         "squizlabs/php_codesniffer": "^3.7",
         "symfony/maker-bundle": "^1.42",
