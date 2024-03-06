@@ -232,9 +232,6 @@
     "smartassert/test-authenticaton-provider-bundle": {
         "version": "0.1"
     },
-    "smartassert/users-client": {
-        "version": "0.2"
-    },
     "smartassert/users-security-bundle": {
         "version": "0.4"
     },
