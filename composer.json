@@ -12,7 +12,7 @@
         "doctrine/orm": "^2.12",
         "guzzlehttp/guzzle": "^7.4",
         "smartassert/health-check-bundle": "^6.1",
-        "smartassert/users-security-bundle": "^9.0",
+        "smartassert/users-security-bundle": "^10.0",
         "symfony/console": "7.0.*",
         "symfony/dotenv": "7.0.*",
         "symfony/flex": "^2",
