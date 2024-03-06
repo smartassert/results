@@ -82,7 +82,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
         ?string $eventType,
         array $expectedResponseData,
     ): void {
-        $jobs = $jobsCreator(self::$users->get('user@example.com')->id);
+        $jobs = $jobsCreator(self::$users->get('user@example.com')['id']);
 
         foreach ($jobs as $job) {
             $this->jobRepository->add($job);
