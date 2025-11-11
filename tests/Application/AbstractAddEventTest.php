@@ -85,8 +85,8 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                 'payload' => [
                     AddEventRequest::KEY_SEQUENCE_NUMBER => [
                         'value' => null,
-                        'message' => 'Required field "sequence_number" invalid, ' .
-                            'missing from request or not a positive integer.',
+                        'message' => 'Required field "sequence_number" invalid, '
+                            . 'missing from request or not a positive integer.',
                     ],
                 ],
             ],
@@ -183,8 +183,8 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                         'payload' => [
                             AddEventRequest::KEY_REFERENCE => [
                                 'value' => null,
-                                'message' => 'Required field "reference" invalid, ' .
-                                    'missing from request or not a string.',
+                                'message' => 'Required field "reference" invalid, '
+                                    . 'missing from request or not a string.',
                             ],
                         ],
                     ],
