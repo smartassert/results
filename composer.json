@@ -94,6 +94,7 @@
             "@test-functional"
         ],
         "db-setup": [
+            "echo \"CREATE DATABASE results;\" | docker exec -i postgres psql -h localhost -U postgres -f-",
             "php bin/console doctrine:database:create --if-not-exists",
             "php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration"
         ],
