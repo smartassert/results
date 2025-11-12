@@ -483,7 +483,8 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         );
 
         $createTokenResponseData = json_decode($createJobResponse->getBody()->getContents(), true);
-        self::assertIsArray($createTokenResponseData);
+        \assert(is_array($createTokenResponseData));
+        \assert(array_key_exists('token', $createTokenResponseData));
 
         return (string) $createTokenResponseData['token'];
     }

@@ -26,7 +26,6 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
         );
 
         $job = $jobRepository->findAll()[0];
-        self::assertInstanceOf(Job::class, $job);
 
         $response = $this->applicationClient->makeJobRequest(
             self::$apiTokens->get('user@example.com'),
