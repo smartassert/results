@@ -2,7 +2,7 @@
 
 namespace App\ObjectFactory;
 
-use App\Entity\Job;
+use App\Entity\JobInterface;
 use App\Enum\JobState as State;
 use App\Model\JobEndedEvent;
 use App\Model\JobState;
@@ -15,7 +15,7 @@ class JobStateFactory
     ) {
     }
 
-    public function create(Job $job): JobState
+    public function create(JobInterface $job): JobState
     {
         if (false === $this->eventRepository->hasForJob($job)) {
             return new JobState(State::AWAITING_EVENTS);

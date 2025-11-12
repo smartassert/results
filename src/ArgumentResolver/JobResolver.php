@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\ArgumentResolver;
 
-use App\Entity\Job;
+use App\Entity\JobInterface;
 use App\Repository\JobRepository;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,12 +23,12 @@ class JobResolver implements ValueResolverInterface
     }
 
     /**
-     * @return array<null|Job>
+     * @return array<null|JobInterface>
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         if (
-            Job::class !== $argument->getType()
+            JobInterface::class !== $argument->getType()
             || !$this->requestAttributesContainJobIdentifier($request->attributes)
         ) {
             return [];

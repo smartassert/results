@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Event;
-use App\Entity\Job;
+use App\Entity\JobInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -32,7 +32,7 @@ class EventRepository extends ServiceEntityRepository
     /**
      * @return Event[]
      */
-    public function findByType(Job $job, string $type): array
+    public function findByType(JobInterface $job, string $type): array
     {
         $queryBuilder = $this->createJobQueryBuilder($job);
         $queryBuilder = $this->addQueryBuilderTypeConstraint($queryBuilder, $type);
@@ -52,7 +52,7 @@ class EventRepository extends ServiceEntityRepository
         return $filteredResults;
     }
 
-    public function hasForType(Job $job, string $type): bool
+    public function hasForType(JobInterface $job, string $type): bool
     {
         $queryBuilder = $this->createJobQueryBuilder($job);
         $queryBuilder = $this->addQueryBuilderTypeConstraint($queryBuilder, $type);
@@ -69,7 +69,7 @@ class EventRepository extends ServiceEntityRepository
         return 0 !== $result;
     }
 
-    public function hasForJob(Job $job): bool
+    public function hasForJob(JobInterface $job): bool
     {
         $queryBuilder = $this->createJobQueryBuilder($job);
         $queryBuilder = $this->addQueryBuilderCountConstraint($queryBuilder);
@@ -112,7 +112,7 @@ class EventRepository extends ServiceEntityRepository
         return $queryBuilder;
     }
 
-    private function createJobQueryBuilder(Job $job): QueryBuilder
+    private function createJobQueryBuilder(JobInterface $job): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('Event');
         $queryBuilder

@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Job;
+use App\Entity\JobInterface;
 use App\EntityFactory\JobFactory;
 use App\Exception\EmptyUlidException;
 use App\Exception\InvalidUserException;
@@ -38,7 +38,7 @@ class JobController
     }
 
     #[Route('/job/{label<[A-Z0-9]{26,32}>}', name: 'job_status', methods: ['GET'])]
-    public function status(UserInterface $user, ?Job $job): Response
+    public function status(UserInterface $user, ?JobInterface $job): Response
     {
         if (null === $job || $job->getUserId() !== $user->getUserIdentifier()) {
             return new Response(null, 404);
