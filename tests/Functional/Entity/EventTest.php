@@ -10,6 +10,7 @@ use App\ObjectFactory\UlidFactory;
 use App\Repository\EventRepository;
 use App\Repository\ReferenceRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use webignition\ObjectReflector\ObjectReflector;
 
@@ -44,11 +45,10 @@ class EventTest extends WebTestCase
     }
 
     /**
-     * @dataProvider createDataProvider
-     *
      * @param non-empty-string $id
      * @param array<mixed>     $body
      */
+    #[DataProvider('createDataProvider')]
     public function testCreate(
         string $id,
         int $sequenceNumber,

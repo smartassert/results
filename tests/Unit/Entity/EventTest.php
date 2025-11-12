@@ -7,15 +7,15 @@ namespace App\Tests\Unit\Entity;
 use App\Entity\Event;
 use App\Entity\Reference;
 use App\ObjectFactory\UlidFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class EventTest extends TestCase
 {
     /**
-     * @dataProvider jsonSerializeDataProvider
-     *
      * @param array<mixed> $expected
      */
+    #[DataProvider('jsonSerializeDataProvider')]
     public function testJsonSerialize(Event $event, array $expected): void
     {
         self::assertEquals($expected, $event->jsonSerialize());

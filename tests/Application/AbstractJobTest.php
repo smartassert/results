@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Application;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Uid\Ulid;
 
 abstract class AbstractJobTest extends AbstractApplicationTest
 {
-    /**
-     * @dataProvider createBadMethodDataProvider
-     */
+    #[DataProvider('createBadMethodDataProvider')]
     public function testRequestBadMethod(string $method): void
     {
         $label = (string) new Ulid();
@@ -39,9 +38,7 @@ abstract class AbstractJobTest extends AbstractApplicationTest
         ];
     }
 
-    /**
-     * @dataProvider unauthorizedUserDataProvider
-     */
+    #[DataProvider('unauthorizedUserDataProvider')]
     public function testRequestUnauthorizedUser(?string $token, string $method): void
     {
         $response = $this->applicationClient->makeJobRequest($token, (string) new Ulid(), $method);

@@ -12,6 +12,7 @@ use App\Repository\JobRepository;
 use App\Repository\ReferenceRepository;
 use App\Tests\Services\EventFactory;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use webignition\ObjectReflector\ObjectReflector;
 
@@ -64,12 +65,11 @@ class EventRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider findByTypeScopeDataProvider
-     *
      * @param Event[]          $events
      * @param non-empty-string $type
      * @param string[]         $expectedEventIds
      */
+    #[DataProvider('findByTypeScopeDataProvider')]
     public function testFindByType(array $events, string $jobLabel, string $type, array $expectedEventIds): void
     {
         foreach ($events as $event) {
@@ -289,11 +289,10 @@ class EventRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider hasForTypeDataProvider
-     *
      * @param Event[]          $events
      * @param non-empty-string $type
      */
+    #[DataProvider('hasForTypeDataProvider')]
     public function testHasForType(array $events, string $jobLabel, string $type, bool $expected): void
     {
         foreach ($events as $event) {
@@ -506,10 +505,9 @@ class EventRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider hasForJobDataProvider
-     *
      * @param Event[] $events
      */
+    #[DataProvider('hasForJobDataProvider')]
     public function testHasForJob(array $events, string $jobLabel, bool $expected): void
     {
         foreach ($events as $event) {
