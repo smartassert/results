@@ -7,17 +7,11 @@ use App\Entity\Job;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Event>
- *
- * @method null|Event find($id, $lockMode = null, $lockVersion = null)
- * @method null|Event findOneBy(array $criteria, array $orderBy = null)
- * @method Event[]    findAll()
- * @method Event[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class EventRepository extends ServiceEntityRepository
 {
@@ -64,7 +58,15 @@ class EventRepository extends ServiceEntityRepository
         $queryBuilder = $this->addQueryBuilderTypeConstraint($queryBuilder, $type);
         $queryBuilder = $this->addQueryBuilderCountConstraint($queryBuilder);
 
-        return $this->resultHasIntegerScalarGreaterThanZero($queryBuilder->getQuery());
+        $query = $queryBuilder->getQuery();
+
+        try {
+            $result = $query->getSingleScalarResult();
+        } catch (NonUniqueResultException | NoResultException) {
+            return false;
+        }
+
+        return 0 !== $result;
     }
 
     public function hasForJob(Job $job): bool
@@ -72,11 +74,8 @@ class EventRepository extends ServiceEntityRepository
         $queryBuilder = $this->createJobQueryBuilder($job);
         $queryBuilder = $this->addQueryBuilderCountConstraint($queryBuilder);
 
-        return $this->resultHasIntegerScalarGreaterThanZero($queryBuilder->getQuery());
-    }
+        $query = $queryBuilder->getQuery();
 
-    private function resultHasIntegerScalarGreaterThanZero(Query $query): bool
-    {
         try {
             $result = $query->getSingleScalarResult();
         } catch (NonUniqueResultException | NoResultException) {

@@ -42,7 +42,6 @@ class EventFactory
     {
         $reflectionClass = new \ReflectionClass($event);
         $reflectionEvent = $reflectionClass->newInstanceWithoutConstructor();
-        \assert($reflectionEvent instanceof Event);
 
         $referenceProperty = $reflectionClass->getProperty('reference');
         $referenceProperty->setValue($reflectionEvent, $reference);

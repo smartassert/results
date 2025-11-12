@@ -5,3 +5,11 @@ parameters:
     - src
     - tests
   inferPrivatePropertyTypeFromConstructor: true
+  ignoreErrors:
+    -
+      message: "#Call to function assert\\(\\) with true will always evaluate to true#"
+      path: src/Entity/Job.php
+
+    -
+      message: "#Strict comparison using !== between '' and non-empty-string will always evaluate to tru#"
+      path: src/Entity/Job.php

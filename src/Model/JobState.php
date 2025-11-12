@@ -24,7 +24,7 @@ class JobState
             'state' => $this->state->value,
         ];
 
-        if (State::ENDED === $this->state && is_string($this->endState) && '' !== $this->endState) {
+        if (State::ENDED === $this->state && is_string($this->endState)) {
             $data['end_state'] = $this->endState;
         }
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Application;
 
-use App\Entity\Job;
 use App\Repository\JobRepository;
 use Symfony\Component\Uid\Ulid;
 
@@ -26,7 +25,6 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
         );
 
         $job = $jobRepository->findAll()[0];
-        self::assertInstanceOf(Job::class, $job);
 
         $response = $this->applicationClient->makeJobRequest(
             self::$apiTokens->get('user@example.com'),
