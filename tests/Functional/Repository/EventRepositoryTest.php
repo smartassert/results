@@ -92,7 +92,7 @@ class EventRepositoryTest extends WebTestCase
     /**
      * @return array<mixed>
      */
-    public function findByTypeScopeDataProvider(): array
+    public static function findByTypeScopeDataProvider(): array
     {
         return [
             'no events, wildcard type' => [
@@ -309,7 +309,7 @@ class EventRepositoryTest extends WebTestCase
     /**
      * @return array<mixed>
      */
-    public function hasForTypeDataProvider(): array
+    public static function hasForTypeDataProvider(): array
     {
         return [
             'no events, wildcard type' => [
@@ -528,7 +528,7 @@ class EventRepositoryTest extends WebTestCase
     /**
      * @return array<mixed>
      */
-    public function hasForJobDataProvider(): array
+    public static function hasForJobDataProvider(): array
     {
         $job1Events = [
             new Event(

@@ -84,14 +84,14 @@ class EventTest extends WebTestCase
     /**
      * @return array<mixed>
      */
-    public function createDataProvider(): array
+    public static function createDataProvider(): array
     {
         $ulidFactory = new UlidFactory();
 
         return [
             'null body' => [
                 'id' => $ulidFactory->create(),
-                'sequence_number' => 1,
+                'sequenceNumber' => 1,
                 'job' => md5('null body job'),
                 'type' => 'job/started',
                 'body' => null,
@@ -99,7 +99,7 @@ class EventTest extends WebTestCase
             ],
             'empty body' => [
                 'id' => $ulidFactory->create(),
-                'sequence_number' => 2,
+                'sequenceNumber' => 2,
                 'job' => md5('empty body job'),
                 'type' => 'job/started',
                 'body' => [],
@@ -107,7 +107,7 @@ class EventTest extends WebTestCase
             ],
             'non-empty body' => [
                 'id' => $ulidFactory->create(),
-                'sequence_number' => 3,
+                'sequenceNumber' => 3,
                 'job' => md5('job'),
                 'type' => 'job/finished',
                 'body' => [
