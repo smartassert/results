@@ -119,10 +119,10 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
      */
     public static function listSuccessDataProvider(): array
     {
-        $requestJobLabel = self::createJobLabel();
+        $requestJobLabel = (new UlidFactory())->create();
         $nonUserJobLabels = [
-            self::createJobLabel(),
-            self::createJobLabel(),
+            (new UlidFactory())->create(),
+            (new UlidFactory())->create(),
         ];
 
         $ulidFactory = new UlidFactory();
@@ -415,16 +415,5 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                 ],
             ],
         ];
-    }
-
-    /**
-     * @return non-empty-string
-     */
-    private static function createJobLabel(): string
-    {
-        $label = (string) new Ulid();
-        \assert('' !== $label);
-
-        return $label;
     }
 }
