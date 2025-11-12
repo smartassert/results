@@ -59,7 +59,15 @@ class EventRepository extends ServiceEntityRepository
         $queryBuilder = $this->addQueryBuilderTypeConstraint($queryBuilder, $type);
         $queryBuilder = $this->addQueryBuilderCountConstraint($queryBuilder);
 
-        return $this->resultHasIntegerScalarGreaterThanZero($queryBuilder->getQuery());
+        $query = $queryBuilder->getQuery();
+
+        try {
+            $result = $query->getSingleScalarResult();
+        } catch (NonUniqueResultException | NoResultException) {
+            return false;
+        }
+
+        return 0 !== $result;
     }
 
     public function hasForJob(Job $job): bool
@@ -67,11 +75,8 @@ class EventRepository extends ServiceEntityRepository
         $queryBuilder = $this->createJobQueryBuilder($job);
         $queryBuilder = $this->addQueryBuilderCountConstraint($queryBuilder);
 
-        return $this->resultHasIntegerScalarGreaterThanZero($queryBuilder->getQuery());
-    }
+        $query = $queryBuilder->getQuery();
 
-    private function resultHasIntegerScalarGreaterThanZero(Query $query): bool
-    {
         try {
             $result = $query->getSingleScalarResult();
         } catch (NonUniqueResultException | NoResultException) {
