@@ -13,25 +13,16 @@ class Job
 {
     public const ID_LENGTH = 32;
 
-    /**
-     * @var non-empty-string
-     */
     #[ORM\Id]
     #[ORM\Column(type: 'string', length: self::ID_LENGTH, unique: true)]
-    public readonly string $token;
+    private readonly string $token;
 
-    /**
-     * @var non-empty-string
-     */
     #[ORM\Id]
     #[ORM\Column(type: 'string', length: self::ID_LENGTH, unique: true)]
-    public readonly string $label;
+    private readonly string $label;
 
-    /**
-     * @var non-empty-string
-     */
     #[ORM\Column(type: 'string', length: 32)]
-    public readonly string $userId;
+    private readonly string $userId;
 
     /**
      * @param non-empty-string $token
@@ -46,13 +37,43 @@ class Job
     }
 
     /**
+     * @return non-empty-string
+     */
+    public function getToken(): string
+    {
+        \assert('' !== $this->token);
+
+        return $this->token;
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    public function getLabel(): string
+    {
+        \assert('' !== $this->label);
+
+        return $this->label;
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    public function getUserId(): string
+    {
+        \assert('' !== $this->userId);
+
+        return $this->userId;
+    }
+
+    /**
      * @return array{label: non-empty-string, token: non-empty-string}
      */
     public function toArray(): array
     {
         return [
-            'label' => $this->label,
-            'token' => $this->token,
+            'label' => $this->getLabel(),
+            'token' => $this->getToken(),
         ];
     }
 }

@@ -46,7 +46,7 @@ class EventController
         }
 
         $event = $eventFactory->create(
-            $job->label,
+            $job->getLabel(),
             $request->sequenceNumber,
             $request->type,
             $request->label,
@@ -63,14 +63,14 @@ class EventController
     {
         if (
             null === $request->job
-            || $request->job->userId !== $user->getUserIdentifier()
+            || $request->job->getUserId() !== $user->getUserIdentifier()
             || $request->hasReferenceFilter && null === $request->reference
         ) {
             return new JsonResponse([]);
         }
 
         $findCriteria = [
-            'job' => $request->job->label,
+            'job' => $request->job->getLabel(),
         ];
 
         if ($request->reference instanceof Reference) {

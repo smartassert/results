@@ -40,7 +40,7 @@ class JobController
     #[Route('/job/{label<[A-Z0-9]{26,32}>}', name: 'job_status', methods: ['GET'])]
     public function status(UserInterface $user, ?Job $job): Response
     {
-        if (null === $job || $job->userId !== $user->getUserIdentifier()) {
+        if (null === $job || $job->getUserId() !== $user->getUserIdentifier()) {
             return new Response(null, 404);
         }
 
