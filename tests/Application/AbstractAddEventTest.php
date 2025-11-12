@@ -34,7 +34,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
     /**
      * @return array<mixed>
      */
-    public function addBadMethodDataProvider(): array
+    public static function addBadMethodDataProvider(): array
     {
         return [
             'GET' => [
@@ -77,7 +77,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
     /**
      * @return array<mixed>
      */
-    public function addBadRequestDataProvider(): array
+    public static function addBadRequestDataProvider(): array
     {
         $expectedInvalidSequenceNumberResponseData = [
             'error' => [
@@ -222,7 +222,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
     /**
      * @return array<mixed>
      */
-    public function addSuccessDataProvider(): array
+    public static function addSuccessDataProvider(): array
     {
         $jobLabel = (string) new Ulid();
 
@@ -388,12 +388,12 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
     /**
      * @return array<mixed>
      */
-    public function addIsIdempotentDataProvider(): array
+    public static function addIsIdempotentDataProvider(): array
     {
         return [
             'type is not modified by second request' => [
                 'jobLabel' => (string) new Ulid(),
-                'sequence_number' => rand(),
+                'sequenceNumber' => rand(),
                 'firstRequestPayload' => [
                     AddEventRequest::KEY_TYPE => 'first request type',
                     AddEventRequest::KEY_LABEL => 'first request label',
@@ -413,7 +413,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             ],
             'label is not modified by second request' => [
                 'jobLabel' => (string) new Ulid(),
-                'sequence_number' => rand(),
+                'sequenceNumber' => rand(),
                 'firstRequestPayload' => [
                     AddEventRequest::KEY_TYPE => 'first request type',
                     AddEventRequest::KEY_LABEL => 'first request label',
@@ -433,7 +433,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             ],
             'reference is not modified by second request' => [
                 'jobLabel' => (string) new Ulid(),
-                'sequence_number' => rand(),
+                'sequenceNumber' => rand(),
                 'firstRequestPayload' => [
                     AddEventRequest::KEY_TYPE => 'first request type',
                     AddEventRequest::KEY_LABEL => 'first request label',
@@ -453,7 +453,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             ],
             'body is not modified by second request' => [
                 'jobLabel' => (string) new Ulid(),
-                'sequence_number' => rand(),
+                'sequenceNumber' => rand(),
                 'firstRequestPayload' => [
                     AddEventRequest::KEY_TYPE => 'first request type',
                     AddEventRequest::KEY_LABEL => 'first request label',

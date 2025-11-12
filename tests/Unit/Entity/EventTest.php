@@ -24,7 +24,7 @@ class EventTest extends TestCase
     /**
      * @return array<mixed>
      */
-    public function jsonSerializeDataProvider(): array
+    public static function jsonSerializeDataProvider(): array
     {
         $ulidFactory = new UlidFactory();
 

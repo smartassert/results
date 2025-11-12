@@ -84,7 +84,7 @@ class JobStateFactoryTest extends WebTestCase
     /**
      * @return array<mixed>
      */
-    public function createDataProvider(): array
+    public static function createDataProvider(): array
     {
         return [
             'no events' => [
@@ -93,47 +93,47 @@ class JobStateFactoryTest extends WebTestCase
                 'expected' => new JobState(JobStateEnum::AWAITING_EVENTS),
             ],
             'job/ended only, no end state' => [
-                'events' => $this->createFoo(['job/ended']),
+                'events' => self::createEvents(['job/ended']),
                 'jobLabel' => self::JOB_LABEL,
                 'expected' => new JobState(JobStateEnum::ENDED, 'unknown'),
             ],
             'job/ended only, has end state' => [
-                'events' => $this->createFoo(['job/ended:complete']),
+                'events' => self::createEvents(['job/ended:complete']),
                 'jobLabel' => self::JOB_LABEL,
                 'expected' => new JobState(JobStateEnum::ENDED, 'complete'),
             ],
             'multiple job/ended, has end state' => [
-                'events' => $this->createFoo(['job/ended:timed-out', 'job/ended:failed/compilation']),
+                'events' => self::createEvents(['job/ended:timed-out', 'job/ended:failed/compilation']),
                 'jobLabel' => self::JOB_LABEL,
                 'expected' => new JobState(JobStateEnum::ENDED, 'timed-out'),
             ],
             'job/execution/ended only' => [
-                'events' => $this->createFoo(['job/execution/ended']),
+                'events' => self::createEvents(['job/execution/ended']),
                 'jobLabel' => self::JOB_LABEL,
                 'expected' => new JobState(JobStateEnum::EXECUTED),
             ],
             'job/execution/started only' => [
-                'events' => $this->createFoo(['job/execution/started']),
+                'events' => self::createEvents(['job/execution/started']),
                 'jobLabel' => self::JOB_LABEL,
                 'expected' => new JobState(JobStateEnum::EXECUTING),
             ],
             'job/compilation/ended only' => [
-                'events' => $this->createFoo(['job/compilation/ended']),
+                'events' => self::createEvents(['job/compilation/ended']),
                 'jobLabel' => self::JOB_LABEL,
                 'expected' => new JobState(JobStateEnum::COMPILED),
             ],
             'job/compilation/started only' => [
-                'events' => $this->createFoo(['job/compilation/started']),
+                'events' => self::createEvents(['job/compilation/started']),
                 'jobLabel' => self::JOB_LABEL,
                 'expected' => new JobState(JobStateEnum::COMPILING),
             ],
             'job/started only' => [
-                'events' => $this->createFoo(['job/started']),
+                'events' => self::createEvents(['job/started']),
                 'jobLabel' => self::JOB_LABEL,
                 'expected' => new JobState(JobStateEnum::STARTED),
             ],
             'full successful event set' => [
-                'events' => $this->createFoo([
+                'events' => self::createEvents([
                     'job/started',
                     'job/compilation/started',
                     'job/compilation/ended',
@@ -145,7 +145,7 @@ class JobStateFactoryTest extends WebTestCase
                 'expected' => new JobState(JobStateEnum::ENDED, 'complete'),
             ],
             'full compilation failure event set' => [
-                'events' => $this->createFoo([
+                'events' => self::createEvents([
                     'job/started',
                     'job/compilation/started',
                     'job/compilation/failed',
@@ -155,7 +155,7 @@ class JobStateFactoryTest extends WebTestCase
                 'expected' => new JobState(JobStateEnum::ENDED, 'failed/compilation'),
             ],
             'full execution failure event set' => [
-                'events' => $this->createFoo([
+                'events' => self::createEvents([
                     'job/started',
                     'job/compilation/started',
                     'job/compilation/ended',
@@ -173,7 +173,7 @@ class JobStateFactoryTest extends WebTestCase
      *
      * @return Event[]
      */
-    private function createFoo(array $types): array
+    private static function createEvents(array $types): array
     {
         $events = [];
         $sequenceNumber = 1;

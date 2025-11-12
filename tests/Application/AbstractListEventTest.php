@@ -47,7 +47,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
     /**
      * @return array<mixed>
      */
-    public function listBadMethodDataProvider(): array
+    public static function listBadMethodDataProvider(): array
     {
         return [
             'POST' => [
@@ -119,12 +119,12 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
     /**
      * @return array<mixed>
      */
-    public function listSuccessDataProvider(): array
+    public static function listSuccessDataProvider(): array
     {
-        $requestJobLabel = $this->createJobLabel();
+        $requestJobLabel = self::createJobLabel();
         $nonUserJobLabels = [
-            $this->createJobLabel(),
-            $this->createJobLabel(),
+            self::createJobLabel(),
+            self::createJobLabel(),
         ];
 
         $ulidFactory = new UlidFactory();
@@ -422,7 +422,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
     /**
      * @return non-empty-string
      */
-    private function createJobLabel(): string
+    private static function createJobLabel(): string
     {
         $label = (string) new Ulid();
         \assert('' !== $label);
