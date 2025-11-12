@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Job;
+use App\Entity\JobInterface;
 use App\Entity\Reference;
 use App\EntityFactory\EventFactory;
 use App\Exception\EmptyUlidException;
@@ -20,7 +20,7 @@ class EventController
      * @throws EmptyUlidException
      */
     #[Route('/event/add/{token<[A-Z0-9]{26,32}>}', name: 'event_add', methods: ['POST'])]
-    public function add(EventFactory $eventFactory, AddEventRequest $request, ?Job $job): Response
+    public function add(EventFactory $eventFactory, AddEventRequest $request, ?JobInterface $job): Response
     {
         if (null === $job) {
             return new Response('', 404);

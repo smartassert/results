@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\UniqueConstraint(name: 'label_idx', columns: ['label'])]
 #[ORM\UniqueConstraint(name: 'token_idx', columns: ['token'])]
 #[ORM\Index(name: 'user_id_idx', columns: ['user_id'])]
-class Job
+class Job implements JobInterface
 {
     public const ID_LENGTH = 32;
 
