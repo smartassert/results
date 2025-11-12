@@ -50,12 +50,12 @@ class JobTest extends WebTestCase
 
         self::assertSame(1, $this->repository->count([]));
 
-        self::assertSame($jobLabel, $entity->label);
+        self::assertSame($jobLabel, $entity->getLabel());
         self::assertSame($userId, ObjectReflector::getProperty($entity, 'userId'));
 
         $this->entityManager->clear();
 
-        $retrievedEntity = $this->repository->findOneBy(['token' => $entity->token]);
+        $retrievedEntity = $this->repository->findOneBy(['token' => $entity->getToken()]);
 
         self::assertNotSame($entity, $retrievedEntity);
         self::assertEquals($entity, $retrievedEntity);

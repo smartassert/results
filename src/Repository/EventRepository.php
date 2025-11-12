@@ -118,7 +118,7 @@ class EventRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('Event');
         $queryBuilder
             ->where('Event.job = :JobLabel')
-            ->setParameter('JobLabel', $job->label)
+            ->setParameter('JobLabel', $job->getLabel())
         ;
 
         return $queryBuilder;

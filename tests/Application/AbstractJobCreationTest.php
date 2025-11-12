@@ -38,7 +38,7 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
 
         $job = $jobRepository->findOneBy(['token' => $responseData['token']]);
         self::assertInstanceOf(Job::class, $job);
-        self::assertSame($jobLabel, $job->label);
+        self::assertSame($jobLabel, $job->getLabel());
     }
 
     public function testCreateIsIdempotent(): void
