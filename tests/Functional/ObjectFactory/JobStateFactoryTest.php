@@ -15,6 +15,7 @@ use App\Repository\JobRepository;
 use App\Repository\ReferenceRepository;
 use App\Tests\Services\EventFactory;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class JobStateFactoryTest extends WebTestCase
@@ -65,10 +66,9 @@ class JobStateFactoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider createDataProvider
-     *
      * @param Event[] $events
      */
+    #[DataProvider('createDataProvider')]
     public function testCreate(array $events, string $jobLabel, JobState $expected): void
     {
         foreach ($events as $event) {

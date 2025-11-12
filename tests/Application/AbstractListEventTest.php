@@ -8,6 +8,7 @@ use App\Entity\Job;
 use App\EntityFactory\EventFactory;
 use App\ObjectFactory\UlidFactory;
 use App\Repository\JobRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Uid\Ulid;
 
 abstract class AbstractListEventTest extends AbstractApplicationTest
@@ -28,9 +29,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
         $this->eventFactory = $eventFactory;
     }
 
-    /**
-     * @dataProvider listBadMethodDataProvider
-     */
+    #[DataProvider('listBadMethodDataProvider')]
     public function testListBadMethod(string $method): void
     {
         $response = $this->applicationClient->makeEventListRequest(
@@ -63,8 +62,6 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
     }
 
     /**
-     * @dataProvider listSuccessDataProvider
-     *
      * @param array<array{
      *     jobLabel: non-empty-string,
      *     sequenceNumber: positive-int,
@@ -74,6 +71,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
      * }> $eventDataCollection
      * @param array<mixed> $expectedResponseData
      */
+    #[DataProvider('listSuccessDataProvider')]
     public function testListSuccess(
         callable $jobsCreator,
         array $eventDataCollection,

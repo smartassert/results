@@ -6,6 +6,7 @@ namespace App\Tests\Application;
 
 use App\Repository\EventRepository;
 use App\Request\AddEventRequest;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Uid\Ulid;
 
 abstract class AbstractAddEventTest extends AbstractApplicationTest
@@ -21,9 +22,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         $this->eventRepository = $eventRepository;
     }
 
-    /**
-     * @dataProvider addBadMethodDataProvider
-     */
+    #[DataProvider('addBadMethodDataProvider')]
     public function testAddBadMethod(string $method): void
     {
         $response = $this->applicationClient->makeEventAddRequest((string) new Ulid(), [], $method);
@@ -50,11 +49,10 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
     }
 
     /**
-     * @dataProvider addBadRequestDataProvider
-     *
      * @param array<string, array<mixed>|string> $requestPayload
      * @param array<mixed>                       $expectedResponseData
      */
+    #[DataProvider('addBadRequestDataProvider')]
     public function testAddBadRequest(array $requestPayload, array $expectedResponseData): void
     {
         self::assertSame(0, $this->eventRepository->count([]));
@@ -194,12 +192,11 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
     }
 
     /**
-     * @dataProvider addSuccessDataProvider
-     *
      * @param non-empty-string                   $jobLabel
      * @param array<string, array<mixed>|string> $requestPayload
      * @param array<mixed>                       $expectedSerializedEvent
      */
+    #[DataProvider('addSuccessDataProvider')]
     public function testAddSuccess(string $jobLabel, array $requestPayload, array $expectedSerializedEvent): void
     {
         $jobToken = $this->createJobToken($jobLabel);
@@ -351,8 +348,6 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
     }
 
     /**
-     * @dataProvider addIsIdempotentDataProvider
-     *
      * @param array{
      *     header: array{type: string, reference: string, label: string},
      *     body: array<mixed>
@@ -362,6 +357,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
      *     body: array<mixed>
      * } $secondRequestPayload
      */
+    #[DataProvider('addIsIdempotentDataProvider')]
     public function testAddIsIdempotent(
         string $jobLabel,
         int $sequenceNumber,
