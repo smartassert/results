@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\EntityFactory;
 
 use App\Entity\Job;
-use App\Exception\EmptyUlidException;
 use App\Exception\InvalidUserException;
 use App\ObjectFactory\UlidFactory;
 use App\Repository\JobRepository;
@@ -23,7 +22,6 @@ class JobFactory
      * @param non-empty-string $label
      *
      * @throws InvalidUserException
-     * @throws EmptyUlidException
      */
     public function createForUserAndJob(UserInterface $user, string $label): Job
     {

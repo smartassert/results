@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\EntityFactory;
 
 use App\Entity\Event;
-use App\Exception\EmptyUlidException;
 use App\ObjectFactory\UlidFactory;
 use App\Repository\EventRepository;
 
@@ -26,8 +25,6 @@ class EventFactory
      * @param non-empty-string  $label
      * @param non-empty-string  $reference
      * @param null|array<mixed> $relatedReferences
-     *
-     * @throws EmptyUlidException
      */
     public function create(
         string $jobLabel,
