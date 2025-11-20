@@ -12,8 +12,7 @@ class JobState
     public function __construct(
         public readonly State $state,
         public readonly ?string $endState = null,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array{state: non-empty-string, end_state?: non-empty-string}

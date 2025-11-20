@@ -14,8 +14,7 @@ class AddEventRequestResolver implements ValueResolverInterface
 {
     public function __construct(
         private readonly AddEventRequestFactory $addEventRequestFactory,
-    ) {
-    }
+    ) {}
 
     /**
      * @return AddEventRequest[]

@@ -15,8 +15,7 @@ class JobFactory
     public function __construct(
         private readonly JobRepository $repository,
         private readonly UlidFactory $ulidFactory,
-    ) {
-    }
+    ) {}
 
     /**
      * @param non-empty-string $label

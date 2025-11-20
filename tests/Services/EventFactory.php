@@ -15,8 +15,7 @@ class EventFactory
     public function __construct(
         private readonly ReferenceFactory $referenceFactory,
         private readonly EventRepository $eventRepository,
-    ) {
-    }
+    ) {}
 
     public function persist(Event $event): void
     {

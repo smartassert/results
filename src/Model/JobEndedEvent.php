@@ -10,8 +10,7 @@ class JobEndedEvent
 
     public function __construct(
         private readonly Event $event,
-    ) {
-    }
+    ) {}
 
     /**
      * @return non-empty-string

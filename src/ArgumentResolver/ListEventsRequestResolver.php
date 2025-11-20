@@ -16,8 +16,7 @@ class ListEventsRequestResolver implements ValueResolverInterface
     public function __construct(
         private readonly JobRepository $jobRepository,
         private readonly ReferenceRepository $referenceRepository,
-    ) {
-    }
+    ) {}
 
     /**
      * @return ListEventsRequest[]

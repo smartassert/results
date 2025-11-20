@@ -15,8 +15,7 @@ class JobController
 {
     public function __construct(
         private readonly JobStateFactory $jobStateFactory,
-    ) {
-    }
+    ) {}
 
     /**
      * @param non-empty-string $label

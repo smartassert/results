@@ -12,6 +12,5 @@ class ListEventsRequest
         public readonly ?Reference $reference,
         public readonly ?string $type,
         public readonly bool $hasReferenceFilter,
-    ) {
-    }
+    ) {}
 }

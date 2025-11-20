@@ -19,8 +19,7 @@ class JobResolver implements ValueResolverInterface
     public function __construct(
         private readonly JobRepository $jobRepository,
         private readonly array $jobIdentifiers = ['token', 'label'],
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<null|JobInterface>

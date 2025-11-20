@@ -26,6 +26,5 @@ class AddEventRequest
         public readonly ?string $reference,
         public readonly ?array $relatedReferences,
         public readonly ?array $body,
-    ) {
-    }
+    ) {}
 }
