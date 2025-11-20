@@ -12,8 +12,7 @@ class JobStateFactory
 {
     public function __construct(
         private readonly EventRepository $eventRepository,
-    ) {
-    }
+    ) {}
 
     public function create(JobInterface $job): JobState
     {

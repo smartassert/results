@@ -11,8 +11,7 @@ class ReferenceFactory
 {
     public function __construct(
         private readonly ReferenceRepository $repository,
-    ) {
-    }
+    ) {}
 
     /**
      * @param non-empty-string $label

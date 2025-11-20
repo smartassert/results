@@ -11,7 +11,7 @@ $finder = (new PhpCsFixer\Finder())
 
 return (new PhpCsFixer\Config())
     ->setRules([
-        '@PSR12' => true,
+        '@PER-CS' => true,
         '@PhpCsFixer' => true,
         'concat_space' => [
             'spacing' => 'one',
@@ -21,31 +21,6 @@ return (new PhpCsFixer\Config())
         'types_spaces' => [
             'space_multiple_catch' => 'single',
         ],
-        'blank_line_before_statement' => [
-            'statements' => [
-                'break',
-                'continue',
-                'declare',
-                'default',
-                'phpdoc',
-                'do',
-                'exit',
-                'for',
-                'goto',
-                'include',
-                'include_once',
-                'require',
-                'require_once',
-                'return',
-                'switch',
-                'throw',
-                'try',
-                'while',
-                'yield',
-                'yield_from',
-            ],
-        ],
-        'single_line_empty_body' => false,
     ])
     ->setFinder($finder)
     ;

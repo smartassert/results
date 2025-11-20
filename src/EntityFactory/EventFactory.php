@@ -14,8 +14,7 @@ class EventFactory
         private readonly EventRepository $repository,
         private readonly ReferenceFactory $referenceFactory,
         private readonly UlidFactory $ulidFactory,
-    ) {
-    }
+    ) {}
 
     /**
      * @param non-empty-string  $jobLabel
