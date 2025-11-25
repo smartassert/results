@@ -10,7 +10,7 @@
         "doctrine/doctrine-bundle": "^3",
         "doctrine/doctrine-migrations-bundle": "^3",
         "guzzlehttp/guzzle": "^7.4",
-        "smartassert/health-check-bundle": "^6.1",
+        "smartassert/health-check-bundle": "^8.1",
         "smartassert/users-security-bundle": "^11.1",
         "symfony/console": "7.3.*",
         "symfony/dotenv": "7.3.*",
