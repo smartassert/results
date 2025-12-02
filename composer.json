@@ -11,16 +11,16 @@
         "doctrine/doctrine-migrations-bundle": "^3",
         "guzzlehttp/guzzle": "^7.4",
         "smartassert/health-check-bundle": "^8.1",
-        "smartassert/users-security-bundle": "^11.1",
-        "symfony/console": "7.4.*",
-        "symfony/dotenv": "7.4.*",
+        "smartassert/users-security-bundle": "^12",
+        "symfony/console": "8.0.*",
+        "symfony/dotenv": "8.0.*",
         "symfony/flex": "^2.9",
-        "symfony/framework-bundle": "7.4.*",
-        "symfony/monolog-bundle": "^3.8",
-        "symfony/runtime": "7.4.*",
-        "symfony/security-bundle": "7.4.*",
-        "symfony/uid": "7.4.*",
-        "symfony/yaml": "7.4.*"
+        "symfony/framework-bundle": "8.0.*",
+        "symfony/monolog-bundle": "^4.0",
+        "symfony/runtime": "8.0.*",
+        "symfony/security-bundle": "8.0.*",
+        "symfony/uid": "8.0.*",
+        "symfony/yaml": "8.0.*"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.89",
@@ -34,11 +34,11 @@
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/phpstan-symfony": "^2.0",
         "phpunit/phpunit": "^12",
-        "smartassert/symfony-test-client": "^2.1",
-        "smartassert/test-authenticaton-provider-bundle": "^5.0",
+        "smartassert/symfony-test-client": "^3",
+        "smartassert/test-authenticaton-provider-bundle": "^6.0",
         "squizlabs/php_codesniffer": "^4.0",
         "symfony/maker-bundle": "^1.42",
-        "symfony/phpunit-bridge": "7.4.*",
+        "symfony/phpunit-bridge": "8.0.*",
         "webignition/object-reflector": "^1.0"
     },
     "config": {
@@ -150,7 +150,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.4.*"
+            "require": "8.0.*"
         }
     }
 }
