@@ -8,7 +8,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "doctrine/doctrine-bundle": "^3",
-        "doctrine/doctrine-migrations-bundle": "^3",
+        "doctrine/doctrine-migrations-bundle": "^4",
         "guzzlehttp/guzzle": "^7.4",
         "smartassert/health-check-bundle": "^8.1",
         "smartassert/users-security-bundle": "^12",
