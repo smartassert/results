@@ -15,12 +15,23 @@ class JobState
     ) {}
 
     /**
-     * @return array{state: non-empty-string, end_state?: non-empty-string}
+     * @return array{
+     *     'state': non-empty-string,
+     *     'end_state'?: non-empty-string,
+     *     'meta_state': array{'ended': bool, 'succeeded': bool}
+     * }
      */
     public function toArray(): array
     {
+        $hasEnded = State::ENDED === $this->state && is_string($this->endState);
+        $hasSucceed = $hasEnded && 'complete' === $this->endState;
+
         $data = [
             'state' => $this->state->value,
+            'meta_state' => [
+                'ended' => $hasEnded,
+                'succeeded' => $hasSucceed,
+            ],
         ];
 
         if (State::ENDED === $this->state && is_string($this->endState)) {

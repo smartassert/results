@@ -10,6 +10,7 @@ use App\Enum\JobState as JobStateEnum;
 use App\Model\JobState;
 use App\ObjectFactory\JobStateFactory;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -42,7 +43,11 @@ class JobControllerTest extends WebTestCase
         self::assertSame(404, $response->getStatusCode());
     }
 
-    public function testStatusSuccess(): void
+    /**
+     * @param array<mixed> $expected
+     */
+    #[DataProvider('getStatusSuccessDataProvider')]
+    public function testGetStatusSuccess(JobStateFactory $jobStateFactory, array $expected): void
     {
         $job = new Job('token', 'label', 'job-user-id');
 
@@ -50,16 +55,6 @@ class JobControllerTest extends WebTestCase
         $user
             ->shouldReceive('getUserIdentifier')
             ->andReturn('job-user-id')
-        ;
-
-        $jobStateFactory = \Mockery::mock(JobStateFactory::class);
-        $jobStateFactory
-            ->shouldReceive('create')
-            ->with($job)
-            ->andReturn(new JobState(
-                JobStateEnum::ENDED,
-                'complete'
-            ))
         ;
 
         $controller = new JobController($jobStateFactory);
@@ -70,12 +65,201 @@ class JobControllerTest extends WebTestCase
 
         $responseData = json_decode((string) $response->getContent(), true);
         self::assertIsArray($responseData);
-        self::assertSame(
-            [
-                'state' => 'ended',
-                'end_state' => 'complete',
+        self::assertSame($expected, $responseData);
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public static function getStatusSuccessDataProvider(): array
+    {
+        return [
+            'awaiting events' => [
+                'jobStateFactory' => (function () {
+                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
+                    $jobStateFactory
+                        ->shouldReceive('create')
+                        ->andReturn(new JobState(
+                            JobStateEnum::AWAITING_EVENTS,
+                        ))
+                    ;
+
+                    return $jobStateFactory;
+                })(),
+                'expected' => [
+                    'state' => 'awaiting-events',
+                    'meta_state' => [
+                        'ended' => false,
+                        'succeeded' => false,
+                    ],
+                ],
             ],
-            $responseData
-        );
+            'started' => [
+                'jobStateFactory' => (function () {
+                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
+                    $jobStateFactory
+                        ->shouldReceive('create')
+                        ->andReturn(new JobState(
+                            JobStateEnum::STARTED,
+                        ))
+                    ;
+
+                    return $jobStateFactory;
+                })(),
+                'expected' => [
+                    'state' => 'started',
+                    'meta_state' => [
+                        'ended' => false,
+                        'succeeded' => false,
+                    ],
+                ],
+            ],
+            'compiling' => [
+                'jobStateFactory' => (function () {
+                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
+                    $jobStateFactory
+                        ->shouldReceive('create')
+                        ->andReturn(new JobState(
+                            JobStateEnum::COMPILING,
+                        ))
+                    ;
+
+                    return $jobStateFactory;
+                })(),
+                'expected' => [
+                    'state' => 'compiling',
+                    'meta_state' => [
+                        'ended' => false,
+                        'succeeded' => false,
+                    ],
+                ],
+            ],
+            'compiled' => [
+                'jobStateFactory' => (function () {
+                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
+                    $jobStateFactory
+                        ->shouldReceive('create')
+                        ->andReturn(new JobState(
+                            JobStateEnum::COMPILED,
+                        ))
+                    ;
+
+                    return $jobStateFactory;
+                })(),
+                'expected' => [
+                    'state' => 'compiled',
+                    'meta_state' => [
+                        'ended' => false,
+                        'succeeded' => false,
+                    ],
+                ],
+            ],
+            'executing' => [
+                'jobStateFactory' => (function () {
+                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
+                    $jobStateFactory
+                        ->shouldReceive('create')
+                        ->andReturn(new JobState(
+                            JobStateEnum::EXECUTING,
+                        ))
+                    ;
+
+                    return $jobStateFactory;
+                })(),
+                'expected' => [
+                    'state' => 'executing',
+                    'meta_state' => [
+                        'ended' => false,
+                        'succeeded' => false,
+                    ],
+                ],
+            ],
+            'executed' => [
+                'jobStateFactory' => (function () {
+                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
+                    $jobStateFactory
+                        ->shouldReceive('create')
+                        ->andReturn(new JobState(
+                            JobStateEnum::EXECUTED,
+                        ))
+                    ;
+
+                    return $jobStateFactory;
+                })(),
+                'expected' => [
+                    'state' => 'executed',
+                    'meta_state' => [
+                        'ended' => false,
+                        'succeeded' => false,
+                    ],
+                ],
+            ],
+            'ended, complete' => [
+                'jobStateFactory' => (function () {
+                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
+                    $jobStateFactory
+                        ->shouldReceive('create')
+                        ->andReturn(new JobState(
+                            JobStateEnum::ENDED,
+                            'complete'
+                        ))
+                    ;
+
+                    return $jobStateFactory;
+                })(),
+                'expected' => [
+                    'state' => 'ended',
+                    'meta_state' => [
+                        'ended' => true,
+                        'succeeded' => true,
+                    ],
+                    'end_state' => 'complete',
+                ],
+            ],
+            'ended, timed out' => [
+                'jobStateFactory' => (function () {
+                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
+                    $jobStateFactory
+                        ->shouldReceive('create')
+                        ->andReturn(new JobState(
+                            JobStateEnum::ENDED,
+                            'timed-out'
+                        ))
+                    ;
+
+                    return $jobStateFactory;
+                })(),
+                'expected' => [
+                    'state' => 'ended',
+                    'meta_state' => [
+                        'ended' => true,
+                        'succeeded' => false,
+                    ],
+                    'end_state' => 'timed-out',
+                ],
+            ],
+            'ended, failed/test/failure' => [
+                'jobStateFactory' => (function () {
+                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
+                    $jobStateFactory
+                        ->shouldReceive('create')
+                        ->andReturn(new JobState(
+                            JobStateEnum::ENDED,
+                            'failed/test/failure'
+                        ))
+                    ;
+
+                    return $jobStateFactory;
+                })(),
+                'expected' => [
+                    'state' => 'ended',
+                    'meta_state' => [
+                        'ended' => true,
+                        'succeeded' => false,
+                    ],
+                    'end_state' => 'failed/test/failure',
+                ],
+            ],
+        ];
     }
 }
