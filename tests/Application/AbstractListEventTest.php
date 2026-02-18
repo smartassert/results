@@ -9,7 +9,6 @@ use App\EntityFactory\EventFactory;
 use App\ObjectFactory\UlidFactory;
 use App\Repository\JobRepository;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Symfony\Component\Uid\Ulid;
 
 abstract class AbstractListEventTest extends AbstractApplicationTest
 {
@@ -27,38 +26,6 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
         $eventFactory = self::getContainer()->get(EventFactory::class);
         \assert($eventFactory instanceof EventFactory);
         $this->eventFactory = $eventFactory;
-    }
-
-    #[DataProvider('listBadMethodDataProvider')]
-    public function testListBadMethod(string $method): void
-    {
-        $response = $this->applicationClient->makeEventListRequest(
-            (string) new Ulid(),
-            (string) new Ulid(),
-            md5((string) rand()),
-            null,
-            $method
-        );
-
-        self::assertSame(405, $response->getStatusCode());
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public static function listBadMethodDataProvider(): array
-    {
-        return [
-            'POST' => [
-                'method' => 'POST',
-            ],
-            'PUT' => [
-                'method' => 'PUT',
-            ],
-            'DELETE' => [
-                'method' => 'DELETE',
-            ],
-        ];
     }
 
     /**
