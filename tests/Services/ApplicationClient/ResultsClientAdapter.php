@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Services\ApplicationClient;
 
-use GuzzleHttp\Psr7\Response as GuzzleResponse;
-use Psr\Http\Message\ResponseInterface as Response;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 use SmartAssert\ResultsClient\Client as ResultsClient;
 use SmartAssert\ResultsClient\Model\Event;
 use SmartAssert\ResultsClient\Model\EventInterface;
@@ -22,8 +22,12 @@ readonly class ResultsClientAdapter implements ClientInterface
         private HttpResponseFactory $httpResponseFactory,
     ) {}
 
-    public function makeRequest(string $method, string $uri, array $headers = [], ?string $body = null): Response
-    {
+    public function makeRequest(
+        string $method,
+        string $uri,
+        array $headers = [],
+        ?string $body = null
+    ): ResponseInterface {
         if ('POST' === $method && str_starts_with($uri, '/job/')) {
             try {
                 $resultsClientResponse = $this->resultsClient->createJob(
@@ -31,7 +35,7 @@ readonly class ResultsClientAdapter implements ClientInterface
                     $this->getJobLabelFromUri($uri),
                 );
             } catch (UnauthorizedException) {
-                return new GuzzleResponse(401);
+                return new Response(401);
             }
 
             return $this->httpResponseFactory->createJobResponse($resultsClientResponse);
@@ -44,7 +48,7 @@ readonly class ResultsClientAdapter implements ClientInterface
                     $this->getJobLabelFromUri($uri),
                 );
             } catch (UnauthorizedException) {
-                return new GuzzleResponse(401);
+                return new Response(401);
             }
 
             return $this->httpResponseFactory->createJobStatusResponse($resultsClientResponse);
@@ -60,7 +64,7 @@ readonly class ResultsClientAdapter implements ClientInterface
                     $event,
                 );
             } catch (UnauthorizedException) {
-                return new GuzzleResponse(401);
+                return new Response(401);
             }
 
             $bodyData = json_decode((string) $body, true);
@@ -80,13 +84,13 @@ readonly class ResultsClientAdapter implements ClientInterface
                     $this->getValueFromUri('type', $uri),
                 );
             } catch (UnauthorizedException) {
-                return new GuzzleResponse(401);
+                return new Response(401);
             }
 
             return $this->httpResponseFactory->createEventListResponse($resultsClientResponse);
         }
 
-        return new GuzzleResponse(404);
+        return new Response(404);
     }
 
     /**
