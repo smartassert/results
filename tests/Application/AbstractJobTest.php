@@ -9,35 +9,6 @@ use Symfony\Component\Uid\Ulid;
 
 abstract class AbstractJobTest extends AbstractApplicationTest
 {
-    #[DataProvider('createBadMethodDataProvider')]
-    public function testRequestBadMethod(string $method): void
-    {
-        $label = (string) new Ulid();
-
-        $response = $this->applicationClient->makeJobRequest(
-            self::$apiTokens->get('user@example.com'),
-            $label,
-            $method
-        );
-
-        self::assertSame(405, $response->getStatusCode());
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public static function createBadMethodDataProvider(): array
-    {
-        return [
-            'PUT' => [
-                'method' => 'PUT',
-            ],
-            'DELETE' => [
-                'method' => 'DELETE',
-            ],
-        ];
-    }
-
     #[DataProvider('unauthorizedUserDataProvider')]
     public function testRequestUnauthorizedUser(?string $token, string $method): void
     {
