@@ -8,5 +8,5 @@ use App\Tests\Application\AbstractAddEventBadRequestTest;
 
 class AddEventBadRequestTest extends AbstractAddEventBadRequestTest
 {
-    use GetClientAdapterTrait;
+    use GetHttpAdapter;
 }

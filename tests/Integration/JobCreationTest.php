@@ -8,5 +8,5 @@ use App\Tests\Application\AbstractJobCreationTest;
 
 class JobCreationTest extends AbstractJobCreationTest
 {
-    use GetClientAdapterTrait;
+    use GetResultsClientAdapterTrait;
 }

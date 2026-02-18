@@ -7,7 +7,7 @@ namespace App\Tests\Integration;
 use SmartAssert\SymfonyTestClient\ClientInterface;
 use SmartAssert\SymfonyTestClient\HttpClient;
 
-trait GetClientAdapterTrait
+trait GetHttpAdapter
 {
     protected function getClientAdapter(): ClientInterface
     {
