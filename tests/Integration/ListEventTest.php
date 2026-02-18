@@ -8,5 +8,5 @@ use App\Tests\Application\AbstractListEventTest;
 
 class ListEventTest extends AbstractListEventTest
 {
-    use GetClientAdapterTrait;
+    use GetResultsClientAdapterTrait;
 }

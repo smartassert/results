@@ -8,5 +8,5 @@ use App\Tests\Application\AbstractHealthCheckTest;
 
 class HealthCheckTest extends AbstractHealthCheckTest
 {
-    use GetClientAdapterTrait;
+    use GetHttpAdapter;
 }
