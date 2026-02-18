@@ -28,66 +28,55 @@ readonly class ResultsClientAdapter implements ClientInterface
         array $headers = [],
         ?string $body = null
     ): ResponseInterface {
-        if ('POST' === $method && str_starts_with($uri, '/job/')) {
-            try {
-                $resultsClientResponse = $this->resultsClient->createJob(
-                    $this->getAuthenticationTokenFromHeaders($headers),
-                    $this->getJobLabelFromUri($uri),
+        try {
+            if ('POST' === $method && str_starts_with($uri, '/job/')) {
+                return $this->httpResponseFactory->createJobResponse(
+                    $this->resultsClient->createJob(
+                        $this->getAuthenticationTokenFromHeaders($headers),
+                        $this->getJobLabelFromUri($uri),
+                    )
                 );
-            } catch (UnauthorizedException) {
-                return new Response(401);
             }
 
-            return $this->httpResponseFactory->createJobResponse($resultsClientResponse);
-        }
-
-        if ('GET' === $method && str_starts_with($uri, '/job/')) {
-            try {
-                $resultsClientResponse = $this->resultsClient->getJobStatus(
-                    $this->getAuthenticationTokenFromHeaders($headers),
-                    $this->getJobLabelFromUri($uri),
+            if ('GET' === $method && str_starts_with($uri, '/job/')) {
+                return $this->httpResponseFactory->createJobStatusResponse(
+                    $this->resultsClient->getJobStatus(
+                        $this->getAuthenticationTokenFromHeaders($headers),
+                        $this->getJobLabelFromUri($uri),
+                    )
                 );
-            } catch (UnauthorizedException) {
-                return new Response(401);
             }
 
-            return $this->httpResponseFactory->createJobStatusResponse($resultsClientResponse);
-        }
+            if ('POST' === $method && str_starts_with($uri, '/event/add/')) {
+                $event = $this->createEventFromJsonBody((string) $body);
+                \assert($event instanceof EventInterface);
 
-        if ('POST' === $method && str_starts_with($uri, '/event/add/')) {
-            $event = $this->createEventFromJsonBody((string) $body);
-            \assert($event instanceof EventInterface);
+                $bodyData = json_decode((string) $body, true);
+                $bodyData = is_array($bodyData) ? $bodyData : [];
+                $bodyValue = $bodyData['body'] ?? null;
+                $hasBodyValue = null !== $bodyValue;
 
-            try {
-                $resultsClientResponse = $this->resultsClient->addEvent(
-                    $this->getJobLabelFromUri($uri),
-                    $event,
+                return $this->httpResponseFactory->createEventResponse(
+                    $this->resultsClient->addEvent(
+                        $this->getJobLabelFromUri($uri),
+                        $event,
+                    ),
+                    $hasBodyValue
                 );
-            } catch (UnauthorizedException) {
-                return new Response(401);
             }
 
-            $bodyData = json_decode((string) $body, true);
-            $bodyData = is_array($bodyData) ? $bodyData : [];
-            $bodyValue = $bodyData['body'] ?? null;
-            $hasBodyValue = null !== $bodyValue;
-
-            return $this->httpResponseFactory->createEventResponse($resultsClientResponse, $hasBodyValue);
-        }
-
-        if ('GET' === $method && str_starts_with($uri, '/event/list/')) {
-            try {
-                $resultsClientResponse = $this->resultsClient->listEvents(
-                    $this->getAuthenticationTokenFromHeaders($headers),
-                    $this->getJobLabelFromUri($uri),
-                    $this->getValueFromUri('reference', $uri),
-                    $this->getValueFromUri('type', $uri),
+            if ('GET' === $method && str_starts_with($uri, '/event/list/')) {
+                return $this->httpResponseFactory->createEventListResponse(
+                    $this->resultsClient->listEvents(
+                        $this->getAuthenticationTokenFromHeaders($headers),
+                        $this->getJobLabelFromUri($uri),
+                        $this->getValueFromUri('reference', $uri),
+                        $this->getValueFromUri('type', $uri),
+                    )
                 );
-            } catch (UnauthorizedException) {
-                return new Response(401);
             }
-
-            return $this->httpResponseFactory->createEventListResponse($resultsClientResponse);
+        } catch (UnauthorizedException) {
+            return new Response(401);
         }
 
         return new Response(404);
