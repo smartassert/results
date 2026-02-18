@@ -1,0 +1,45 @@
+parameters:
+    users_base_url: 'http://localhost:9080'
+#    test_authentication_provider_bundle_frontend_token_provider_users:
+#        'user@example.com': 'password'
+#    test_authentication_provider_bundle_users_url: 'http://localhost:9080'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    SmartAssert\TestAuthenticationProviderBundle\FrontendTokenProvider:
+        public: true
+        arguments:
+            $baseUrl: '%users_base_url%'
+            $userCredentials:
+                'user@example.com': 'password'
+
+    SmartAssert\TestAuthenticationProviderBundle\ApiKeyProvider:
+        public: true
+        arguments:
+            $baseUrl: '%users_base_url%'
+
+    SmartAssert\TestAuthenticationProviderBundle\ApiTokenProvider:
+        public: true
+        arguments:
+            $baseUrl: '%users_base_url%'
+
+    SmartAssert\ResultsClient\ResourceReferenceFactory: ~
+
+    SmartAssert\ResultsClient\EventFactory: ~
+
+    SmartAssert\ServiceClient\ExceptionFactory\CurlExceptionFactory: ~
+
+    SmartAssert\ServiceClient\ResponseFactory\ResponseFactory:
+        factory: ['SmartAssert\ServiceClient\ResponseFactory\ResponseFactory', 'createFactory']
+
+    SmartAssert\ServiceClient\Client:
+        arguments:
+            $httpClient: '@app.tests.integration.http.client'
+
+    SmartAssert\ResultsClient\Client:
+        public: true
+        arguments:
+            $baseUrl: "https://localhost/"
