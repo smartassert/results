@@ -57,7 +57,7 @@ readonly class ResultsClientAdapter implements ClientInterface
                 $hasBodyValue = null !== $bodyValue;
 
                 return $this->httpResponseFactory->createEventResponse(
-                    $this->resultsClient->addEvent(
+                    $this->resultsClient->addAndGetEvent(
                         $this->getJobLabelFromUri($uri),
                         $event,
                     ),
