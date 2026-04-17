@@ -28,16 +28,12 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
      * @param array<mixed>                       $expectedSerializedEvent
      */
     #[DataProvider('addSuccessDataProvider')]
-    public function testAddSuccess(
-        string $jobLabel,
-        array $requestPayload,
-        array $expectedSerializedEvent
-    ): void {
-        $jobToken = $this->createJobToken($jobLabel);
-
+    public function testAddSuccess(string $jobLabel, array $requestPayload, array $expectedSerializedEvent): void
+    {
         self::assertSame(0, $this->eventRepository->count([]));
 
-        $response = $this->applicationClient->makeEventAddRequest($jobToken, $requestPayload);
+        $addEventUrl = $this->createJobAddEventUrl($jobLabel);
+        $response = $this->applicationClient->makeEventAddRequest($addEventUrl, $requestPayload);
 
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('application/json', $response->getHeaderLine('content-type'));
@@ -203,18 +199,17 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         array $firstRequestPayload,
         array $secondRequestPayload
     ): void {
-        $jobToken = $this->createJobToken($jobLabel);
-
         self::assertSame(0, $this->eventRepository->count([]));
 
+        $addEventUrl = $this->createJobAddEventUrl($jobLabel);
         $firstRequestPayload[AddEventRequest::KEY_SEQUENCE_NUMBER] = $sequenceNumber;
 
-        $firstResponse = $this->applicationClient->makeEventAddRequest($jobToken, $firstRequestPayload);
+        $firstResponse = $this->applicationClient->makeEventAddRequest($addEventUrl, $firstRequestPayload);
         self::assertSame(1, $this->eventRepository->count([]));
 
         $secondRequestPayload[AddEventRequest::KEY_SEQUENCE_NUMBER] = $sequenceNumber;
 
-        $secondResponse = $this->applicationClient->makeEventAddRequest($jobToken, $secondRequestPayload);
+        $secondResponse = $this->applicationClient->makeEventAddRequest($addEventUrl, $secondRequestPayload);
         self::assertSame(1, $this->eventRepository->count([]));
 
         self::assertSame($firstResponse->getBody()->getContents(), $secondResponse->getBody()->getContents());
@@ -309,7 +304,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         ];
     }
 
-    private function createJobToken(string $jobLabel): string
+    private function createJobAddEventUrl(string $jobLabel): string
     {
         $createJobResponse = $this->applicationClient->makeJobRequest(
             self::$apiTokens->get('user@example.com'),
@@ -317,10 +312,10 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             'POST'
         );
 
-        $createTokenResponseData = json_decode($createJobResponse->getBody()->getContents(), true);
-        \assert(is_array($createTokenResponseData));
-        \assert(array_key_exists('token', $createTokenResponseData));
+        $responseData = json_decode($createJobResponse->getBody()->getContents(), true);
+        \assert(is_array($responseData));
+        \assert(array_key_exists('event_add_url', $responseData));
 
-        return (string) $createTokenResponseData['token'];
+        return (string) $responseData['event_add_url'];
     }
 }
