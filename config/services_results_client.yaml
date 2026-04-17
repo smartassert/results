@@ -40,3 +40,7 @@ services:
         public: true
         arguments:
             $baseUrl: "https://localhost/"
+
+    App\Tests\Services\ApplicationClient\HttpResponseFactory: ~
+    App\Tests\Services\ApplicationClient\ResultsClientAdapter:
+        public: true
