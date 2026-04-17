@@ -65,15 +65,4 @@ class Job implements JobInterface
 
         return $this->userId;
     }
-
-    /**
-     * @return array{label: non-empty-string, token: non-empty-string}
-     */
-    public function toArray(): array
-    {
-        return [
-            'label' => $this->getLabel(),
-            'token' => $this->getToken(),
-        ];
-    }
 }
