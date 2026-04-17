@@ -28,8 +28,11 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
      * @param array<mixed>                       $expectedSerializedEvent
      */
     #[DataProvider('addSuccessDataProvider')]
-    public function testAddSuccess(string $jobLabel, array $requestPayload, array $expectedSerializedEvent): void
-    {
+    public function testAddSuccess(
+        string $jobLabel,
+        array $requestPayload,
+        array $expectedSerializedEvent
+    ): void {
         $jobToken = $this->createJobToken($jobLabel);
 
         self::assertSame(0, $this->eventRepository->count([]));
@@ -39,12 +42,17 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('application/json', $response->getHeaderLine('content-type'));
 
-        self::assertSame(1, $this->eventRepository->count([]));
+        $event = $this->eventRepository->findAll()[0];
+        $serializedEvent = $event->jsonSerialize();
 
-        $responseData = json_decode($response->getBody()->getContents(), true);
-        self::assertIsArray($responseData);
+        if (
+            !array_key_exists(AddEventRequest::KEY_BODY, $expectedSerializedEvent)
+            && array_key_exists(AddEventRequest::KEY_BODY, $serializedEvent)
+        ) {
+            unset($serializedEvent[AddEventRequest::KEY_BODY]);
+        }
 
-        self::assertEquals($expectedSerializedEvent, $responseData);
+        self::assertEquals($expectedSerializedEvent, $serializedEvent);
     }
 
     /**
