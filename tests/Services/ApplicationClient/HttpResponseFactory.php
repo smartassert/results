@@ -50,22 +50,6 @@ class HttpResponseFactory
         );
     }
 
-    public function createEventResponse(EventInterface $event, bool $hasBodyValue): ResponseInterface
-    {
-        $data = $event->toArray();
-        if ([] === $data['body'] && false === $hasBodyValue) {
-            unset($data['body']);
-        }
-
-        return new Response(
-            200,
-            [
-                'content-type' => 'application/json',
-            ],
-            (string) json_encode($data),
-        );
-    }
-
     /**
      * @param EventInterface[] $events
      */
@@ -86,6 +70,16 @@ class HttpResponseFactory
                 'content-type' => 'application/json',
             ],
             (string) json_encode($data),
+        );
+    }
+
+    public function createSuccessResponse(): ResponseInterface
+    {
+        return new Response(
+            200,
+            [
+                'content-type' => 'application/json',
+            ]
         );
     }
 }
