@@ -42,3 +42,7 @@ services:
 
     Psr\Http\Message\StreamFactoryInterface:
         alias: GuzzleHttp\Psr7\HttpFactory
+
+    App\ObjectFactory\JobFactory:
+        arguments:
+            $selfUrl: '%env(string:SELF_URL)%'

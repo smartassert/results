@@ -49,11 +49,11 @@ readonly class ResultsClientAdapter implements ClientInterface
                 );
             }
 
-            if ('POST' === $method && str_starts_with($uri, '/event/add/')) {
+            if ('POST' === $method && str_contains($uri, '/event/add/')) {
                 $event = $this->createEventFromJsonBody((string) $body);
                 \assert($event instanceof EventInterface);
 
-                $this->addEventClient->add('https://localhost/event/add/' . $this->getJobLabelFromUri($uri), $event);
+                $this->addEventClient->add($uri, $event);
 
                 return $this->httpResponseFactory->createSuccessResponse();
             }
