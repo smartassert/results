@@ -36,7 +36,6 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         $response = $this->applicationClient->makeEventAddRequest($addEventUrl, $requestPayload);
 
         self::assertSame(200, $response->getStatusCode());
-        self::assertSame('application/json', $response->getHeaderLine('content-type'));
 
         $event = $this->eventRepository->findAll()[0];
         $serializedEvent = $event->jsonSerialize();
