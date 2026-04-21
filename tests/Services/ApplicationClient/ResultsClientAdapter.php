@@ -53,7 +53,7 @@ readonly class ResultsClientAdapter implements ClientInterface
                 $event = $this->createEventFromJsonBody((string) $body);
                 \assert($event instanceof EventInterface);
 
-                $this->addEventClient->add('https://localhost/', $this->getJobLabelFromUri($uri), $event);
+                $this->addEventClient->add('https://localhost/event/add/' . $this->getJobLabelFromUri($uri), $event);
 
                 return $this->httpResponseFactory->createSuccessResponse();
             }
