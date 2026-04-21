@@ -6,6 +6,7 @@ namespace App\Tests\Services\ApplicationClient;
 
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
+use SmartAssert\ResultsClient\AddEventClient;
 use SmartAssert\ResultsClient\Client as ResultsClient;
 use SmartAssert\ResultsClient\Model\Event;
 use SmartAssert\ResultsClient\Model\EventInterface;
@@ -19,6 +20,7 @@ readonly class ResultsClientAdapter implements ClientInterface
 {
     public function __construct(
         private ResultsClient $resultsClient,
+        private AddEventClient $addEventClient,
         private HttpResponseFactory $httpResponseFactory,
     ) {}
 
@@ -51,18 +53,9 @@ readonly class ResultsClientAdapter implements ClientInterface
                 $event = $this->createEventFromJsonBody((string) $body);
                 \assert($event instanceof EventInterface);
 
-                $bodyData = json_decode((string) $body, true);
-                $bodyData = is_array($bodyData) ? $bodyData : [];
-                $bodyValue = $bodyData['body'] ?? null;
-                $hasBodyValue = null !== $bodyValue;
+                $this->addEventClient->add('https://localhost/', $this->getJobLabelFromUri($uri), $event);
 
-                return $this->httpResponseFactory->createEventResponse(
-                    $this->resultsClient->addAndGetEvent(
-                        $this->getJobLabelFromUri($uri),
-                        $event,
-                    ),
-                    $hasBodyValue
-                );
+                return $this->httpResponseFactory->createSuccessResponse();
             }
 
             if ('GET' === $method && str_starts_with($uri, '/event/list/')) {
