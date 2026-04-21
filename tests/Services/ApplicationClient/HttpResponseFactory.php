@@ -21,7 +21,7 @@ class HttpResponseFactory
             ],
             (string) json_encode([
                 'label' => $job->label,
-                'event_add_url' => '/event/add/' . $job->token,
+                'event_add_url' => '/event/add/' . $job->authenticator,
                 'state' => $job->state,
                 'meta_state' => [
                     'ended' => false,
