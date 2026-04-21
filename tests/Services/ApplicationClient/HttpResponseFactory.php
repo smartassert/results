@@ -21,11 +21,11 @@ class HttpResponseFactory
             ],
             (string) json_encode([
                 'label' => $job->label,
-                'event_add_url' => '/event/add/' . $job->authenticator,
-                'state' => $job->state,
+                'event_add_url' => $job->authenticator,
+                'state' => $job->state->state,
                 'meta_state' => [
-                    'ended' => false,
-                    'succeeded' => false,
+                    'ended' => $job->state->metaState->ended,
+                    'succeeded' => $job->state->metaState->succeeded,
                 ],
             ]),
         );
