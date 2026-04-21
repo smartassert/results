@@ -41,7 +41,7 @@ class EventController
             return $this->createInvalidAddEventRequestFieldResponse(AddEventRequest::KEY_REFERENCE, 'a string');
         }
 
-        $event = $eventFactory->create(
+        $eventFactory->create(
             $job->getLabel(),
             $request->sequenceNumber,
             $request->type,
@@ -51,7 +51,7 @@ class EventController
             $request->relatedReferences,
         );
 
-        return new JsonResponse($event);
+        return new Response();
     }
 
     #[Route('/event/list/{label<[A-Z0-9]{26,32}>}', name: 'event_list', methods: ['GET'])]
