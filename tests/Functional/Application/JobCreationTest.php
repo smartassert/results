@@ -9,4 +9,9 @@ use App\Tests\Application\AbstractJobCreationTest;
 class JobCreationTest extends AbstractJobCreationTest
 {
     use GetClientAdapterTrait;
+
+    protected function getSelfUrl(): string
+    {
+        return 'https://results.example.com';
+    }
 }

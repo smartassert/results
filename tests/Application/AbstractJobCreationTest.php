@@ -41,7 +41,7 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
         self::assertEquals(
             [
                 'label' => $jobLabel,
-                'event_add_url' => '/event/add/' . $job->getToken(),
+                'event_add_url' => $this->getSelfUrl() . '/event/add/' . $job->getToken(),
                 'state' => 'awaiting-events',
                 'meta_state' => [
                     'ended' => false,
@@ -75,4 +75,6 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
         );
         self::assertSame(1, $jobRepository->count([]));
     }
+
+    abstract protected function getSelfUrl(): string;
 }
