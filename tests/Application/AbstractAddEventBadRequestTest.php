@@ -31,9 +31,9 @@ abstract class AbstractAddEventBadRequestTest extends AbstractApplicationTest
     {
         self::assertSame(0, $this->eventRepository->count([]));
 
-        $jobToken = $this->createJobToken((string) new Ulid());
+        $addEventUrl = $this->createJobAddEventUrl((string) new Ulid());
 
-        $response = $this->applicationClient->makeEventAddRequest($jobToken, $requestPayload);
+        $response = $this->applicationClient->makeEventAddRequest($addEventUrl, $requestPayload);
 
         self::assertSame(0, $this->eventRepository->count([]));
 
@@ -165,7 +165,7 @@ abstract class AbstractAddEventBadRequestTest extends AbstractApplicationTest
         ];
     }
 
-    private function createJobToken(string $jobLabel): string
+    private function createJobAddEventUrl(string $jobLabel): string
     {
         $createJobResponse = $this->applicationClient->makeJobRequest(
             self::$apiTokens->get('user@example.com'),
@@ -173,10 +173,10 @@ abstract class AbstractAddEventBadRequestTest extends AbstractApplicationTest
             'POST'
         );
 
-        $createTokenResponseData = json_decode($createJobResponse->getBody()->getContents(), true);
-        \assert(is_array($createTokenResponseData));
-        \assert(array_key_exists('token', $createTokenResponseData));
+        $responseData = json_decode($createJobResponse->getBody()->getContents(), true);
+        \assert(is_array($responseData));
+        \assert(array_key_exists('event_add_url', $responseData));
 
-        return (string) $createTokenResponseData['token'];
+        return (string) $responseData['event_add_url'];
     }
 }

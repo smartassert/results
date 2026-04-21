@@ -34,11 +34,22 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
         self::assertIsArray($responseData);
         self::assertArrayHasKey('label', $responseData);
         self::assertSame($jobLabel, $responseData['label']);
-        self::assertArrayHasKey('token', $responseData);
 
-        $job = $jobRepository->findOneBy(['token' => $responseData['token']]);
+        $job = $jobRepository->findOneBy(['label' => $responseData['label']]);
         self::assertInstanceOf(Job::class, $job);
-        self::assertSame($jobLabel, $job->getLabel());
+
+        self::assertEquals(
+            [
+                'label' => $jobLabel,
+                'event_add_url' => '/event/add/' . $job->getToken(),
+                'state' => 'awaiting-events',
+                'meta_state' => [
+                    'ended' => false,
+                    'succeeded' => false,
+                ],
+            ],
+            $responseData,
+        );
     }
 
     public function testCreateIsIdempotent(): void

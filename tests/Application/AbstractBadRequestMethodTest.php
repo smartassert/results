@@ -41,7 +41,11 @@ abstract class AbstractBadRequestMethodTest extends AbstractApplicationTest
     #[DataProvider('addEventBadMethodDataProvider')]
     public function testAddEventBadMethod(string $method): void
     {
-        $response = $this->applicationClient->makeEventAddRequest((string) new Ulid(), [], $method);
+        $response = $this->applicationClient->makeEventAddRequest(
+            '/event/add/' . new Ulid(),
+            [],
+            $method
+        );
 
         self::assertSame(405, $response->getStatusCode());
     }

@@ -7,13 +7,12 @@ use App\Enum\JobState as State;
 readonly class Job implements \JsonSerializable
 {
     /**
-     * @param non-empty-string      $token
      * @param non-empty-string      $label
      * @param null|non-empty-string $endState
      */
     public function __construct(
         private string $label,
-        private string $token,
+        private string $eventAddUrl,
         private State $state,
         private ?string $endState = null,
     ) {}
@@ -21,7 +20,7 @@ readonly class Job implements \JsonSerializable
     /**
      * @return array{
      *     label: non-empty-string,
-     *     token: non-empty-string,
+     *     event_add_url: string,
      *     state: non-empty-string,
      *     end_state?: non-empty-string,
      *     meta_state: array{
@@ -37,7 +36,7 @@ readonly class Job implements \JsonSerializable
 
         $data = [
             'label' => $this->label,
-            'token' => $this->token,
+            'event_add_url' => $this->eventAddUrl,
             'state' => $this->state->value,
             'meta_state' => [
                 'ended' => $hasEnded,
