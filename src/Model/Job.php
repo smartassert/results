@@ -24,6 +24,7 @@ readonly class Job implements \JsonSerializable
      *     state: non-empty-string,
      *     end_state?: non-empty-string,
      *     meta_state: array{
+     *       pending: bool,
      *       ended: bool,
      *       succeeded: bool
      *     }
