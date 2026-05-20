@@ -24,6 +24,7 @@ readonly class Job implements \JsonSerializable
      *     state: non-empty-string,
      *     end_state?: non-empty-string,
      *     meta_state: array{
+     *       pending: bool,
      *       ended: bool,
      *       succeeded: bool
      *     }
@@ -39,6 +40,7 @@ readonly class Job implements \JsonSerializable
             'event_add_url' => $this->eventAddUrl,
             'state' => $this->state->value,
             'meta_state' => [
+                'pending' => State::AWAITING_EVENTS === $this->state,
                 'ended' => $hasEnded,
                 'succeeded' => $hasSucceed,
             ],
