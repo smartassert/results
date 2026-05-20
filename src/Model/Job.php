@@ -44,7 +44,7 @@ readonly class Job implements \JsonSerializable
             ],
         ];
 
-        if ($hasEnded && is_string($this->endState)) {
+        if ($hasEnded) {
             $data['end_state'] = $this->endState;
         }
 
