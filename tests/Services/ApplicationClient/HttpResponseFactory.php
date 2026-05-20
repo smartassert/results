@@ -24,6 +24,7 @@ class HttpResponseFactory
                 'event_add_url' => $job->authenticator,
                 'state' => $job->state->state,
                 'meta_state' => [
+                    'pending' => $job->state->metaState->pending,
                     'ended' => $job->state->metaState->ended,
                     'succeeded' => $job->state->metaState->succeeded,
                 ],
@@ -36,6 +37,7 @@ class HttpResponseFactory
         $responseData = [
             'state' => $jobState->state,
             'meta_state' => [
+                'pending' => $jobState->metaState->pending,
                 'ended' => $jobState->metaState->ended,
                 'succeeded' => $jobState->metaState->succeeded,
             ],
