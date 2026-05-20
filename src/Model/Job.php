@@ -39,6 +39,7 @@ readonly class Job implements \JsonSerializable
             'event_add_url' => $this->eventAddUrl,
             'state' => $this->state->value,
             'meta_state' => [
+                'pending' => State::AWAITING_EVENTS === $this->state,
                 'ended' => $hasEnded,
                 'succeeded' => $hasSucceed,
             ],
