@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Controller;
 
 use App\Controller\JobController;
-use App\Entity\Job;
+use App\Entity\Job as JobEntity;
+use App\Entity\JobInterface;
 use App\Enum\JobState as JobStateEnum;
-use App\Model\JobState;
-use App\ObjectFactory\JobStateFactory;
+use App\Model\Job as JobModel;
+use App\ObjectFactory\JobFactoryInterface as JobModelFactory;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -21,7 +22,7 @@ class JobControllerTest extends WebTestCase
     public function testStatusNoJob(): void
     {
         $response = new JobController()->status(
-            \Mockery::mock(JobStateFactory::class),
+            \Mockery::mock(JobModelFactory::class),
             \Mockery::mock(UserInterface::class),
             null
         );
@@ -31,7 +32,7 @@ class JobControllerTest extends WebTestCase
 
     public function testStatusInvalidUser(): void
     {
-        $job = new Job('token', 'label', 'job-user-id');
+        $job = new JobEntity('token', 'label', 'job-user-id');
 
         $user = \Mockery::mock(UserInterface::class);
         $user
@@ -39,18 +40,19 @@ class JobControllerTest extends WebTestCase
             ->andReturn('user-id')
         ;
 
-        $response = new JobController()->status(\Mockery::mock(JobStateFactory::class), $user, $job);
+        $response = new JobController()->status(\Mockery::mock(JobModelFactory::class), $user, $job);
 
         self::assertSame(404, $response->getStatusCode());
     }
 
     /**
-     * @param array<mixed> $expected
+     * @param callable(JobInterface): JobModelFactory $jobModelFactoryCreator
+     * @param callable(JobInterface): array<mixed>    $expectedCreator
      */
     #[DataProvider('getStatusSuccessDataProvider')]
-    public function testGetStatusSuccess(JobStateFactory $jobStateFactory, array $expected): void
+    public function testGetStatusSuccess(callable $jobModelFactoryCreator, callable $expectedCreator): void
     {
-        $job = new Job('token', 'label', 'job-user-id');
+        $job = new JobEntity('token', 'label', 'job-user-id');
 
         $user = \Mockery::mock(UserInterface::class);
         $user
@@ -58,14 +60,16 @@ class JobControllerTest extends WebTestCase
             ->andReturn('job-user-id')
         ;
 
-        $response = new JobController()->status($jobStateFactory, $user, $job);
+        $jobModelFactory = $jobModelFactoryCreator($job);
+
+        $response = new JobController()->status($jobModelFactory, $user, $job);
 
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('application/json', $response->headers->get('content-type'));
 
         $responseData = json_decode((string) $response->getContent(), true);
         self::assertIsArray($responseData);
-        self::assertSame($expected, $responseData);
+        self::assertEquals($expectedCreator($job), $responseData);
     }
 
     /**
@@ -75,196 +79,271 @@ class JobControllerTest extends WebTestCase
     {
         return [
             'awaiting events' => [
-                'jobStateFactory' => (function () {
-                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
-                    $jobStateFactory
+                'jobModelFactoryCreator' => function (JobInterface $job) {
+                    $jobModelFactory = \Mockery::mock(JobModelFactory::class);
+                    $jobModelFactory
                         ->shouldReceive('create')
-                        ->andReturn(new JobState(
-                            JobStateEnum::AWAITING_EVENTS,
-                        ))
+                        ->andReturn(
+                            new JobModel(
+                                $job->getLabel(),
+                                '/event/add/token',
+                                JobStateEnum::AWAITING_EVENTS,
+                            )
+                        )
                     ;
 
-                    return $jobStateFactory;
-                })(),
-                'expected' => [
-                    'state' => 'awaiting-events',
-                    'meta_state' => [
-                        'ended' => false,
-                        'succeeded' => false,
-                    ],
-                ],
+                    return $jobModelFactory;
+                },
+                'expectedCreator' => function (JobInterface $job) {
+                    return [
+                        'label' => $job->getLabel(),
+                        'event_add_url' => '/event/add/token',
+                        'state' => 'awaiting-events',
+                        'meta_state' => [
+                            'pending' => true,
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
+                    ];
+                },
             ],
             'started' => [
-                'jobStateFactory' => (function () {
-                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
-                    $jobStateFactory
+                'jobModelFactoryCreator' => function (JobInterface $job) {
+                    $jobModelFactory = \Mockery::mock(JobModelFactory::class);
+                    $jobModelFactory
                         ->shouldReceive('create')
-                        ->andReturn(new JobState(
-                            JobStateEnum::STARTED,
-                        ))
+                        ->andReturn(
+                            new JobModel(
+                                $job->getLabel(),
+                                '/event/add/token',
+                                JobStateEnum::STARTED,
+                            )
+                        )
                     ;
 
-                    return $jobStateFactory;
-                })(),
-                'expected' => [
-                    'state' => 'started',
-                    'meta_state' => [
-                        'ended' => false,
-                        'succeeded' => false,
-                    ],
-                ],
+                    return $jobModelFactory;
+                },
+                'expectedCreator' => function (JobInterface $job) {
+                    return [
+                        'label' => $job->getLabel(),
+                        'event_add_url' => '/event/add/token',
+                        'state' => 'started',
+                        'meta_state' => [
+                            'pending' => false,
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
+                    ];
+                },
             ],
             'compiling' => [
-                'jobStateFactory' => (function () {
-                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
-                    $jobStateFactory
+                'jobModelFactoryCreator' => function (JobInterface $job) {
+                    $jobModelFactory = \Mockery::mock(JobModelFactory::class);
+                    $jobModelFactory
                         ->shouldReceive('create')
-                        ->andReturn(new JobState(
-                            JobStateEnum::COMPILING,
-                        ))
+                        ->andReturn(
+                            new JobModel(
+                                $job->getLabel(),
+                                '/event/add/token',
+                                JobStateEnum::COMPILING,
+                            )
+                        )
                     ;
 
-                    return $jobStateFactory;
-                })(),
-                'expected' => [
-                    'state' => 'compiling',
-                    'meta_state' => [
-                        'ended' => false,
-                        'succeeded' => false,
-                    ],
-                ],
+                    return $jobModelFactory;
+                },
+                'expectedCreator' => function (JobInterface $job) {
+                    return [
+                        'label' => $job->getLabel(),
+                        'event_add_url' => '/event/add/token',
+                        'state' => 'compiling',
+                        'meta_state' => [
+                            'pending' => false,
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
+                    ];
+                },
             ],
             'compiled' => [
-                'jobStateFactory' => (function () {
-                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
-                    $jobStateFactory
+                'jobModelFactoryCreator' => function (JobInterface $job) {
+                    $jobModelFactory = \Mockery::mock(JobModelFactory::class);
+                    $jobModelFactory
                         ->shouldReceive('create')
-                        ->andReturn(new JobState(
-                            JobStateEnum::COMPILED,
-                        ))
+                        ->andReturn(
+                            new JobModel(
+                                $job->getLabel(),
+                                '/event/add/token',
+                                JobStateEnum::COMPILED,
+                            )
+                        )
                     ;
 
-                    return $jobStateFactory;
-                })(),
-                'expected' => [
-                    'state' => 'compiled',
-                    'meta_state' => [
-                        'ended' => false,
-                        'succeeded' => false,
-                    ],
-                ],
+                    return $jobModelFactory;
+                },
+                'expectedCreator' => function (JobInterface $job) {
+                    return [
+                        'label' => $job->getLabel(),
+                        'event_add_url' => '/event/add/token',
+                        'state' => 'compiled',
+                        'meta_state' => [
+                            'pending' => false,
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
+                    ];
+                },
             ],
             'executing' => [
-                'jobStateFactory' => (function () {
-                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
-                    $jobStateFactory
+                'jobModelFactoryCreator' => function (JobInterface $job) {
+                    $jobModelFactory = \Mockery::mock(JobModelFactory::class);
+                    $jobModelFactory
                         ->shouldReceive('create')
-                        ->andReturn(new JobState(
-                            JobStateEnum::EXECUTING,
-                        ))
+                        ->andReturn(
+                            new JobModel(
+                                $job->getLabel(),
+                                '/event/add/token',
+                                JobStateEnum::EXECUTING,
+                            )
+                        )
                     ;
 
-                    return $jobStateFactory;
-                })(),
-                'expected' => [
-                    'state' => 'executing',
-                    'meta_state' => [
-                        'ended' => false,
-                        'succeeded' => false,
-                    ],
-                ],
+                    return $jobModelFactory;
+                },
+                'expectedCreator' => function (JobInterface $job) {
+                    return [
+                        'label' => $job->getLabel(),
+                        'event_add_url' => '/event/add/token',
+                        'state' => 'executing',
+                        'meta_state' => [
+                            'pending' => false,
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
+                    ];
+                },
             ],
             'executed' => [
-                'jobStateFactory' => (function () {
-                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
-                    $jobStateFactory
+                'jobModelFactoryCreator' => function (JobInterface $job) {
+                    $jobModelFactory = \Mockery::mock(JobModelFactory::class);
+                    $jobModelFactory
                         ->shouldReceive('create')
-                        ->andReturn(new JobState(
-                            JobStateEnum::EXECUTED,
-                        ))
+                        ->andReturn(
+                            new JobModel(
+                                $job->getLabel(),
+                                '/event/add/token',
+                                JobStateEnum::EXECUTED,
+                            )
+                        )
                     ;
 
-                    return $jobStateFactory;
-                })(),
-                'expected' => [
-                    'state' => 'executed',
-                    'meta_state' => [
-                        'ended' => false,
-                        'succeeded' => false,
-                    ],
-                ],
+                    return $jobModelFactory;
+                },
+                'expectedCreator' => function (JobInterface $job) {
+                    return [
+                        'label' => $job->getLabel(),
+                        'event_add_url' => '/event/add/token',
+                        'state' => 'executed',
+                        'meta_state' => [
+                            'pending' => false,
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
+                    ];
+                },
             ],
             'ended, complete' => [
-                'jobStateFactory' => (function () {
-                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
-                    $jobStateFactory
+                'jobModelFactoryCreator' => function (JobInterface $job) {
+                    $jobModelFactory = \Mockery::mock(JobModelFactory::class);
+                    $jobModelFactory
                         ->shouldReceive('create')
-                        ->andReturn((function () {
-                            $jobState = new JobState(JobStateEnum::ENDED);
-                            $jobState->setEndState('complete');
-
-                            return $jobState;
-                        })())
+                        ->andReturn(
+                            new JobModel(
+                                $job->getLabel(),
+                                '/event/add/token',
+                                JobStateEnum::ENDED,
+                                'complete',
+                            )
+                        )
                     ;
 
-                    return $jobStateFactory;
-                })(),
-                'expected' => [
-                    'state' => 'ended',
-                    'meta_state' => [
-                        'ended' => true,
-                        'succeeded' => true,
-                    ],
-                    'end_state' => 'complete',
-                ],
+                    return $jobModelFactory;
+                },
+                'expectedCreator' => function (JobInterface $job) {
+                    return [
+                        'label' => $job->getLabel(),
+                        'event_add_url' => '/event/add/token',
+                        'state' => 'ended',
+                        'end_state' => 'complete',
+                        'meta_state' => [
+                            'pending' => false,
+                            'ended' => true,
+                            'succeeded' => true,
+                        ],
+                    ];
+                },
             ],
             'ended, timed out' => [
-                'jobStateFactory' => (function () {
-                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
-                    $jobStateFactory
+                'jobModelFactoryCreator' => function (JobInterface $job) {
+                    $jobModelFactory = \Mockery::mock(JobModelFactory::class);
+                    $jobModelFactory
                         ->shouldReceive('create')
-                        ->andReturn((function () {
-                            $jobState = new JobState(JobStateEnum::ENDED);
-                            $jobState->setEndState('timed-out');
-
-                            return $jobState;
-                        })())
+                        ->andReturn(
+                            new JobModel(
+                                $job->getLabel(),
+                                '/event/add/token',
+                                JobStateEnum::ENDED,
+                                'timed-out',
+                            )
+                        )
                     ;
 
-                    return $jobStateFactory;
-                })(),
-                'expected' => [
-                    'state' => 'ended',
-                    'meta_state' => [
-                        'ended' => true,
-                        'succeeded' => false,
-                    ],
-                    'end_state' => 'timed-out',
-                ],
+                    return $jobModelFactory;
+                },
+                'expectedCreator' => function (JobInterface $job) {
+                    return [
+                        'label' => $job->getLabel(),
+                        'event_add_url' => '/event/add/token',
+                        'state' => 'ended',
+                        'end_state' => 'timed-out',
+                        'meta_state' => [
+                            'pending' => false,
+                            'ended' => true,
+                            'succeeded' => false,
+                        ],
+                    ];
+                },
             ],
             'ended, failed/test/failure' => [
-                'jobStateFactory' => (function () {
-                    $jobStateFactory = \Mockery::mock(JobStateFactory::class);
-                    $jobStateFactory
+                'jobModelFactoryCreator' => function (JobInterface $job) {
+                    $jobModelFactory = \Mockery::mock(JobModelFactory::class);
+                    $jobModelFactory
                         ->shouldReceive('create')
-                        ->andReturn((function () {
-                            $jobState = new JobState(JobStateEnum::ENDED);
-                            $jobState->setEndState('failed/test/failure');
-
-                            return $jobState;
-                        })())
+                        ->andReturn(
+                            new JobModel(
+                                $job->getLabel(),
+                                '/event/add/token',
+                                JobStateEnum::ENDED,
+                                'failed/test/failure'
+                            )
+                        )
                     ;
 
-                    return $jobStateFactory;
-                })(),
-                'expected' => [
-                    'state' => 'ended',
-                    'meta_state' => [
-                        'ended' => true,
-                        'succeeded' => false,
-                    ],
-                    'end_state' => 'failed/test/failure',
-                ],
+                    return $jobModelFactory;
+                },
+                'expectedCreator' => function (JobInterface $job) {
+                    return [
+                        'label' => $job->getLabel(),
+                        'event_add_url' => '/event/add/token',
+                        'state' => 'ended',
+                        'end_state' => 'failed/test/failure',
+                        'meta_state' => [
+                            'pending' => false,
+                            'ended' => true,
+                            'succeeded' => false,
+                        ],
+                    ];
+                },
             ],
         ];
     }

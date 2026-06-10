@@ -6,7 +6,6 @@ use App\Entity\JobInterface;
 use App\EntityFactory\JobFactory as JobEntityFactory;
 use App\Exception\InvalidUserException;
 use App\ObjectFactory\JobFactoryInterface as JobModelFactory;
-use App\ObjectFactory\JobStateFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -35,12 +34,12 @@ class JobController
     }
 
     #[Route(name: 'status', methods: ['GET'])]
-    public function status(JobStateFactory $jobStateFactory, UserInterface $user, ?JobInterface $job): Response
+    public function status(JobModelFactory $jobModelFactory, UserInterface $user, ?JobInterface $job): Response
     {
         if (null === $job || $job->getUserId() !== $user->getUserIdentifier()) {
             return new Response(null, 404);
         }
 
-        return new JsonResponse($jobStateFactory->create($job));
+        return new JsonResponse($jobModelFactory->create($job));
     }
 }
