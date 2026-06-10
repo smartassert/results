@@ -12,12 +12,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+#[Route('/job/{label<[A-Z0-9]{26,32}>}', name: 'job_')]
 class JobController
 {
     /**
      * @param non-empty-string $label
      */
-    #[Route('/job/{label<[A-Z0-9]{26,32}>}', name: 'job_create', methods: ['POST'])]
+    #[Route(name: 'create', methods: ['POST'])]
     public function create(
         JobEntityFactory $jobEntityFactory,
         JobModelFactory $jobModelFactory,
@@ -33,7 +34,7 @@ class JobController
         }
     }
 
-    #[Route('/job/{label<[A-Z0-9]{26,32}>}', name: 'job_status', methods: ['GET'])]
+    #[Route(name: 'status', methods: ['GET'])]
     public function status(JobStateFactory $jobStateFactory, UserInterface $user, ?JobInterface $job): Response
     {
         if (null === $job || $job->getUserId() !== $user->getUserIdentifier()) {
