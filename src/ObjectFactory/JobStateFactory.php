@@ -25,7 +25,10 @@ class JobStateFactory
         if ([] !== $jobEndedEvents) {
             $jobEndedEvent = new JobEndedEvent($jobEndedEvents[0]);
 
-            return new JobState(State::ENDED, $jobEndedEvent->getEndState());
+            $jobState = new JobState(State::ENDED);
+            $jobState->setEndState($jobEndedEvent->getEndState());
+
+            return $jobState;
         }
 
         $hasExecutionEndedEvent = $this->eventRepository->hasForType($job, 'job/execution/ended');
