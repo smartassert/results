@@ -4,15 +4,28 @@ namespace App\Model;
 
 use App\Enum\JobState as State;
 
-class JobState implements \JsonSerializable
+readonly class JobState implements \JsonSerializable
 {
     /**
      * @param null|non-empty-string $endState
      */
     public function __construct(
-        public readonly State $state,
-        public readonly ?string $endState = null,
+        private State $state,
+        private ?string $endState = null,
     ) {}
+
+    public function getState(): State
+    {
+        return $this->state;
+    }
+
+    /**
+     * @return ?non-empty-string
+     */
+    public function getEndState(): ?string
+    {
+        return $this->endState;
+    }
 
     /**
      * @return array{
