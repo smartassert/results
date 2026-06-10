@@ -8,7 +8,6 @@ use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use SmartAssert\ResultsClient\Model\EventInterface;
 use SmartAssert\ResultsClient\Model\Job;
-use SmartAssert\ResultsClient\Model\JobState;
 
 class HttpResponseFactory
 {
@@ -29,30 +28,6 @@ class HttpResponseFactory
                     'succeeded' => $job->state->metaState->succeeded,
                 ],
             ]),
-        );
-    }
-
-    public function createJobStatusResponse(JobState $jobState): ResponseInterface
-    {
-        $responseData = [
-            'state' => $jobState->state,
-            'meta_state' => [
-                'pending' => $jobState->metaState->pending,
-                'ended' => $jobState->metaState->ended,
-                'succeeded' => $jobState->metaState->succeeded,
-            ],
-        ];
-
-        if ($jobState->hasEndState()) {
-            $responseData['end_state'] = $jobState->endState;
-        }
-
-        return new Response(
-            200,
-            [
-                'content-type' => 'application/json',
-            ],
-            (string) json_encode($responseData),
         );
     }
 
