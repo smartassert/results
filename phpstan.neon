@@ -15,5 +15,5 @@ parameters:
       path: src/Entity/Job.php
 
     -
-      message: "#Parameter .+1 .+criteria#"
+      message: "#.*::findBy#"
       path: src/Controller/EventController.php
