@@ -41,7 +41,7 @@ readonly class ResultsClientAdapter implements ClientInterface
             }
 
             if ('GET' === $method && str_starts_with($uri, '/job/')) {
-                return $this->httpResponseFactory->createJobStatusResponse(
+                return $this->httpResponseFactory->createJobResponse(
                     $this->resultsClient->getJobStatus(
                         $this->getAuthenticationTokenFromHeaders($headers),
                         $this->getJobLabelFromUri($uri),
