@@ -33,8 +33,8 @@ class JobController
         }
     }
 
-    #[Route(name: 'status', methods: ['GET'])]
-    public function status(JobModelFactory $jobModelFactory, UserInterface $user, ?JobInterface $job): Response
+    #[Route(name: 'get', methods: ['GET'])]
+    public function get(JobModelFactory $jobModelFactory, UserInterface $user, ?JobInterface $job): Response
     {
         if (null === $job || $job->getUserId() !== $user->getUserIdentifier()) {
             return new Response(null, 404);

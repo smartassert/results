@@ -21,7 +21,7 @@ class JobControllerTest extends WebTestCase
 
     public function testStatusNoJob(): void
     {
-        $response = new JobController()->status(
+        $response = new JobController()->get(
             \Mockery::mock(JobModelFactory::class),
             \Mockery::mock(UserInterface::class),
             null
@@ -40,7 +40,7 @@ class JobControllerTest extends WebTestCase
             ->andReturn('user-id')
         ;
 
-        $response = new JobController()->status(\Mockery::mock(JobModelFactory::class), $user, $job);
+        $response = new JobController()->get(\Mockery::mock(JobModelFactory::class), $user, $job);
 
         self::assertSame(404, $response->getStatusCode());
     }
@@ -62,7 +62,7 @@ class JobControllerTest extends WebTestCase
 
         $jobModelFactory = $jobModelFactoryCreator($job);
 
-        $response = new JobController()->status($jobModelFactory, $user, $job);
+        $response = new JobController()->get($jobModelFactory, $user, $job);
 
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('application/json', $response->headers->get('content-type'));
