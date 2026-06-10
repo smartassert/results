@@ -20,6 +20,6 @@ readonly class JobFactory
         $relativeUrl = $this->router->generate('event_add', ['token' => $job->getToken()]);
         $eventAddUrl = rtrim($this->selfUrl, '/') . $relativeUrl;
 
-        return new Job($job->getLabel(), $eventAddUrl, $jobState->state, $jobState->endState);
+        return new Job($job->getLabel(), $eventAddUrl, $jobState->getState(), $jobState->getEndState());
     }
 }
