@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\JobInterface;
 use App\EntityFactory\JobFactory as JobEntityFactory;
 use App\Exception\InvalidUserException;
-use App\ObjectFactory\JobFactory as JobModelFactory;
+use App\ObjectFactory\JobFactoryInterface as JobModelFactory;
 use App\ObjectFactory\JobStateFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
