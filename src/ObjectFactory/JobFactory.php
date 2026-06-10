@@ -6,7 +6,7 @@ use App\Entity\JobInterface;
 use App\Model\Job;
 use Symfony\Component\Routing\RouterInterface;
 
-readonly class JobFactory
+readonly class JobFactory implements JobFactoryInterface
 {
     public function __construct(
         private JobStateFactory $jobStateFactory,
