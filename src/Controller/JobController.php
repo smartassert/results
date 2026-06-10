@@ -28,9 +28,9 @@ readonly class JobController
         string $label
     ): Response {
         try {
-            $jobEntity = $jobEntityFactory->createForUserAndJob($user, $label);
-
-            return new JsonResponse($this->jobModelFactory->create($jobEntity));
+            return $this->createJobResponse(
+                $jobEntityFactory->createForUserAndJob($user, $label)
+            );
         } catch (InvalidUserException) {
             return new JsonResponse(null, 403);
         }
@@ -43,6 +43,11 @@ readonly class JobController
             return new Response(null, 404);
         }
 
+        return $this->createJobResponse($job);
+    }
+
+    private function createJobResponse(JobInterface $job): Response
+    {
         return new JsonResponse($this->jobModelFactory->create($job));
     }
 }
