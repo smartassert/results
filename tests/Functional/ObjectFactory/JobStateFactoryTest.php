@@ -95,17 +95,32 @@ class JobStateFactoryTest extends WebTestCase
             'job/ended only, no end state' => [
                 'events' => self::createEvents(['job/ended']),
                 'jobLabel' => self::JOB_LABEL,
-                'expected' => new JobState(JobStateEnum::ENDED, 'unknown'),
+                'expected' => (function () {
+                    $jobState = new JobState(JobStateEnum::ENDED);
+                    $jobState->setEndState('unknown');
+
+                    return $jobState;
+                })(),
             ],
             'job/ended only, has end state' => [
                 'events' => self::createEvents(['job/ended:complete']),
                 'jobLabel' => self::JOB_LABEL,
-                'expected' => new JobState(JobStateEnum::ENDED, 'complete'),
+                'expected' => (function () {
+                    $jobState = new JobState(JobStateEnum::ENDED);
+                    $jobState->setEndState('complete');
+
+                    return $jobState;
+                })(),
             ],
             'multiple job/ended, has end state' => [
                 'events' => self::createEvents(['job/ended:timed-out', 'job/ended:failed/compilation']),
                 'jobLabel' => self::JOB_LABEL,
-                'expected' => new JobState(JobStateEnum::ENDED, 'timed-out'),
+                'expected' => (function () {
+                    $jobState = new JobState(JobStateEnum::ENDED);
+                    $jobState->setEndState('timed-out');
+
+                    return $jobState;
+                })(),
             ],
             'job/execution/ended only' => [
                 'events' => self::createEvents(['job/execution/ended']),
@@ -142,7 +157,12 @@ class JobStateFactoryTest extends WebTestCase
                     'job/ended:complete',
                 ]),
                 'jobLabel' => self::JOB_LABEL,
-                'expected' => new JobState(JobStateEnum::ENDED, 'complete'),
+                'expected' => (function () {
+                    $jobState = new JobState(JobStateEnum::ENDED);
+                    $jobState->setEndState('complete');
+
+                    return $jobState;
+                })(),
             ],
             'full compilation failure event set' => [
                 'events' => self::createEvents([
@@ -152,7 +172,12 @@ class JobStateFactoryTest extends WebTestCase
                     'job/ended:failed/compilation',
                 ]),
                 'jobLabel' => self::JOB_LABEL,
-                'expected' => new JobState(JobStateEnum::ENDED, 'failed/compilation'),
+                'expected' => (function () {
+                    $jobState = new JobState(JobStateEnum::ENDED);
+                    $jobState->setEndState('failed/compilation');
+
+                    return $jobState;
+                })(),
             ],
             'full execution failure event set' => [
                 'events' => self::createEvents([
@@ -163,7 +188,12 @@ class JobStateFactoryTest extends WebTestCase
                     'job/ended:failed/execution',
                 ]),
                 'jobLabel' => self::JOB_LABEL,
-                'expected' => new JobState(JobStateEnum::ENDED, 'failed/execution'),
+                'expected' => (function () {
+                    $jobState = new JobState(JobStateEnum::ENDED);
+                    $jobState->setEndState('failed/execution');
+
+                    return $jobState;
+                })(),
             ],
         ];
     }

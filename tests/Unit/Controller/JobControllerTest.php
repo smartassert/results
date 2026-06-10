@@ -199,10 +199,12 @@ class JobControllerTest extends WebTestCase
                     $jobStateFactory = \Mockery::mock(JobStateFactory::class);
                     $jobStateFactory
                         ->shouldReceive('create')
-                        ->andReturn(new JobState(
-                            JobStateEnum::ENDED,
-                            'complete'
-                        ))
+                        ->andReturn((function () {
+                            $jobState = new JobState(JobStateEnum::ENDED);
+                            $jobState->setEndState('complete');
+
+                            return $jobState;
+                        })())
                     ;
 
                     return $jobStateFactory;
@@ -221,10 +223,12 @@ class JobControllerTest extends WebTestCase
                     $jobStateFactory = \Mockery::mock(JobStateFactory::class);
                     $jobStateFactory
                         ->shouldReceive('create')
-                        ->andReturn(new JobState(
-                            JobStateEnum::ENDED,
-                            'timed-out'
-                        ))
+                        ->andReturn((function () {
+                            $jobState = new JobState(JobStateEnum::ENDED);
+                            $jobState->setEndState('timed-out');
+
+                            return $jobState;
+                        })())
                     ;
 
                     return $jobStateFactory;
@@ -243,10 +247,12 @@ class JobControllerTest extends WebTestCase
                     $jobStateFactory = \Mockery::mock(JobStateFactory::class);
                     $jobStateFactory
                         ->shouldReceive('create')
-                        ->andReturn(new JobState(
-                            JobStateEnum::ENDED,
-                            'failed/test/failure'
-                        ))
+                        ->andReturn((function () {
+                            $jobState = new JobState(JobStateEnum::ENDED);
+                            $jobState->setEndState('failed/test/failure');
+
+                            return $jobState;
+                        })())
                     ;
 
                     return $jobStateFactory;
