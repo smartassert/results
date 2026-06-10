@@ -13,3 +13,7 @@ parameters:
     -
       message: "#Strict comparison using !== between '' and non-empty-string will always evaluate to tru#"
       path: src/Entity/Job.php
+
+    -
+      message: "#Parameter .+1 .+criteria of method .*::findBy\\(\\)#"
+      path: src/Controller/EventController.php
