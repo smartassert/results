@@ -4,18 +4,32 @@ namespace App\Model;
 
 use App\Enum\JobState as State;
 
-readonly class Job implements \JsonSerializable
+class Job implements \JsonSerializable
 {
     /**
-     * @param non-empty-string      $label
-     * @param null|non-empty-string $endState
+     * @var non-empty-string
+     */
+    private string $endState;
+
+    /**
+     * @param non-empty-string $label
      */
     public function __construct(
-        private string $label,
-        private string $eventAddUrl,
-        private State $state,
-        private ?string $endState = null,
+        private readonly string $label,
+        private readonly string $eventAddUrl,
+        private readonly State $state,
     ) {}
+
+    /**
+     * @param non-empty-string $endState
+     */
+    public function withEndState(string $endState): self
+    {
+        $new = clone $this;
+        $new->endState = $endState;
+
+        return $new;
+    }
 
     /**
      * @return array{
@@ -32,7 +46,7 @@ readonly class Job implements \JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        $hasEnded = State::ENDED === $this->state && is_string($this->endState);
+        $hasEnded = State::ENDED === $this->state && isset($this->endState);
         $hasSucceed = $hasEnded && 'complete' === $this->endState;
 
         $data = [

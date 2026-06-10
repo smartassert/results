@@ -20,6 +20,13 @@ readonly class JobFactory implements JobFactoryInterface
         $relativeUrl = $this->router->generate('event_add', ['token' => $job->getToken()]);
         $eventAddUrl = rtrim($this->selfUrl, '/') . $relativeUrl;
 
-        return new Job($job->getLabel(), $eventAddUrl, $jobState->getState(), $jobState->getEndState());
+        $job = new Job($job->getLabel(), $eventAddUrl, $jobState->getState());
+
+        $endState = $jobState->getEndState();
+        if (null !== $endState) {
+            $job = $job->withEndState($endState);
+        }
+
+        return $job;
     }
 }

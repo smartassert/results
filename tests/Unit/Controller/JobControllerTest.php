@@ -263,8 +263,7 @@ class JobControllerTest extends WebTestCase
                                 $job->getLabel(),
                                 '/event/add/token',
                                 JobStateEnum::ENDED,
-                                'complete',
-                            )
+                            )->withEndState('complete')
                         )
                     ;
 
@@ -294,8 +293,7 @@ class JobControllerTest extends WebTestCase
                                 $job->getLabel(),
                                 '/event/add/token',
                                 JobStateEnum::ENDED,
-                                'timed-out',
-                            )
+                            )->withEndState('timed-out')
                         )
                     ;
 
@@ -325,8 +323,7 @@ class JobControllerTest extends WebTestCase
                                 $job->getLabel(),
                                 '/event/add/token',
                                 JobStateEnum::ENDED,
-                                'failed/test/failure'
-                            )
+                            )->withEndState('failed/test/failure')
                         )
                     ;
 
