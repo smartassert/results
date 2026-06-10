@@ -89,6 +89,7 @@ class JobControllerTest extends WebTestCase
                                 $job->getLabel(),
                                 '/event/add/token',
                                 JobStateEnum::AWAITING_EVENTS,
+                                false,
                             )
                         )
                     ;
@@ -100,6 +101,7 @@ class JobControllerTest extends WebTestCase
                         'label' => $job->getLabel(),
                         'event_add_url' => '/event/add/token',
                         'state' => 'awaiting-events',
+                        'has_events' => false,
                         'meta_state' => [
                             'pending' => true,
                             'ended' => false,
@@ -118,6 +120,7 @@ class JobControllerTest extends WebTestCase
                                 $job->getLabel(),
                                 '/event/add/token',
                                 JobStateEnum::STARTED,
+                                true,
                             )
                         )
                     ;
@@ -129,6 +132,7 @@ class JobControllerTest extends WebTestCase
                         'label' => $job->getLabel(),
                         'event_add_url' => '/event/add/token',
                         'state' => 'started',
+                        'has_events' => true,
                         'meta_state' => [
                             'pending' => false,
                             'ended' => false,
@@ -147,6 +151,7 @@ class JobControllerTest extends WebTestCase
                                 $job->getLabel(),
                                 '/event/add/token',
                                 JobStateEnum::COMPILING,
+                                true,
                             )
                         )
                     ;
@@ -158,6 +163,7 @@ class JobControllerTest extends WebTestCase
                         'label' => $job->getLabel(),
                         'event_add_url' => '/event/add/token',
                         'state' => 'compiling',
+                        'has_events' => true,
                         'meta_state' => [
                             'pending' => false,
                             'ended' => false,
@@ -176,6 +182,7 @@ class JobControllerTest extends WebTestCase
                                 $job->getLabel(),
                                 '/event/add/token',
                                 JobStateEnum::COMPILED,
+                                true,
                             )
                         )
                     ;
@@ -187,6 +194,7 @@ class JobControllerTest extends WebTestCase
                         'label' => $job->getLabel(),
                         'event_add_url' => '/event/add/token',
                         'state' => 'compiled',
+                        'has_events' => true,
                         'meta_state' => [
                             'pending' => false,
                             'ended' => false,
@@ -205,6 +213,7 @@ class JobControllerTest extends WebTestCase
                                 $job->getLabel(),
                                 '/event/add/token',
                                 JobStateEnum::EXECUTING,
+                                true,
                             )
                         )
                     ;
@@ -216,6 +225,7 @@ class JobControllerTest extends WebTestCase
                         'label' => $job->getLabel(),
                         'event_add_url' => '/event/add/token',
                         'state' => 'executing',
+                        'has_events' => true,
                         'meta_state' => [
                             'pending' => false,
                             'ended' => false,
@@ -234,6 +244,7 @@ class JobControllerTest extends WebTestCase
                                 $job->getLabel(),
                                 '/event/add/token',
                                 JobStateEnum::EXECUTED,
+                                true,
                             )
                         )
                     ;
@@ -245,6 +256,7 @@ class JobControllerTest extends WebTestCase
                         'label' => $job->getLabel(),
                         'event_add_url' => '/event/add/token',
                         'state' => 'executed',
+                        'has_events' => true,
                         'meta_state' => [
                             'pending' => false,
                             'ended' => false,
@@ -263,6 +275,7 @@ class JobControllerTest extends WebTestCase
                                 $job->getLabel(),
                                 '/event/add/token',
                                 JobStateEnum::ENDED,
+                                true,
                             )->withEndState('complete')
                         )
                     ;
@@ -274,6 +287,7 @@ class JobControllerTest extends WebTestCase
                         'label' => $job->getLabel(),
                         'event_add_url' => '/event/add/token',
                         'state' => 'ended',
+                        'has_events' => true,
                         'end_state' => 'complete',
                         'meta_state' => [
                             'pending' => false,
@@ -293,6 +307,7 @@ class JobControllerTest extends WebTestCase
                                 $job->getLabel(),
                                 '/event/add/token',
                                 JobStateEnum::ENDED,
+                                true,
                             )->withEndState('timed-out')
                         )
                     ;
@@ -304,6 +319,7 @@ class JobControllerTest extends WebTestCase
                         'label' => $job->getLabel(),
                         'event_add_url' => '/event/add/token',
                         'state' => 'ended',
+                        'has_events' => true,
                         'end_state' => 'timed-out',
                         'meta_state' => [
                             'pending' => false,
@@ -323,6 +339,7 @@ class JobControllerTest extends WebTestCase
                                 $job->getLabel(),
                                 '/event/add/token',
                                 JobStateEnum::ENDED,
+                                true,
                             )->withEndState('failed/test/failure')
                         )
                     ;
@@ -334,6 +351,7 @@ class JobControllerTest extends WebTestCase
                         'label' => $job->getLabel(),
                         'event_add_url' => '/event/add/token',
                         'state' => 'ended',
+                        'has_events' => true,
                         'end_state' => 'failed/test/failure',
                         'meta_state' => [
                             'pending' => false,

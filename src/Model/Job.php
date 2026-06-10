@@ -18,6 +18,7 @@ class Job implements \JsonSerializable
         private readonly string $label,
         private readonly string $eventAddUrl,
         private readonly State $state,
+        private readonly bool $hasEvents,
     ) {}
 
     /**
@@ -36,6 +37,7 @@ class Job implements \JsonSerializable
      *     label: non-empty-string,
      *     event_add_url: string,
      *     state: non-empty-string,
+     *     has_events: bool,
      *     end_state?: non-empty-string,
      *     meta_state: array{
      *       pending: bool,
@@ -53,6 +55,7 @@ class Job implements \JsonSerializable
             'label' => $this->label,
             'event_add_url' => $this->eventAddUrl,
             'state' => $this->state->value,
+            'has_events' => $this->hasEvents,
             'meta_state' => [
                 'pending' => State::AWAITING_EVENTS === $this->state,
                 'ended' => $hasEnded,

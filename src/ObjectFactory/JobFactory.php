@@ -4,6 +4,7 @@ namespace App\ObjectFactory;
 
 use App\Entity\JobInterface;
 use App\Model\Job;
+use App\Repository\EventRepository;
 use Symfony\Component\Routing\RouterInterface;
 
 readonly class JobFactory implements JobFactoryInterface
@@ -12,6 +13,7 @@ readonly class JobFactory implements JobFactoryInterface
         private JobStateFactory $jobStateFactory,
         private RouterInterface $router,
         private string $selfUrl,
+        private EventRepository $eventRepository,
     ) {}
 
     public function create(JobInterface $job): Job
@@ -20,7 +22,12 @@ readonly class JobFactory implements JobFactoryInterface
         $relativeUrl = $this->router->generate('event_add', ['token' => $job->getToken()]);
         $eventAddUrl = rtrim($this->selfUrl, '/') . $relativeUrl;
 
-        $job = new Job($job->getLabel(), $eventAddUrl, $jobState->getState());
+        $job = new Job(
+            $job->getLabel(),
+            $eventAddUrl,
+            $jobState->getState(),
+            $this->eventRepository->hasForJob($job),
+        );
 
         $endState = $jobState->getEndState();
         if (null !== $endState) {
