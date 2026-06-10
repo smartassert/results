@@ -43,6 +43,7 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
                 'label' => $jobLabel,
                 'event_add_url' => $this->getSelfUrl() . '/event/add/' . $job->getToken(),
                 'state' => 'awaiting-events',
+                'has_events' => false,
                 'meta_state' => [
                     'pending' => true,
                     'ended' => false,

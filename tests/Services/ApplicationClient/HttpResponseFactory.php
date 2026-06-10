@@ -27,6 +27,7 @@ class HttpResponseFactory
                     'ended' => $job->state->metaState->ended,
                     'succeeded' => $job->state->metaState->succeeded,
                 ],
+                'has_events' => $job->hasEvents,
             ]),
         );
     }
