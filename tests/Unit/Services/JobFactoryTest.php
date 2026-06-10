@@ -33,7 +33,7 @@ class JobFactoryTest extends TestCase
         $factory = new JobFactory($jobRepository, new UlidFactory());
 
         self::expectException(InvalidUserException::class);
-        self::expectExceptionMessage(InvalidUserException::MESSAGE_USER_IDENTIFIER_EMPTY);
+        self::expectExceptionMessageIs(InvalidUserException::MESSAGE_USER_IDENTIFIER_EMPTY);
         self::expectExceptionCode(InvalidUserException::CODE_USER_IDENTIFIER_EMPTY);
 
         $factory->createForUserAndJob($user, $jobLabel);
