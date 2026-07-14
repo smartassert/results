@@ -9,4 +9,9 @@ use App\Tests\Application\AbstractJobStatusTest;
 class JobStatusTest extends AbstractJobStatusTest
 {
     use GetClientAdapterTrait;
+
+    protected function getSelfUrl(): string
+    {
+        return 'https://results.example.com';
+    }
 }

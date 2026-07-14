@@ -43,13 +43,19 @@ class Job implements \JsonSerializable
      *       pending: bool,
      *       ended: bool,
      *       succeeded: bool
-     *     }
+     *     },
+     *     previous_states: value-of<State>[]
      * }
      */
     public function jsonSerialize(): array
     {
         $hasEnded = State::ENDED === $this->state && isset($this->endState);
         $hasSucceed = $hasEnded && 'complete' === $this->endState;
+
+        $previousStates = [];
+        foreach ($this->state->getPreviousStates() as $previousState) {
+            $previousStates[] = $previousState->value;
+        }
 
         $data = [
             'label' => $this->label,
@@ -61,6 +67,7 @@ class Job implements \JsonSerializable
                 'ended' => $hasEnded,
                 'succeeded' => $hasSucceed,
             ],
+            'previous_states' => $previousStates,
         ];
 
         if ($hasEnded) {

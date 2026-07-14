@@ -49,6 +49,7 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
                     'ended' => false,
                     'succeeded' => false,
                 ],
+                'previous_states' => [],
             ],
             $responseData,
         );

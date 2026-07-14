@@ -13,4 +13,63 @@ enum JobState: string
     case EXECUTING = 'executing';
     case EXECUTED = 'executed';
     case ENDED = 'ended';
+
+    /**
+     * @return JobState[]
+     */
+    public function getPreviousStates(): array
+    {
+        if (JobState::STARTED === $this) {
+            return [
+                JobState::AWAITING_EVENTS,
+            ];
+        }
+
+        if (JobState::COMPILING === $this) {
+            return [
+                JobState::AWAITING_EVENTS,
+                JobState::STARTED,
+            ];
+        }
+
+        if (JobState::COMPILED === $this) {
+            return [
+                JobState::AWAITING_EVENTS,
+                JobState::STARTED,
+                JobState::COMPILING,
+            ];
+        }
+
+        if (JobState::EXECUTING === $this) {
+            return [
+                JobState::AWAITING_EVENTS,
+                JobState::STARTED,
+                JobState::COMPILING,
+                JobState::COMPILED,
+            ];
+        }
+
+        if (JobState::EXECUTED === $this) {
+            return [
+                JobState::AWAITING_EVENTS,
+                JobState::STARTED,
+                JobState::COMPILING,
+                JobState::COMPILED,
+                JobState::EXECUTING,
+            ];
+        }
+
+        if (JobState::ENDED === $this) {
+            return [
+                JobState::AWAITING_EVENTS,
+                JobState::STARTED,
+                JobState::COMPILING,
+                JobState::COMPILED,
+                JobState::EXECUTING,
+                JobState::EXECUTED,
+            ];
+        }
+
+        return [];
+    }
 }
