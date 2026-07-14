@@ -13,9 +13,11 @@
         "smartassert/health-check-bundle": "^8.1",
         "smartassert/users-security-bundle": "^12",
         "symfony/console": "8.1.*",
+        "symfony/doctrine-messenger": "8.1.*",
         "symfony/dotenv": "8.1.*",
         "symfony/flex": "^2.9",
         "symfony/framework-bundle": "8.1.*",
+        "symfony/messenger": "8.1.*",
         "symfony/monolog-bundle": "^4.0",
         "symfony/runtime": "8.1.*",
         "symfony/security-bundle": "8.1.*",
@@ -132,7 +134,13 @@
             "@integration-up",
             "sleep 2",
             "@db-setup",
+            "@messenger-setup",
             "@users-setup"
+        ],
+        "messenger-setup": [
+            "echo '[job-coordinator] messanger-setup'",
+            "php bin/console messenger:setup-transports",
+            "echo ''"
         ]
     },
     "conflict": {
