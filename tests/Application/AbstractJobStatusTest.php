@@ -25,10 +25,9 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
 
         $jobLabel = (string) new Ulid();
 
-        $this->applicationClient->makeJobRequest(
+        $this->applicationClient->makeJobCreationRequest(
             self::$apiTokens->get('user@example.com'),
             $jobLabel,
-            'POST'
         );
 
         $job = $jobRepository->findAll()[0];
@@ -38,10 +37,9 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
 
         $eventCreator($eventFactory, $jobLabel);
 
-        $response = $this->applicationClient->makeJobRequest(
+        $response = $this->applicationClient->makeJobRetrievalRequest(
             self::$apiTokens->get('user@example.com'),
             $jobLabel,
-            'GET'
         );
 
         self::assertSame(200, $response->getStatusCode());

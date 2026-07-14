@@ -19,10 +19,9 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
 
         $jobLabel = (string) new Ulid();
 
-        $response = $this->applicationClient->makeJobRequest(
+        $response = $this->applicationClient->makeJobCreationRequest(
             self::$apiTokens->get('user@example.com'),
             $jobLabel,
-            'POST'
         );
 
         self::assertSame(200, $response->getStatusCode());
@@ -64,17 +63,15 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
 
         $jobLabel = (string) new Ulid();
 
-        $this->applicationClient->makeJobRequest(
+        $this->applicationClient->makeJobCreationRequest(
             self::$apiTokens->get('user@example.com'),
             $jobLabel,
-            'POST'
         );
         self::assertSame(1, $jobRepository->count([]));
 
-        $this->applicationClient->makeJobRequest(
+        $this->applicationClient->makeJobCreationRequest(
             self::$apiTokens->get('user@example.com'),
             $jobLabel,
-            'POST'
         );
         self::assertSame(1, $jobRepository->count([]));
     }
