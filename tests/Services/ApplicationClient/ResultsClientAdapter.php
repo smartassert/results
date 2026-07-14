@@ -32,10 +32,20 @@ readonly class ResultsClientAdapter implements ClientInterface
     ): ResponseInterface {
         try {
             if ('POST' === $method && str_starts_with($uri, '/job/')) {
+                $decodedBody = [];
+                if (is_string($body)) {
+                    parse_str($body, $decodedBody);
+                }
+
+                $notifyUrl = $decodedBody['notify_url'] ?? null;
+                $notifyUrl = is_string($notifyUrl) ? $notifyUrl : null;
+                $notifyUrl = '' !== $notifyUrl ? $notifyUrl : null;
+
                 return $this->httpResponseFactory->createJobResponse(
                     $this->resultsClient->createJob(
                         $this->getAuthenticationTokenFromHeaders($headers),
                         $this->getJobLabelFromUri($uri),
+                        $notifyUrl,
                     )
                 );
             }

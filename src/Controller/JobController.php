@@ -30,7 +30,7 @@ readonly class JobController
         }
 
         return $this->createJobResponse(
-            $jobEntityFactory->createForUserAndJob($user, $label)
+            $jobEntityFactory->createForUserAndJob($user, $label, $request->notifyUrl)
         );
     }
 
