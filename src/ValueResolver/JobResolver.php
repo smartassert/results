@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\ArgumentResolver;
+namespace App\ValueResolver;
 
 use App\Entity\JobInterface;
 use App\Repository\JobRepository;
@@ -11,14 +11,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
-class JobResolver implements ValueResolverInterface
+final readonly class JobResolver implements ValueResolverInterface
 {
     /**
      * @param non-empty-string[] $jobIdentifiers
      */
     public function __construct(
-        private readonly JobRepository $jobRepository,
-        private readonly array $jobIdentifiers = ['token', 'label'],
+        private JobRepository $jobRepository,
+        private array $jobIdentifiers = ['token', 'label'],
     ) {}
 
     /**
