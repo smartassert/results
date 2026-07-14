@@ -15,6 +15,16 @@ class Client
         private readonly RouterInterface $router,
     ) {}
 
+    public function makeJobCreationRequest(?string $authenticationToken, string $label): ResponseInterface
+    {
+        return $this->makeJobRequest($authenticationToken, $label, 'POST');
+    }
+
+    public function makeJobRetrievalRequest(?string $authenticationToken, string $label): ResponseInterface
+    {
+        return $this->makeJobRequest($authenticationToken, $label, 'GET');
+    }
+
     public function makeJobRequest(?string $authenticationToken, string $label, string $method): ResponseInterface
     {
         return $this->client->makeRequest(
