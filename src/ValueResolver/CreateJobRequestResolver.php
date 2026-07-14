@@ -24,6 +24,10 @@ final readonly class CreateJobRequestResolver implements ValueResolverInterface
         $label = is_string($label) ? trim($label) : null;
         $label = '' === $label ? null : $label;
 
-        return [new CreateJobRequest($label)];
+        $notifyUrl = $request->request->get(CreateJobRequest::KEY_NOTIFY_URL);
+        $notifyUrl = is_string($notifyUrl) ? trim($notifyUrl) : null;
+        $notifyUrl = '' === $notifyUrl ? null : $notifyUrl;
+
+        return [new CreateJobRequest($label, $notifyUrl)];
     }
 }

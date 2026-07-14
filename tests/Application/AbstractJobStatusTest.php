@@ -29,6 +29,7 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
         $this->applicationClient->makeJobCreationRequest(
             self::$apiTokens->get('user@example.com'),
             $jobLabel,
+            null,
         );
 
         $job = $jobRepository->findAll()[0];

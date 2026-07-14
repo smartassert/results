@@ -170,6 +170,7 @@ abstract class AbstractAddEventBadRequestTest extends AbstractApplicationTest
         $createJobResponse = $this->applicationClient->makeJobCreationRequest(
             self::$apiTokens->get('user@example.com'),
             $jobLabel,
+            null,
         );
 
         $responseData = json_decode($createJobResponse->getBody()->getContents(), true);

@@ -6,11 +6,13 @@ namespace App\Tests\Application;
 
 use App\Entity\Job;
 use App\Repository\JobRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Uid\Ulid;
 
 abstract class AbstractJobCreationTest extends AbstractApplicationTest
 {
-    public function testCreateSuccess(): void
+    #[DataProvider('createSuccessDataProvider')]
+    public function testCreateSuccess(?string $notifyUrl, ?string $expectedNotifyUrl): void
     {
         $jobRepository = self::getContainer()->get(JobRepository::class);
         \assert($jobRepository instanceof JobRepository);
@@ -22,6 +24,7 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
         $response = $this->applicationClient->makeJobCreationRequest(
             self::$apiTokens->get('user@example.com'),
             $jobLabel,
+            $notifyUrl,
         );
 
         self::assertSame(200, $response->getStatusCode());
@@ -36,6 +39,8 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
 
         $job = $jobRepository->findOneBy(['label' => $responseData['label']]);
         self::assertInstanceOf(Job::class, $job);
+
+        self::assertSame($expectedNotifyUrl, $job->getNotifyUrl());
 
         self::assertEquals(
             [
@@ -54,6 +59,27 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
         );
     }
 
+    /**
+     * @return array<mixed>
+     */
+    public static function createSuccessDataProvider(): array
+    {
+        return [
+            'null notify url' => [
+                'notifyUrl' => null,
+                'expectedNotifyUrl' => null,
+            ],
+            'empty notify url' => [
+                'notifyUrl' => '',
+                'expectedNotifyUrl' => null,
+            ],
+            'non-empty notify url' => [
+                'notifyUrl' => 'https://example.com/notify',
+                'expectedNotifyUrl' => 'https://example.com/notify',
+            ],
+        ];
+    }
+
     public function testCreateIsIdempotent(): void
     {
         $jobRepository = self::getContainer()->get(JobRepository::class);
@@ -66,12 +92,14 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
         $this->applicationClient->makeJobCreationRequest(
             self::$apiTokens->get('user@example.com'),
             $jobLabel,
+            null,
         );
         self::assertSame(1, $jobRepository->count([]));
 
         $this->applicationClient->makeJobCreationRequest(
             self::$apiTokens->get('user@example.com'),
             $jobLabel,
+            null,
         );
         self::assertSame(1, $jobRepository->count([]));
     }
