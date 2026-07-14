@@ -22,7 +22,7 @@ class JobFactory
      *
      * @throws InvalidUserException
      */
-    public function createForUserAndJob(UserInterface $user, string $label): Job
+    public function createForUserAndJob(UserInterface $user, string $label, ?string $notifyUrl): Job
     {
         $job = $this->repository->findOneBy(['label' => $label]);
 
@@ -33,7 +33,7 @@ class JobFactory
                 throw InvalidUserException::createForEmptyUserIdentifier($user);
             }
 
-            $job = new Job($this->ulidFactory->create(), $label, $userIdentifier);
+            $job = new Job($this->ulidFactory->create(), $label, $userIdentifier, $notifyUrl);
             $this->repository->add($job);
         }
 
