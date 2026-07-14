@@ -24,16 +24,20 @@ class Job implements JobInterface
     #[ORM\Column(type: 'string', length: 32)]
     private readonly string $userId;
 
+    #[ORM\Column(nullable: true)]
+    private ?string $notifyUrl;
+
     /**
      * @param non-empty-string $token
      * @param non-empty-string $label
      * @param non-empty-string $userId
      */
-    public function __construct(string $token, string $label, string $userId)
+    public function __construct(string $token, string $label, string $userId, ?string $notifyUrl = null)
     {
         $this->token = $token;
         $this->label = $label;
         $this->userId = $userId;
+        $this->notifyUrl = $notifyUrl;
     }
 
     /**
@@ -64,5 +68,10 @@ class Job implements JobInterface
         \assert('' !== $this->userId);
 
         return $this->userId;
+    }
+
+    public function getNotifyUrl(): ?string
+    {
+        return $this->notifyUrl;
     }
 }
