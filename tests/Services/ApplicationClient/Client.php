@@ -15,9 +15,17 @@ class Client
         private readonly RouterInterface $router,
     ) {}
 
-    public function makeJobCreationRequest(?string $authenticationToken, string $label): ResponseInterface
-    {
-        return $this->makeJobRequest($authenticationToken, $label, 'POST');
+    public function makeJobCreationRequest(
+        ?string $authenticationToken,
+        string $label,
+        ?string $notifyUrl
+    ): ResponseInterface {
+        $payload = [];
+        if (is_string($notifyUrl)) {
+            $payload['notify_url'] = $notifyUrl;
+        }
+
+        return $this->makeJobRequest($authenticationToken, $label, 'POST', $payload);
     }
 
     public function makeJobRetrievalRequest(?string $authenticationToken, string $label): ResponseInterface
@@ -25,12 +33,32 @@ class Client
         return $this->makeJobRequest($authenticationToken, $label, 'GET');
     }
 
-    public function makeJobRequest(?string $authenticationToken, string $label, string $method): ResponseInterface
-    {
+    /**
+     * @param array<string, string> $payload
+     */
+    public function makeJobRequest(
+        ?string $authenticationToken,
+        string $label,
+        string $method,
+        array $payload = []
+    ): ResponseInterface {
+        $hasPayload = [] !== $payload;
+
+        $headers = $this->createAuthorizationHeader($authenticationToken);
+        if ($hasPayload) {
+            $headers['content-type'] = 'application/x-www-form-urlencoded';
+        }
+
+        $body = null;
+        if ($hasPayload) {
+            $body = http_build_query($payload);
+        }
+
         return $this->client->makeRequest(
             $method,
             $this->router->generate('job_create', ['label' => $label]),
-            $this->createAuthorizationHeader($authenticationToken)
+            $headers,
+            $body,
         );
     }
 

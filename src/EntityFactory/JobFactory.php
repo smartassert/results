@@ -19,13 +19,13 @@ class JobFactory
     /**
      * @param non-empty-string $label
      */
-    public function createForUserAndJob(UserInterface $user, string $label): Job
+    public function createForUserAndJob(UserInterface $user, string $label, ?string $notifyUrl): Job
     {
         $job = $this->repository->findOneBy(['label' => $label]);
         if ($job instanceof Job) {
             return $job;
         }
 
-        return new Job($this->ulidFactory->create(), $label, $user->getUserIdentifier());
+        return new Job($this->ulidFactory->create(), $label, $user->getUserIdentifier(), $notifyUrl);
     }
 }
