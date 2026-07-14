@@ -6,6 +6,7 @@ use App\Entity\JobInterface;
 use App\EntityFactory\JobFactory as JobEntityFactory;
 use App\Exception\InvalidUserException;
 use App\ObjectFactory\JobFactoryInterface as JobModelFactory;
+use App\Request\CreateJobRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,15 +19,17 @@ readonly class JobController
         private JobModelFactory $jobModelFactory,
     ) {}
 
-    /**
-     * @param non-empty-string $label
-     */
     #[Route(name: 'create', methods: ['POST'])]
     public function create(
         JobEntityFactory $jobEntityFactory,
         UserInterface $user,
-        string $label
+        CreateJobRequest $request,
     ): Response {
+        $label = $request->label;
+        if (null === $label) {
+            return new Response(null, 400);
+        }
+
         try {
             return $this->createJobResponse(
                 $jobEntityFactory->createForUserAndJob($user, $label)
