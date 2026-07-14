@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\ArgumentResolver;
+namespace App\ValueResolver;
 
 use App\Repository\JobRepository;
 use App\Repository\ReferenceRepository;
@@ -11,11 +11,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
-class ListEventsRequestResolver implements ValueResolverInterface
+final readonly class ListEventsRequestResolver implements ValueResolverInterface
 {
     public function __construct(
-        private readonly JobRepository $jobRepository,
-        private readonly ReferenceRepository $referenceRepository,
+        private JobRepository $jobRepository,
+        private ReferenceRepository $referenceRepository,
     ) {}
 
     /**

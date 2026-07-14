@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\ArgumentResolver;
+namespace App\ValueResolver;
 
 use App\Request\AddEventRequest;
 use App\Request\AddEventRequestFactory;
@@ -10,10 +10,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
-class AddEventRequestResolver implements ValueResolverInterface
+final readonly class AddEventRequestResolver implements ValueResolverInterface
 {
     public function __construct(
-        private readonly AddEventRequestFactory $addEventRequestFactory,
+        private AddEventRequestFactory $addEventRequestFactory,
     ) {}
 
     /**
