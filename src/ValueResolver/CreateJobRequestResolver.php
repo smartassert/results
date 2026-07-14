@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\ValueResolver;
 
-use App\Request\AddEventRequest;
 use App\Request\CreateJobRequest;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
@@ -13,7 +12,7 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 final readonly class CreateJobRequestResolver implements ValueResolverInterface
 {
     /**
-     * @return AddEventRequest[]
+     * @return CreateJobRequest[]
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
