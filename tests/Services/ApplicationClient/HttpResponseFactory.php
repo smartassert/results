@@ -13,22 +13,30 @@ class HttpResponseFactory
 {
     public function createJobResponse(Job $job): ResponseInterface
     {
+        $responseData = [
+            'label' => $job->label,
+            'event_add_url' => $job->authenticator,
+            'state' => $job->state->state,
+            'meta_state' => [
+                'pending' => $job->state->metaState->pending,
+                'ended' => $job->state->metaState->ended,
+                'succeeded' => $job->state->metaState->succeeded,
+            ],
+            'has_events' => $job->hasEvents,
+            'previous_states' => $job->previousStates,
+        ];
+
+        $endState = $job->state->endState;
+        if (is_string($endState)) {
+            $responseData['end_state'] = $endState;
+        }
+
         return new Response(
             200,
             [
                 'content-type' => 'application/json',
             ],
-            (string) json_encode([
-                'label' => $job->label,
-                'event_add_url' => $job->authenticator,
-                'state' => $job->state->state,
-                'meta_state' => [
-                    'pending' => $job->state->metaState->pending,
-                    'ended' => $job->state->metaState->ended,
-                    'succeeded' => $job->state->metaState->succeeded,
-                ],
-                'has_events' => $job->hasEvents,
-            ]),
+            (string) json_encode($responseData),
         );
     }
 
