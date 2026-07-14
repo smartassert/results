@@ -32,7 +32,7 @@ readonly class JobController
 
         try {
             return $this->createJobResponse(
-                $jobEntityFactory->createForUserAndJob($user, $label)
+                $jobEntityFactory->createForUserAndJob($user, $label, $request->notifyUrl)
             );
         } catch (InvalidUserException) {
             return new JsonResponse(null, 403);
