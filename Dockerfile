@@ -20,12 +20,17 @@ RUN apt-get -qq update && apt-get -qq -y install  \
   git \
   libpq-dev \
   libzip-dev \
+  supervisor \
   zip \
   && docker-php-ext-install \
   pdo_pgsql \
   zip \
   && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN mkdir -p var/log/supervisor
+COPY build/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
+COPY build/supervisor/conf.d/app.conf /etc/supervisor/conf.d/supervisord.conf
 
 COPY composer.json /app/
 COPY bin/console /app/bin/console
@@ -42,3 +47,5 @@ RUN mkdir -p /app/var/log \
   && COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --no-scripts \
   && rm composer.lock \
   && php bin/console cache:clear
+
+CMD supervisord -c /etc/supervisor/supervisord.conf
