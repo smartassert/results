@@ -5,6 +5,7 @@ WORKDIR /app
 ARG APP_ENV=prod
 ARG DATABASE_URL=postgresql://database_user:database_password@0.0.0.0:5432/database_name?serverVersion=12&charset=utf8
 ARG AUTHENTICATION_BASE_URL=https://users.example.com
+ARG MESSENGER_RETRY_STRATEGY_DELAY=1000
 ARG IS_READY=0
 ARG SELF_URL=https://results.example.com
 
@@ -13,6 +14,7 @@ ENV DATABASE_URL=$DATABASE_URL
 ENV AUTHENTICATION_BASE_URL=$AUTHENTICATION_BASE_URL
 ENV IS_READY=$READY
 ENV SELF_URL=$SELF_URL
+ENV MESSENGER_RETRY_STRATEGY_DELAY=$MESSENGER_RETRY_STRATEGY_DELAY
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
