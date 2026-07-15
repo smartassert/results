@@ -22,12 +22,10 @@ class JobFactory
     public function createForUserAndJob(UserInterface $user, string $label): Job
     {
         $job = $this->repository->findOneBy(['label' => $label]);
-
-        if (null === $job) {
-            $job = new Job($this->ulidFactory->create(), $label, $user->getUserIdentifier());
-            $this->repository->add($job);
+        if ($job instanceof Job) {
+            return $job;
         }
 
-        return $job;
+        return new Job($this->ulidFactory->create(), $label, $user->getUserIdentifier());
     }
 }
