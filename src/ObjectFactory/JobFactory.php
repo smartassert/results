@@ -18,7 +18,7 @@ readonly class JobFactory implements JobFactoryInterface
 
     public function create(JobInterface $job): Job
     {
-        $jobState = $this->jobStateFactory->create($job);
+        $jobState = $this->jobStateFactory->create($job->getLabel());
         $relativeUrl = $this->router->generate('event_add', ['token' => $job->getToken()]);
         $eventAddUrl = rtrim($this->selfUrl, '/') . $relativeUrl;
 
@@ -26,7 +26,7 @@ readonly class JobFactory implements JobFactoryInterface
             $job->getLabel(),
             $eventAddUrl,
             $jobState->getState(),
-            $this->eventRepository->hasForJob($job),
+            $this->eventRepository->hasForJob($job->getLabel()),
         );
 
         $endState = $jobState->getEndState();

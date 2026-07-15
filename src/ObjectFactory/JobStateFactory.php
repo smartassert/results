@@ -2,7 +2,6 @@
 
 namespace App\ObjectFactory;
 
-use App\Entity\JobInterface;
 use App\Enum\JobState as State;
 use App\Model\JobEndedEvent;
 use App\Model\JobState;
@@ -14,13 +13,13 @@ class JobStateFactory
         private readonly EventRepository $eventRepository,
     ) {}
 
-    public function create(JobInterface $job): JobState
+    public function create(string $jobLabel): JobState
     {
-        if (false === $this->eventRepository->hasForJob($job)) {
+        if (false === $this->eventRepository->hasForJob($jobLabel)) {
             return new JobState(State::AWAITING_EVENTS);
         }
 
-        $jobEndedEvents = $this->eventRepository->findByType($job, 'job/ended');
+        $jobEndedEvents = $this->eventRepository->findByType($jobLabel, 'job/ended');
 
         if ([] !== $jobEndedEvents) {
             $jobEndedEvent = new JobEndedEvent($jobEndedEvents[0]);
@@ -31,27 +30,27 @@ class JobStateFactory
             return $jobState;
         }
 
-        $hasExecutionEndedEvent = $this->eventRepository->hasForType($job, 'job/execution/ended');
+        $hasExecutionEndedEvent = $this->eventRepository->hasForType($jobLabel, 'job/execution/ended');
         if ($hasExecutionEndedEvent) {
             return new JobState(State::EXECUTED);
         }
 
-        $hasExecutionStartedEvent = $this->eventRepository->hasForType($job, 'job/execution/started');
+        $hasExecutionStartedEvent = $this->eventRepository->hasForType($jobLabel, 'job/execution/started');
         if ($hasExecutionStartedEvent) {
             return new JobState(State::EXECUTING);
         }
 
-        $hasCompilationEndedEvent = $this->eventRepository->hasForType($job, 'job/compilation/ended');
+        $hasCompilationEndedEvent = $this->eventRepository->hasForType($jobLabel, 'job/compilation/ended');
         if ($hasCompilationEndedEvent) {
             return new JobState(State::COMPILED);
         }
 
-        $hasCompilationStartedEvent = $this->eventRepository->hasForType($job, 'job/compilation/started');
+        $hasCompilationStartedEvent = $this->eventRepository->hasForType($jobLabel, 'job/compilation/started');
         if ($hasCompilationStartedEvent) {
             return new JobState(State::COMPILING);
         }
 
-        $hasJobStartedEvent = $this->eventRepository->hasForType($job, 'job/started');
+        $hasJobStartedEvent = $this->eventRepository->hasForType($jobLabel, 'job/started');
 
         return new JobState($hasJobStartedEvent ? State::STARTED : State::AWAITING_EVENTS);
     }

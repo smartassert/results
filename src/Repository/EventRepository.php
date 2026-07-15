@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Event;
-use App\Entity\JobInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -32,9 +31,9 @@ class EventRepository extends ServiceEntityRepository
     /**
      * @return Event[]
      */
-    public function findByType(JobInterface $job, string $type): array
+    public function findByType(string $jobLabel, string $type): array
     {
-        $queryBuilder = $this->createJobQueryBuilder($job);
+        $queryBuilder = $this->createJobQueryBuilder($jobLabel);
         $queryBuilder = $this->addQueryBuilderTypeConstraint($queryBuilder, $type);
 
         $query = $queryBuilder->getQuery();
@@ -52,9 +51,9 @@ class EventRepository extends ServiceEntityRepository
         return $filteredResults;
     }
 
-    public function hasForType(JobInterface $job, string $type): bool
+    public function hasForType(string $jobLabel, string $type): bool
     {
-        $queryBuilder = $this->createJobQueryBuilder($job);
+        $queryBuilder = $this->createJobQueryBuilder($jobLabel);
         $queryBuilder = $this->addQueryBuilderTypeConstraint($queryBuilder, $type);
         $queryBuilder = $this->addQueryBuilderCountConstraint($queryBuilder);
 
@@ -69,9 +68,9 @@ class EventRepository extends ServiceEntityRepository
         return 0 !== $result;
     }
 
-    public function hasForJob(JobInterface $job): bool
+    public function hasForJob(string $jobLabel): bool
     {
-        $queryBuilder = $this->createJobQueryBuilder($job);
+        $queryBuilder = $this->createJobQueryBuilder($jobLabel);
         $queryBuilder = $this->addQueryBuilderCountConstraint($queryBuilder);
 
         $query = $queryBuilder->getQuery();
@@ -112,12 +111,12 @@ class EventRepository extends ServiceEntityRepository
         return $queryBuilder;
     }
 
-    private function createJobQueryBuilder(JobInterface $job): QueryBuilder
+    private function createJobQueryBuilder(string $jobLabel): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('Event');
         $queryBuilder
             ->where('Event.job = :JobLabel')
-            ->setParameter('JobLabel', $job->getLabel())
+            ->setParameter('JobLabel', $jobLabel)
         ;
 
         return $queryBuilder;
