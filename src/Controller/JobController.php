@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\JobInterface;
 use App\EntityFactory\JobFactory as JobEntityFactory;
-use App\Exception\InvalidUserException;
 use App\ObjectFactory\JobFactoryInterface as JobModelFactory;
 use App\Request\CreateJobRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,13 +29,9 @@ readonly class JobController
             return new Response(null, 400);
         }
 
-        try {
-            return $this->createJobResponse(
-                $jobEntityFactory->createForUserAndJob($user, $label)
-            );
-        } catch (InvalidUserException) {
-            return new JsonResponse(null, 403);
-        }
+        return $this->createJobResponse(
+            $jobEntityFactory->createForUserAndJob($user, $label)
+        );
     }
 
     #[Route(name: 'get', methods: ['GET'])]
