@@ -78,7 +78,7 @@ class JobStateFactoryTest extends WebTestCase
         $job = $this->jobRepository->findOneBy(['label' => $jobLabel]);
         \assert($job instanceof Job);
 
-        self::assertEquals($expected, $this->jobStateFactory->create($job));
+        self::assertEquals($expected, $this->jobStateFactory->create($job->getLabel()));
     }
 
     /**

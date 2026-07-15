@@ -79,7 +79,7 @@ class EventRepositoryTest extends WebTestCase
         $job = $this->jobRepository->findOneBy(['label' => $jobLabel]);
         \assert($job instanceof Job);
 
-        $foundEvents = $this->eventRepository->findByType($job, $type);
+        $foundEvents = $this->eventRepository->findByType($job->getLabel(), $type);
         $foundEventIds = [];
 
         foreach ($foundEvents as $foundEvent) {
@@ -302,7 +302,7 @@ class EventRepositoryTest extends WebTestCase
         $job = $this->jobRepository->findOneBy(['label' => $jobLabel]);
         \assert($job instanceof Job);
 
-        self::assertSame($expected, $this->eventRepository->hasForType($job, $type));
+        self::assertSame($expected, $this->eventRepository->hasForType($job->getLabel(), $type));
     }
 
     /**
@@ -519,7 +519,7 @@ class EventRepositoryTest extends WebTestCase
 
         self::assertSame(
             $expected,
-            $this->eventRepository->hasForJob($job)
+            $this->eventRepository->hasForJob($job->getLabel())
         );
     }
 
