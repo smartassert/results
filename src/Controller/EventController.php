@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\JobInterface;
 use App\Entity\Reference;
 use App\EntityFactory\EventFactory;
+use App\Event\JobStateChangedEvent;
 use App\Event\WorkerEventCreatedEvent;
+use App\ObjectFactory\JobStateFactory;
 use App\Repository\EventRepository;
 use App\Request\AddEventRequest;
 use App\Request\ListEventsRequest;
@@ -20,6 +22,7 @@ class EventController
     #[Route('/event/add/{token<[A-Z0-9]{26,32}>}', name: 'event_add', methods: ['POST'])]
     public function add(
         EventFactory $eventFactory,
+        JobStateFactory $jobStateFactory,
         EventDispatcherInterface $eventDispatcher,
         AddEventRequest $request,
         ?JobInterface $job
@@ -47,6 +50,8 @@ class EventController
             return $this->createInvalidAddEventRequestFieldResponse(AddEventRequest::KEY_REFERENCE, 'a string');
         }
 
+        $currentJobState = $jobStateFactory->create($job->getLabel());
+
         $event = $eventFactory->create(
             $job->getLabel(),
             $request->sequenceNumber,
@@ -58,6 +63,12 @@ class EventController
         );
 
         $eventDispatcher->dispatch(new WorkerEventCreatedEvent($event));
+
+        $newJobState = $jobStateFactory->create($job->getLabel());
+
+        if ($newJobState->getState() !== $currentJobState->getState()) {
+            $eventDispatcher->dispatch(new JobStateChangedEvent($job, $newJobState));
+        }
 
         return new Response();
     }
