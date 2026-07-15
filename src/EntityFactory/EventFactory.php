@@ -39,26 +39,24 @@ class EventFactory
             'sequenceNumber' => $sequenceNumber,
         ]);
 
-        if (null === $event) {
-            $referenceEntity = $this->referenceFactory->create($label, $reference);
-
-            $relatedReferenceEntities = is_array($relatedReferences)
-                ? $this->referenceFactory->createFromArrayCollection($relatedReferences)
-                : [];
-
-            $event = new Event(
-                $this->ulidFactory->create(),
-                $sequenceNumber,
-                $jobLabel,
-                $type,
-                $body,
-                $referenceEntity,
-                $relatedReferenceEntities,
-            );
-
-            $this->repository->add($event);
+        if ($event instanceof Event) {
+            return $event;
         }
 
-        return $event;
+        $referenceEntity = $this->referenceFactory->create($label, $reference);
+
+        $relatedReferenceEntities = is_array($relatedReferences)
+            ? $this->referenceFactory->createFromArrayCollection($relatedReferences)
+            : [];
+
+        return new Event(
+            $this->ulidFactory->create(),
+            $sequenceNumber,
+            $jobLabel,
+            $type,
+            $body,
+            $referenceEntity,
+            $relatedReferenceEntities,
+        );
     }
 }
