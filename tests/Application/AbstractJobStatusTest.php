@@ -6,6 +6,7 @@ namespace App\Tests\Application;
 
 use App\Entity\Job;
 use App\EntityFactory\EventFactory;
+use App\Repository\EventRepository;
 use App\Repository\JobRepository;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Uid\Ulid;
@@ -13,8 +14,8 @@ use Symfony\Component\Uid\Ulid;
 abstract class AbstractJobStatusTest extends AbstractApplicationTest
 {
     /**
-     * @param callable(EventFactory, string): void $eventCreator
-     * @param callable(Job, string): array<mixed>  $expectedCreator
+     * @param callable(EventFactory, EventRepository, string): void $eventCreator
+     * @param callable(Job, string): array<mixed>                   $expectedCreator
      */
     #[DataProvider('statusSuccessDataProvider')]
     public function testStatusSuccess(callable $eventCreator, callable $expectedCreator): void
@@ -35,7 +36,10 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
         $eventFactory = self::getContainer()->get(EventFactory::class);
         \assert($eventFactory instanceof EventFactory);
 
-        $eventCreator($eventFactory, $jobLabel);
+        $eventRepository = self::getContainer()->get(EventRepository::class);
+        \assert($eventRepository instanceof EventRepository);
+
+        $eventCreator($eventFactory, $eventRepository, $jobLabel);
 
         $response = $this->applicationClient->makeJobRetrievalRequest(
             self::$apiTokens->get('user@example.com'),
@@ -75,10 +79,14 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                 },
             ],
             'ended, unknown end state' => [
-                'eventCreator' => function (EventFactory $eventFactory, string $jobLabel): void {
+                'eventCreator' => function (
+                    EventFactory $eventFactory,
+                    EventRepository $eventRepository,
+                    string $jobLabel,
+                ): void {
                     \assert('' !== $jobLabel);
 
-                    $eventFactory->create(
+                    $event = $eventFactory->create(
                         $jobLabel,
                         1,
                         'job/ended',
@@ -87,6 +95,8 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                         null,
                         null,
                     );
+
+                    $eventRepository->add($event);
                 },
                 'expectedCreator' => function (Job $job, string $selfUrl): array {
                     return [
@@ -112,10 +122,14 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                 },
             ],
             'ended, known end state' => [
-                'eventCreator' => function (EventFactory $eventFactory, string $jobLabel): void {
+                'eventCreator' => function (
+                    EventFactory $eventFactory,
+                    EventRepository $eventRepository,
+                    string $jobLabel,
+                ): void {
                     \assert('' !== $jobLabel);
 
-                    $eventFactory->create(
+                    $event = $eventFactory->create(
                         $jobLabel,
                         1,
                         'job/ended',
@@ -126,6 +140,8 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                         ],
                         null,
                     );
+
+                    $eventRepository->add($event);
                 },
                 'expectedCreator' => function (Job $job, string $selfUrl): array {
                     return [
@@ -151,10 +167,14 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                 },
             ],
             'executed' => [
-                'eventCreator' => function (EventFactory $eventFactory, string $jobLabel): void {
+                'eventCreator' => function (
+                    EventFactory $eventFactory,
+                    EventRepository $eventRepository,
+                    string $jobLabel,
+                ): void {
                     \assert('' !== $jobLabel);
 
-                    $eventFactory->create(
+                    $event = $eventFactory->create(
                         $jobLabel,
                         1,
                         'job/execution/ended',
@@ -163,6 +183,8 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                         null,
                         null,
                     );
+
+                    $eventRepository->add($event);
                 },
                 'expectedCreator' => function (Job $job, string $selfUrl): array {
                     return [
@@ -186,10 +208,14 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                 },
             ],
             'executing' => [
-                'eventCreator' => function (EventFactory $eventFactory, string $jobLabel): void {
+                'eventCreator' => function (
+                    EventFactory $eventFactory,
+                    EventRepository $eventRepository,
+                    string $jobLabel,
+                ): void {
                     \assert('' !== $jobLabel);
 
-                    $eventFactory->create(
+                    $event = $eventFactory->create(
                         $jobLabel,
                         1,
                         'job/execution/started',
@@ -198,6 +224,8 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                         null,
                         null,
                     );
+
+                    $eventRepository->add($event);
                 },
                 'expectedCreator' => function (Job $job, string $selfUrl): array {
                     return [
@@ -220,10 +248,14 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                 },
             ],
             'compiled' => [
-                'eventCreator' => function (EventFactory $eventFactory, string $jobLabel): void {
+                'eventCreator' => function (
+                    EventFactory $eventFactory,
+                    EventRepository $eventRepository,
+                    string $jobLabel,
+                ): void {
                     \assert('' !== $jobLabel);
 
-                    $eventFactory->create(
+                    $event = $eventFactory->create(
                         $jobLabel,
                         1,
                         'job/compilation/ended',
@@ -232,6 +264,8 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                         null,
                         null,
                     );
+
+                    $eventRepository->add($event);
                 },
                 'expectedCreator' => function (Job $job, string $selfUrl): array {
                     return [
@@ -253,10 +287,14 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                 },
             ],
             'compiling' => [
-                'eventCreator' => function (EventFactory $eventFactory, string $jobLabel): void {
+                'eventCreator' => function (
+                    EventFactory $eventFactory,
+                    EventRepository $eventRepository,
+                    string $jobLabel,
+                ): void {
                     \assert('' !== $jobLabel);
 
-                    $eventFactory->create(
+                    $event = $eventFactory->create(
                         $jobLabel,
                         1,
                         'job/compilation/started',
@@ -265,6 +303,8 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                         null,
                         null,
                     );
+
+                    $eventRepository->add($event);
                 },
                 'expectedCreator' => function (Job $job, string $selfUrl): array {
                     return [

@@ -5,9 +5,11 @@ namespace App\Controller;
 use App\Entity\JobInterface;
 use App\Entity\Reference;
 use App\EntityFactory\EventFactory;
+use App\Event\WorkerEventCreatedEvent;
 use App\Repository\EventRepository;
 use App\Request\AddEventRequest;
 use App\Request\ListEventsRequest;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -16,8 +18,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class EventController
 {
     #[Route('/event/add/{token<[A-Z0-9]{26,32}>}', name: 'event_add', methods: ['POST'])]
-    public function add(EventFactory $eventFactory, AddEventRequest $request, ?JobInterface $job): Response
-    {
+    public function add(
+        EventFactory $eventFactory,
+        EventDispatcherInterface $eventDispatcher,
+        AddEventRequest $request,
+        ?JobInterface $job
+    ): Response {
         if (null === $job) {
             return new Response('', 404);
         }
@@ -41,7 +47,7 @@ class EventController
             return $this->createInvalidAddEventRequestFieldResponse(AddEventRequest::KEY_REFERENCE, 'a string');
         }
 
-        $eventFactory->create(
+        $event = $eventFactory->create(
             $job->getLabel(),
             $request->sequenceNumber,
             $request->type,
@@ -50,6 +56,8 @@ class EventController
             $request->body,
             $request->relatedReferences,
         );
+
+        $eventDispatcher->dispatch(new WorkerEventCreatedEvent($event));
 
         return new Response();
     }

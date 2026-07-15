@@ -7,6 +7,7 @@ namespace App\Tests\Application;
 use App\Entity\Job;
 use App\EntityFactory\EventFactory;
 use App\ObjectFactory\UlidFactory;
+use App\Repository\EventRepository;
 use App\Repository\JobRepository;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -14,6 +15,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
 {
     private JobRepository $jobRepository;
     private EventFactory $eventFactory;
+    private EventRepository $eventRepository;
 
     protected function setUp(): void
     {
@@ -26,6 +28,10 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
         $eventFactory = self::getContainer()->get(EventFactory::class);
         \assert($eventFactory instanceof EventFactory);
         $this->eventFactory = $eventFactory;
+
+        $eventRepository = self::getContainer()->get(EventRepository::class);
+        \assert($eventRepository instanceof EventRepository);
+        $this->eventRepository = $eventRepository;
     }
 
     /**
@@ -54,7 +60,7 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
         }
 
         foreach ($eventDataCollection as $eventData) {
-            $this->eventFactory->create(
+            $event = $this->eventFactory->create(
                 $eventData['jobLabel'],
                 $eventData['sequenceNumber'],
                 $eventData['type'],
@@ -63,6 +69,8 @@ abstract class AbstractListEventTest extends AbstractApplicationTest
                 null,
                 null
             );
+
+            $this->eventRepository->add($event);
         }
 
         $response = $this->applicationClient->makeEventListRequest(
