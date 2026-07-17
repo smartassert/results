@@ -3,9 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\JobInterface;
-use App\EntityFactory\JobFactory as JobEntityFactory;
+use App\EntityFactory\JobFactory;
 use App\Event\JobCreatedEvent;
-use App\ObjectFactory\SerializableJobFactoryInterface as JobModelFactory;
+use App\ObjectFactory\SerializableJobFactoryInterface;
 use App\Request\CreateJobRequest;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,12 +17,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 readonly class JobController
 {
     public function __construct(
-        private JobModelFactory $jobModelFactory,
+        private SerializableJobFactoryInterface $serializableJobFactory,
     ) {}
 
     #[Route(name: 'create', methods: ['POST'])]
     public function create(
-        JobEntityFactory $jobEntityFactory,
+        JobFactory $jobEntityFactory,
         EventDispatcherInterface $eventDispatcher,
         UserInterface $user,
         CreateJobRequest $request,
@@ -50,6 +50,6 @@ readonly class JobController
 
     private function createJobResponse(JobInterface $job): Response
     {
-        return new JsonResponse($this->jobModelFactory->create($job));
+        return new JsonResponse($this->serializableJobFactory->create($job));
     }
 }
