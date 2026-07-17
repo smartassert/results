@@ -43,6 +43,7 @@ class AddEventTest extends AbstractAddEventTest
         $this->applicationClient->makeJobCreationRequest(
             self::$apiTokens->get('user@example.com'),
             $jobLabel,
+            null,
         );
 
         $job = $jobRepository->findAll()[0];
