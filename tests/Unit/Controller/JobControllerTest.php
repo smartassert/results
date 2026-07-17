@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Controller;
 
 use App\Controller\JobController;
 use App\Entity\Job as JobEntity;
-use App\ObjectFactory\JobFactoryInterface as JobModelFactory;
+use App\ObjectFactory\SerializableJobFactoryInterface as JobModelFactory;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\User\UserInterface;

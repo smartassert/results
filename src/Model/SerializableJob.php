@@ -4,7 +4,7 @@ namespace App\Model;
 
 use App\Enum\JobState as State;
 
-class Job implements \JsonSerializable
+class SerializableJob implements SerializableJobInterface
 {
     /**
      * @var non-empty-string
@@ -32,21 +32,6 @@ class Job implements \JsonSerializable
         return $new;
     }
 
-    /**
-     * @return array{
-     *     label: non-empty-string,
-     *     event_add_url: string,
-     *     state: non-empty-string,
-     *     has_events: bool,
-     *     end_state?: non-empty-string,
-     *     meta_state: array{
-     *       pending: bool,
-     *       ended: bool,
-     *       succeeded: bool
-     *     },
-     *     previous_states: value-of<State>[]
-     * }
-     */
     public function jsonSerialize(): array
     {
         $hasEnded = State::ENDED === $this->state && isset($this->endState);
@@ -75,5 +60,10 @@ class Job implements \JsonSerializable
         }
 
         return $data;
+    }
+
+    public function toArray(): array
+    {
+        return $this->jsonSerialize();
     }
 }
