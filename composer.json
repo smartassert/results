@@ -39,12 +39,14 @@
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/phpstan-symfony": "^2.0",
         "phpunit/phpunit": "^13",
+        "smartassert/callback-receiver-log-reader": "^0.1.0",
         "smartassert/results-client": "^18.1",
         "smartassert/symfony-test-client": "^3",
         "smartassert/test-authenticaton-provider-bundle": "^6.0",
         "squizlabs/php_codesniffer": "^4.0",
         "symfony/maker-bundle": "^1.42",
         "symfony/phpunit-bridge": "8.1.*",
+        "symfony/process": "8.1.*",
         "webignition/object-reflector": "^1.0"
     },
     "config": {
