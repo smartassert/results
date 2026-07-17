@@ -13,13 +13,18 @@
         "smartassert/health-check-bundle": "^8.1",
         "smartassert/users-security-bundle": "^12",
         "symfony/console": "8.1.*",
+        "symfony/doctrine-messenger": "8.1.*",
         "symfony/dotenv": "8.1.*",
         "symfony/flex": "^2.9",
         "symfony/framework-bundle": "8.1.*",
+        "symfony/http-client": "8.1.*",
+        "symfony/messenger": "8.1.*",
         "symfony/monolog-bundle": "^4.0",
         "symfony/runtime": "8.1.*",
         "symfony/security-bundle": "8.1.*",
+        "symfony/serializer": "8.1.*",
         "symfony/uid": "8.1.*",
+        "symfony/webhook": "8.1.*",
         "symfony/yaml": "8.1.*"
     },
     "require-dev": {
@@ -34,12 +39,14 @@
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/phpstan-symfony": "^2.0",
         "phpunit/phpunit": "^13",
-        "smartassert/results-client": "18.0",
+        "smartassert/callback-receiver-log-reader": "^0.1.0",
+        "smartassert/results-client": "^18.1",
         "smartassert/symfony-test-client": "^3",
         "smartassert/test-authenticaton-provider-bundle": "^6.0",
         "squizlabs/php_codesniffer": "^4.0",
         "symfony/maker-bundle": "^1.42",
         "symfony/phpunit-bridge": "8.1.*",
+        "symfony/process": "8.1.*",
         "webignition/object-reflector": "^1.0"
     },
     "config": {
@@ -132,7 +139,13 @@
             "@integration-up",
             "sleep 2",
             "@db-setup",
+            "@messenger-setup",
             "@users-setup"
+        ],
+        "messenger-setup": [
+            "echo '[job-coordinator] messanger-setup'",
+            "php bin/console messenger:setup-transports",
+            "echo ''"
         ]
     },
     "conflict": {

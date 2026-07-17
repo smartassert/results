@@ -32,7 +32,7 @@ readonly class JobController
             return new Response(null, 400);
         }
 
-        $job = $jobEntityFactory->createForUserAndJob($user, $label);
+        $job = $jobEntityFactory->createForUserAndJob($user, $label, $request->notifyUrl);
         $eventDispatcher->dispatch(new JobCreatedEvent($job));
 
         return $this->createJobResponse($job);

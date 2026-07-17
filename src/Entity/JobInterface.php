@@ -18,4 +18,6 @@ interface JobInterface
      * @return non-empty-string
      */
     public function getUserId(): string;
+
+    public function getNotifyUrl(): ?string;
 }
