@@ -30,22 +30,22 @@ class JobStateFactory
             return $jobState;
         }
 
-        $hasExecutionEndedEvent = $this->eventRepository->hasForType($jobLabel, 'job/execution/ended');
+        $hasExecutionEndedEvent = $this->eventRepository->hasForType($jobLabel, 'lifecycle/execution-completed');
         if ($hasExecutionEndedEvent) {
             return new JobState(State::EXECUTED);
         }
 
-        $hasExecutionStartedEvent = $this->eventRepository->hasForType($jobLabel, 'job/execution/started');
+        $hasExecutionStartedEvent = $this->eventRepository->hasForType($jobLabel, 'lifecycle/execution-started');
         if ($hasExecutionStartedEvent) {
             return new JobState(State::EXECUTING);
         }
 
-        $hasCompilationEndedEvent = $this->eventRepository->hasForType($jobLabel, 'job/compilation/ended');
+        $hasCompilationEndedEvent = $this->eventRepository->hasForType($jobLabel, 'lifecycle/compilation-completed');
         if ($hasCompilationEndedEvent) {
             return new JobState(State::COMPILED);
         }
 
-        $hasCompilationStartedEvent = $this->eventRepository->hasForType($jobLabel, 'job/compilation/started');
+        $hasCompilationStartedEvent = $this->eventRepository->hasForType($jobLabel, 'lifecycle/compilation-started');
         if ($hasCompilationStartedEvent) {
             return new JobState(State::COMPILING);
         }
