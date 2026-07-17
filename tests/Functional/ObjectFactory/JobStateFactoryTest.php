@@ -123,22 +123,22 @@ class JobStateFactoryTest extends WebTestCase
                 })(),
             ],
             'job/execution/ended only' => [
-                'events' => self::createEvents(['job/execution/ended']),
+                'events' => self::createEvents(['lifecycle/execution-completed']),
                 'jobLabel' => self::JOB_LABEL,
                 'expected' => new JobState(JobStateEnum::EXECUTED),
             ],
             'job/execution/started only' => [
-                'events' => self::createEvents(['job/execution/started']),
+                'events' => self::createEvents(['lifecycle/execution-started']),
                 'jobLabel' => self::JOB_LABEL,
                 'expected' => new JobState(JobStateEnum::EXECUTING),
             ],
             'job/compilation/ended only' => [
-                'events' => self::createEvents(['job/compilation/ended']),
+                'events' => self::createEvents(['lifecycle/compilation-completed']),
                 'jobLabel' => self::JOB_LABEL,
                 'expected' => new JobState(JobStateEnum::COMPILED),
             ],
             'job/compilation/started only' => [
-                'events' => self::createEvents(['job/compilation/started']),
+                'events' => self::createEvents(['lifecycle/compilation-started']),
                 'jobLabel' => self::JOB_LABEL,
                 'expected' => new JobState(JobStateEnum::COMPILING),
             ],
@@ -150,10 +150,10 @@ class JobStateFactoryTest extends WebTestCase
             'full successful event set' => [
                 'events' => self::createEvents([
                     'job/started',
-                    'job/compilation/started',
-                    'job/compilation/ended',
-                    'job/execution/started',
-                    'job/execution/ended',
+                    'lifecycle/compilation-started',
+                    'lifecycle/compilation-completed',
+                    'lifecycle/execution-started',
+                    'lifecycle/execution-completed',
                     'job/ended:complete',
                 ]),
                 'jobLabel' => self::JOB_LABEL,
@@ -167,7 +167,7 @@ class JobStateFactoryTest extends WebTestCase
             'full compilation failure event set' => [
                 'events' => self::createEvents([
                     'job/started',
-                    'job/compilation/started',
+                    'lifecycle/compilation-started',
                     'job/compilation/failed',
                     'job/ended:failed/compilation',
                 ]),
@@ -182,9 +182,9 @@ class JobStateFactoryTest extends WebTestCase
             'full execution failure event set' => [
                 'events' => self::createEvents([
                     'job/started',
-                    'job/compilation/started',
-                    'job/compilation/ended',
-                    'job/execution/started',
+                    'lifecycle/compilation-started',
+                    'lifecycle/compilation-completed',
+                    'lifecycle/execution-started',
                     'job/ended:failed/execution',
                 ]),
                 'jobLabel' => self::JOB_LABEL,

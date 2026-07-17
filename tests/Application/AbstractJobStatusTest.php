@@ -178,7 +178,7 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                     $event = $eventFactory->create(
                         $jobLabel,
                         1,
-                        'job/execution/ended',
+                        'lifecycle/execution-completed',
                         'event_label',
                         'event_reference',
                         null,
@@ -219,7 +219,7 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                     $event = $eventFactory->create(
                         $jobLabel,
                         1,
-                        'job/execution/started',
+                        'lifecycle/execution-started',
                         'event_label',
                         'event_reference',
                         null,
@@ -259,7 +259,7 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                     $event = $eventFactory->create(
                         $jobLabel,
                         1,
-                        'job/compilation/ended',
+                        'lifecycle/compilation-completed',
                         'event_label',
                         'event_reference',
                         null,
@@ -298,7 +298,7 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                     $event = $eventFactory->create(
                         $jobLabel,
                         1,
-                        'job/compilation/started',
+                        'lifecycle/compilation-started',
                         'event_label',
                         'event_reference',
                         null,
