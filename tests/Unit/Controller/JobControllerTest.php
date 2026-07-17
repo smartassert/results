@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Controller;
 
 use App\Controller\JobController;
 use App\Entity\Job as JobEntity;
-use App\ObjectFactory\JobFactoryInterface as JobModelFactory;
+use App\ObjectFactory\SerializableJobFactoryInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -18,7 +18,7 @@ class JobControllerTest extends WebTestCase
     public function testStatusNoJob(): void
     {
         $response = new JobController(
-            \Mockery::mock(JobModelFactory::class),
+            \Mockery::mock(SerializableJobFactoryInterface::class),
         )->get(
             \Mockery::mock(UserInterface::class),
             null
@@ -37,7 +37,7 @@ class JobControllerTest extends WebTestCase
             ->andReturn('user-id')
         ;
 
-        $response = new JobController(\Mockery::mock(JobModelFactory::class))->get($user, $job);
+        $response = new JobController(\Mockery::mock(SerializableJobFactoryInterface::class))->get($user, $job);
 
         self::assertSame(404, $response->getStatusCode());
     }

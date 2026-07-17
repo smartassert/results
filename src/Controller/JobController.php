@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\JobInterface;
 use App\EntityFactory\JobFactory as JobEntityFactory;
 use App\Event\JobCreatedEvent;
-use App\ObjectFactory\JobFactoryInterface as JobModelFactory;
+use App\ObjectFactory\SerializableJobFactoryInterface as JobModelFactory;
 use App\Request\CreateJobRequest;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
