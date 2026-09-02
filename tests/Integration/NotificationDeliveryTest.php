@@ -12,6 +12,7 @@ use App\Tests\Application\AbstractApplicationTest;
 use PHPUnit\Framework\Attributes\DataProvider;
 use SmartAssert\CallbackReceiverLogReader\Parser;
 use Symfony\Component\Process\Process;
+use webignition\WaitFor\WaitFor;
 
 use function PHPUnit\Framework\assertEquals;
 
@@ -57,7 +58,16 @@ class NotificationDeliveryTest extends AbstractApplicationTest
             \assert(200 === $response->getStatusCode());
         }
 
-        $this->waitUntilJobStateIs($jobLabel, $stopState);
+        new WaitFor()->waitFor(
+            30,
+            function () use ($jobLabel, $stopState) {
+                $jobState = $this->getJobState($jobLabel);
+
+                return $stopState === $jobState;
+            },
+            $jobLabel . '" to be in "' . $stopState . '"',
+        );
+
         sleep(1);
 
         $process = Process::fromShellCommandline('docker logs callback-receiver');
@@ -241,29 +251,6 @@ class NotificationDeliveryTest extends AbstractApplicationTest
                 },
             ],
         ];
-    }
-
-    private function waitUntilJobStateIs(string $jobLabel, string $state): void
-    {
-        $timeout = 30000;
-        $duration = 0;
-        $period = 1000;
-
-        $jobState = $this->getJobState($jobLabel);
-
-        while ($state !== $jobState) {
-            $jobState = $this->getJobState($jobLabel);
-
-            if ($state !== $jobState) {
-                $duration += $period;
-
-                if ($duration >= $timeout) {
-                    throw new \RuntimeException('Timed out waiting for "' . $jobLabel . '" to be in "' . $state . '"');
-                }
-
-                usleep($period);
-            }
-        }
     }
 
     private function getJobState(string $jobLabel): ?string
