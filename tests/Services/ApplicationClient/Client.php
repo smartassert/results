@@ -56,7 +56,7 @@ class Client
 
         return $this->client->makeRequest(
             $method,
-            $this->router->generate('job_create', ['label' => $label]),
+            $this->router->generate('app_job_create', ['label' => $label]),
             $headers,
             $body,
         );
@@ -86,7 +86,7 @@ class Client
     ): ResponseInterface {
         return $this->client->makeRequest(
             $method,
-            $this->router->generate('event_list', ['label' => $label, 'reference' => $reference, 'type' => $type]),
+            $this->router->generate('app_event_list', ['label' => $label, 'reference' => $reference, 'type' => $type]),
             $this->createAuthorizationHeader($authenticationToken)
         );
     }
