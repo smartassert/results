@@ -19,7 +19,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class EventController
 {
-    #[Route('/event/add/{token<[A-Z0-9]{26,32}>}', name: 'event_add', methods: ['POST'])]
+    #[Route('/event/add/{token<[A-Z0-9]{26,32}>}', methods: ['POST'])]
     public function add(
         EventFactory $eventFactory,
         JobStateFactory $jobStateFactory,
@@ -73,7 +73,7 @@ class EventController
         return new Response();
     }
 
-    #[Route('/event/list/{label<[A-Z0-9]{26,32}>}', name: 'event_list', methods: ['GET'])]
+    #[Route('/event/list/{label<[A-Z0-9]{26,32}>}', methods: ['GET'])]
     public function list(UserInterface $user, EventRepository $repository, ListEventsRequest $request): JsonResponse
     {
         if (
