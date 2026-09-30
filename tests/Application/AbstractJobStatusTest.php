@@ -67,6 +67,7 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                 'expectedCreator' => function (Job $job, string $selfUrl): array {
                     return [
                         'label' => $job->getLabel(),
+                        'token' => $job->getToken(),
                         'event_add_url' => $selfUrl . '/event/add/' . $job->getToken(),
                         'state' => 'awaiting-events',
                         'has_events' => false,
@@ -102,6 +103,7 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                 'expectedCreator' => function (Job $job, string $selfUrl): array {
                     return [
                         'label' => $job->getLabel(),
+                        'token' => $job->getToken(),
                         'event_add_url' => $selfUrl . '/event/add/' . $job->getToken(),
                         'state' => 'ended',
                         'has_events' => true,
@@ -147,6 +149,7 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                 'expectedCreator' => function (Job $job, string $selfUrl): array {
                     return [
                         'label' => $job->getLabel(),
+                        'token' => $job->getToken(),
                         'event_add_url' => $selfUrl . '/event/add/' . $job->getToken(),
                         'state' => 'ended',
                         'has_events' => true,
@@ -190,6 +193,7 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                 'expectedCreator' => function (Job $job, string $selfUrl): array {
                     return [
                         'label' => $job->getLabel(),
+                        'token' => $job->getToken(),
                         'event_add_url' => $selfUrl . '/event/add/' . $job->getToken(),
                         'state' => 'executed',
                         'has_events' => true,
@@ -231,6 +235,7 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                 'expectedCreator' => function (Job $job, string $selfUrl): array {
                     return [
                         'label' => $job->getLabel(),
+                        'token' => $job->getToken(),
                         'event_add_url' => $selfUrl . '/event/add/' . $job->getToken(),
                         'state' => 'executing',
                         'has_events' => true,
@@ -271,6 +276,7 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                 'expectedCreator' => function (Job $job, string $selfUrl): array {
                     return [
                         'label' => $job->getLabel(),
+                        'token' => $job->getToken(),
                         'event_add_url' => $selfUrl . '/event/add/' . $job->getToken(),
                         'state' => 'compiled',
                         'has_events' => true,
@@ -310,6 +316,7 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
                 'expectedCreator' => function (Job $job, string $selfUrl): array {
                     return [
                         'label' => $job->getLabel(),
+                        'token' => $job->getToken(),
                         'event_add_url' => $selfUrl . '/event/add/' . $job->getToken(),
                         'state' => 'compiling',
                         'has_events' => true,

@@ -13,9 +13,11 @@ class SerializableJob implements SerializableJobInterface
 
     /**
      * @param non-empty-string $label
+     * @param non-empty-string $token
      */
     public function __construct(
         private readonly string $label,
+        private readonly string $token,
         private readonly string $eventAddUrl,
         private readonly State $state,
         private readonly bool $hasEvents,
@@ -44,6 +46,7 @@ class SerializableJob implements SerializableJobInterface
 
         $data = [
             'label' => $this->label,
+            'token' => $this->token,
             'event_add_url' => $this->eventAddUrl,
             'state' => $this->state->value,
             'has_events' => $this->hasEvents,
