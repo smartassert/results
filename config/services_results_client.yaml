@@ -44,6 +44,8 @@ services:
     SmartAssert\ResultsClient\AddEventClient:
         public: true
 
+    SmartAssert\ResultsClient\JobFactory: ~
+
     App\Tests\Services\ApplicationClient\HttpResponseFactory: ~
     App\Tests\Services\ApplicationClient\ResultsClientAdapter:
         public: true
