@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\ValueResolver;
 
-use App\Request\AddEventRequest;
-use App\Request\AddEventRequestFactory;
+use App\Request\AddEvent\Factory;
+use App\Request\AddEvent\Request as AddEventRequest;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 final readonly class AddEventRequestResolver implements ValueResolverInterface
 {
     public function __construct(
-        private AddEventRequestFactory $addEventRequestFactory,
+        private Factory $addEventRequestFactory,
     ) {}
 
     /**
