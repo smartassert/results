@@ -21,12 +21,12 @@ class NotificationDeliveryTest extends AbstractApplicationTest
     use GetResultsClientAdapterTrait;
 
     /**
-     * @param array<array<mixed>>                         $addEventPayloads
-     * @param callable(JobInterface): array<array<mixed>> $expectedRequestBodiesCreator
+     * @param callable(non-empty-string): array<array<mixed>> $addEventPayloadsCreator
+     * @param callable(JobInterface): array<array<mixed>>     $expectedRequestBodiesCreator
      */
     #[DataProvider('deliveredNotificationsDataProvider')]
     public function testDeliveredNotifications(
-        array $addEventPayloads,
+        callable $addEventPayloadsCreator,
         string $stopState,
         int $expectedDispatchedNotificationsCount,
         callable $expectedRequestBodiesCreator
@@ -52,6 +52,8 @@ class NotificationDeliveryTest extends AbstractApplicationTest
         \assert(array_key_exists('event_add_url', $responseData));
 
         $addEventUrl = (string) $responseData['event_add_url'];
+
+        $addEventPayloads = $addEventPayloadsCreator($jobLabel);
 
         foreach ($addEventPayloads as $addEventPayload) {
             $response = $this->applicationClient->makeEventAddRequest($addEventUrl, $addEventPayload);
@@ -102,47 +104,57 @@ class NotificationDeliveryTest extends AbstractApplicationTest
     {
         return [
             'started, compiling, compiled, executing, executed, ended' => [
-                'addEventPayloads' => [
-                    [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => 1,
-                        AddEventRequest::KEY_TYPE => 'job/started',
-                        AddEventRequest::KEY_LABEL => md5((string) rand()),
-                        AddEventRequest::KEY_REFERENCE => md5((string) rand()),
-                    ],
-                    [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => 2,
-                        AddEventRequest::KEY_TYPE => 'lifecycle/compilation-started',
-                        AddEventRequest::KEY_LABEL => md5((string) rand()),
-                        AddEventRequest::KEY_REFERENCE => md5((string) rand()),
-                    ],
-                    [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
-                        AddEventRequest::KEY_TYPE => 'lifecycle/compilation-completed',
-                        AddEventRequest::KEY_LABEL => md5((string) rand()),
-                        AddEventRequest::KEY_REFERENCE => md5((string) rand()),
-                    ],
-                    [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => 4,
-                        AddEventRequest::KEY_TYPE => 'lifecycle/execution-started',
-                        AddEventRequest::KEY_LABEL => md5((string) rand()),
-                        AddEventRequest::KEY_REFERENCE => md5((string) rand()),
-                    ],
-                    [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => 5,
-                        AddEventRequest::KEY_TYPE => 'lifecycle/execution-completed',
-                        AddEventRequest::KEY_LABEL => md5((string) rand()),
-                        AddEventRequest::KEY_REFERENCE => md5((string) rand()),
-                    ],
-                    [
-                        AddEventRequest::KEY_SEQUENCE_NUMBER => 6,
-                        AddEventRequest::KEY_TYPE => 'job/ended',
-                        AddEventRequest::KEY_LABEL => md5((string) rand()),
-                        AddEventRequest::KEY_REFERENCE => md5((string) rand()),
-                        AddEventRequest::KEY_BODY => [
-                            'end_state' => 'complete',
+                'addEventPayloadsCreator' => function (string $jobLabel) {
+                    \assert('' !== $jobLabel);
+
+                    return [
+                        [
+                            AddEventRequest::KEY_JOB => $jobLabel,
+                            AddEventRequest::KEY_SEQUENCE_NUMBER => 1,
+                            AddEventRequest::KEY_TYPE => 'job/started',
+                            AddEventRequest::KEY_LABEL => md5((string) rand()),
+                            AddEventRequest::KEY_REFERENCE => md5((string) rand()),
                         ],
-                    ],
-                ],
+                        [
+                            AddEventRequest::KEY_JOB => $jobLabel,
+                            AddEventRequest::KEY_SEQUENCE_NUMBER => 2,
+                            AddEventRequest::KEY_TYPE => 'lifecycle/compilation-started',
+                            AddEventRequest::KEY_LABEL => md5((string) rand()),
+                            AddEventRequest::KEY_REFERENCE => md5((string) rand()),
+                        ],
+                        [
+                            AddEventRequest::KEY_JOB => $jobLabel,
+                            AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
+                            AddEventRequest::KEY_TYPE => 'lifecycle/compilation-completed',
+                            AddEventRequest::KEY_LABEL => md5((string) rand()),
+                            AddEventRequest::KEY_REFERENCE => md5((string) rand()),
+                        ],
+                        [
+                            AddEventRequest::KEY_JOB => $jobLabel,
+                            AddEventRequest::KEY_SEQUENCE_NUMBER => 4,
+                            AddEventRequest::KEY_TYPE => 'lifecycle/execution-started',
+                            AddEventRequest::KEY_LABEL => md5((string) rand()),
+                            AddEventRequest::KEY_REFERENCE => md5((string) rand()),
+                        ],
+                        [
+                            AddEventRequest::KEY_JOB => $jobLabel,
+                            AddEventRequest::KEY_SEQUENCE_NUMBER => 5,
+                            AddEventRequest::KEY_TYPE => 'lifecycle/execution-completed',
+                            AddEventRequest::KEY_LABEL => md5((string) rand()),
+                            AddEventRequest::KEY_REFERENCE => md5((string) rand()),
+                        ],
+                        [
+                            AddEventRequest::KEY_JOB => $jobLabel,
+                            AddEventRequest::KEY_SEQUENCE_NUMBER => 6,
+                            AddEventRequest::KEY_TYPE => 'job/ended',
+                            AddEventRequest::KEY_LABEL => md5((string) rand()),
+                            AddEventRequest::KEY_REFERENCE => md5((string) rand()),
+                            AddEventRequest::KEY_BODY => [
+                                'end_state' => 'complete',
+                            ],
+                        ],
+                    ];
+                },
                 'stopState' => 'ended',
                 'expectedDispatchedNotificationsCount' => 6,
                 'expectedRequestBodiesCreator' => function (JobInterface $job) {

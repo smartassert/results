@@ -26,12 +26,13 @@ class AddEventTest extends AbstractAddEventTest
 
     /**
      * @param callable(EventFactory, EventRepository, string): void $eventCreator
+     * @param callable(non-empty-string): AddEventRequest           $addEventRequestCreator
      * @param callable(JobInterface): ?JobStateChangedEvent         $expectedEventCreator
      */
     #[DataProvider('dispatchJobStateChangedEventDataProvider')]
     public function testDispatchJobStateChangedEvent(
         callable $eventCreator,
-        AddEventRequest $addEventRequest,
+        callable $addEventRequestCreator,
         callable $expectedEventCreator,
     ): void {
         $jobRepository = self::getContainer()->get(JobRepository::class);
@@ -68,6 +69,8 @@ class AddEventTest extends AbstractAddEventTest
         $eventDispatcher = self::getContainer()->get(EventDispatcherInterface::class);
         \assert($eventDispatcher instanceof EventDispatcherInterface);
 
+        $addEventRequest = $addEventRequestCreator($jobLabel);
+
         $eventController->add(
             $eventFactory,
             $jobStateFactory,
@@ -98,16 +101,21 @@ class AddEventTest extends AbstractAddEventTest
                     EventRepository $eventRepository,
                     string $jobLabel
                 ): void {},
-                'addEventRequest' => new AddEventRequest(
-                    1,
-                    'job/ended',
-                    'event label',
-                    md5('event label'),
-                    null,
-                    [
-                        'end_state' => 'end state value',
-                    ],
-                ),
+                'addEventRequestCreator' => function (string $jobLabel) {
+                    \assert('' !== $jobLabel);
+
+                    return new AddEventRequest(
+                        $jobLabel,
+                        1,
+                        'job/ended',
+                        'event label',
+                        md5('event label'),
+                        null,
+                        [
+                            'end_state' => 'end state value',
+                        ],
+                    );
+                },
                 'expectedEventCreator' => function (JobInterface $job): JobStateChangedEvent {
                     $jobState = new JobState(JobStateEnum::ENDED);
                     $jobState->setEndState('end state value');
@@ -121,14 +129,19 @@ class AddEventTest extends AbstractAddEventTest
                     EventRepository $eventRepository,
                     string $jobLabel
                 ): void {},
-                'addEventRequest' => new AddEventRequest(
-                    1,
-                    'job/started',
-                    'event label',
-                    md5('event label'),
-                    null,
-                    null,
-                ),
+                'addEventRequestCreator' => function (string $jobLabel) {
+                    \assert('' !== $jobLabel);
+
+                    return new AddEventRequest(
+                        $jobLabel,
+                        1,
+                        'job/started',
+                        'event label',
+                        md5('event label'),
+                        null,
+                        null,
+                    );
+                },
                 'expectedEventCreator' => function (JobInterface $job): JobStateChangedEvent {
                     return new JobStateChangedEvent($job, new JobState(JobStateEnum::STARTED));
                 },
@@ -155,16 +168,21 @@ class AddEventTest extends AbstractAddEventTest
 
                     $eventRepository->add($event);
                 },
-                'addEventRequest' => new AddEventRequest(
-                    1,
-                    'job/ended',
-                    'event label',
-                    md5('event label'),
-                    null,
-                    [
-                        'end_state' => 'end state value',
-                    ],
-                ),
+                'addEventRequestCreator' => function (string $jobLabel) {
+                    \assert('' !== $jobLabel);
+
+                    return new AddEventRequest(
+                        $jobLabel,
+                        1,
+                        'job/ended',
+                        'event label',
+                        md5('event label'),
+                        null,
+                        [
+                            'end_state' => 'end state value',
+                        ],
+                    );
+                },
                 'expectedEventCreator' => function (): null {
                     return null;
                 },

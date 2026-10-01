@@ -134,10 +134,10 @@ readonly class ResultsClientAdapter implements ClientInterface
             return null;
         }
 
-        $label = $data['label'] ?? null;
-        $label = is_string($label) ? $label : null;
-        $label = '' !== $label ? $label : null;
-        if (null === $label) {
+        $job = $data['job'] ?? null;
+        $job = is_string($job) ? $job : null;
+        $job = '' !== $job ? $job : null;
+        if (null === $job) {
             return null;
         }
 
@@ -187,7 +187,7 @@ readonly class ResultsClientAdapter implements ClientInterface
             $relatedReferences = new ResourceReferenceCollection($filteredRelatedReferences);
         }
 
-        return new Event($label, $sequenceNumber, $type, $resourceReference, $body, $relatedReferences);
+        return new Event($job, $sequenceNumber, $type, $resourceReference, $body, $relatedReferences);
     }
 
     /**

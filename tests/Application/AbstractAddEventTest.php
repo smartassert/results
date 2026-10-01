@@ -61,13 +61,14 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             'body not present, related references not present' => [
                 'jobLabel' => $jobLabel,
                 'requestPayload' => [
+                    AddEventRequest::KEY_JOB => $jobLabel,
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 1,
                     AddEventRequest::KEY_TYPE => 'job/compiled',
                     AddEventRequest::KEY_LABEL => $jobLabel,
                     AddEventRequest::KEY_REFERENCE => md5($jobLabel),
                 ],
                 'expectedSerializedEvent' => [
-                    'job' => $jobLabel,
+                    AddEventRequest::KEY_JOB => $jobLabel,
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 1,
                     AddEventRequest::KEY_TYPE => 'job/compiled',
                     AddEventRequest::KEY_LABEL => $jobLabel,
@@ -77,6 +78,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             'body empty, related references empty' => [
                 'jobLabel' => $jobLabel,
                 'requestPayload' => [
+                    AddEventRequest::KEY_JOB => $jobLabel,
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 2,
                     AddEventRequest::KEY_TYPE => 'job/compiled',
                     AddEventRequest::KEY_LABEL => $jobLabel,
@@ -85,7 +87,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                     AddEventRequest::KEY_BODY => [],
                 ],
                 'expectedSerializedEvent' => [
-                    'job' => $jobLabel,
+                    AddEventRequest::KEY_JOB => $jobLabel,
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 2,
                     AddEventRequest::KEY_TYPE => 'job/compiled',
                     AddEventRequest::KEY_LABEL => $jobLabel,
@@ -96,6 +98,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             'body not empty, related references empty' => [
                 'jobLabel' => $jobLabel,
                 'requestPayload' => [
+                    AddEventRequest::KEY_JOB => $jobLabel,
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
                     AddEventRequest::KEY_TYPE => 'job/started',
                     AddEventRequest::KEY_LABEL => $jobLabel,
@@ -108,7 +111,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                     ],
                 ],
                 'expectedSerializedEvent' => [
-                    'job' => $jobLabel,
+                    AddEventRequest::KEY_JOB => $jobLabel,
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
                     AddEventRequest::KEY_TYPE => 'job/started',
                     AddEventRequest::KEY_LABEL => $jobLabel,
@@ -124,6 +127,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             'related references invalid' => [
                 'jobLabel' => $jobLabel,
                 'requestPayload' => [
+                    AddEventRequest::KEY_JOB => $jobLabel,
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
                     AddEventRequest::KEY_TYPE => 'job/started',
                     AddEventRequest::KEY_LABEL => $jobLabel,
@@ -135,7 +139,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                     ],
                 ],
                 'expectedSerializedEvent' => [
-                    'job' => $jobLabel,
+                    AddEventRequest::KEY_JOB => $jobLabel,
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
                     AddEventRequest::KEY_TYPE => 'job/started',
                     AddEventRequest::KEY_LABEL => $jobLabel,
@@ -145,6 +149,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             'related references valid' => [
                 'jobLabel' => $jobLabel,
                 'requestPayload' => [
+                    AddEventRequest::KEY_JOB => $jobLabel,
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
                     AddEventRequest::KEY_TYPE => 'job/started',
                     AddEventRequest::KEY_LABEL => $jobLabel,
@@ -161,7 +166,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                     ],
                 ],
                 'expectedSerializedEvent' => [
-                    'job' => $jobLabel,
+                    AddEventRequest::KEY_JOB => $jobLabel,
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
                     AddEventRequest::KEY_TYPE => 'job/started',
                     AddEventRequest::KEY_LABEL => $jobLabel,
@@ -219,11 +224,17 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
      */
     public static function addIsIdempotentDataProvider(): array
     {
+        $jobLabel1 = (string) new Ulid();
+        $jobLabel2 = (string) new Ulid();
+        $jobLabel3 = (string) new Ulid();
+        $jobLabel4 = (string) new Ulid();
+
         return [
             'type is not modified by second request' => [
-                'jobLabel' => (string) new Ulid(),
+                'jobLabel' => $jobLabel1,
                 'sequenceNumber' => rand(),
                 'firstRequestPayload' => [
+                    AddEventRequest::KEY_JOB => $jobLabel1,
                     AddEventRequest::KEY_TYPE => 'first request type',
                     AddEventRequest::KEY_LABEL => 'first request label',
                     AddEventRequest::KEY_REFERENCE => 'first request reference',
@@ -232,6 +243,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                     ],
                 ],
                 'secondRequestPayload' => [
+                    AddEventRequest::KEY_JOB => $jobLabel1,
                     AddEventRequest::KEY_TYPE => 'second request type',
                     AddEventRequest::KEY_REFERENCE => 'first request reference',
                     AddEventRequest::KEY_LABEL => 'first request label',
@@ -241,9 +253,10 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                 ],
             ],
             'label is not modified by second request' => [
-                'jobLabel' => (string) new Ulid(),
+                'jobLabel' => $jobLabel2,
                 'sequenceNumber' => rand(),
                 'firstRequestPayload' => [
+                    AddEventRequest::KEY_JOB => $jobLabel2,
                     AddEventRequest::KEY_TYPE => 'first request type',
                     AddEventRequest::KEY_LABEL => 'first request label',
                     AddEventRequest::KEY_REFERENCE => 'first request reference',
@@ -252,6 +265,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                     ],
                 ],
                 'secondRequestPayload' => [
+                    AddEventRequest::KEY_JOB => $jobLabel2,
                     AddEventRequest::KEY_TYPE => 'first request type',
                     AddEventRequest::KEY_REFERENCE => 'second request reference',
                     AddEventRequest::KEY_LABEL => 'first request label',
@@ -261,9 +275,10 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                 ],
             ],
             'reference is not modified by second request' => [
-                'jobLabel' => (string) new Ulid(),
+                'jobLabel' => $jobLabel3,
                 'sequenceNumber' => rand(),
                 'firstRequestPayload' => [
+                    AddEventRequest::KEY_JOB => $jobLabel3,
                     AddEventRequest::KEY_TYPE => 'first request type',
                     AddEventRequest::KEY_LABEL => 'first request label',
                     AddEventRequest::KEY_REFERENCE => 'first request reference',
@@ -272,6 +287,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                     ],
                 ],
                 'secondRequestPayload' => [
+                    AddEventRequest::KEY_JOB => $jobLabel3,
                     AddEventRequest::KEY_TYPE => 'first request type',
                     AddEventRequest::KEY_LABEL => 'first request label',
                     AddEventRequest::KEY_REFERENCE => 'second request reference',
@@ -281,9 +297,10 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                 ],
             ],
             'body is not modified by second request' => [
-                'jobLabel' => (string) new Ulid(),
+                'jobLabel' => $jobLabel4,
                 'sequenceNumber' => rand(),
                 'firstRequestPayload' => [
+                    AddEventRequest::KEY_JOB => $jobLabel4,
                     AddEventRequest::KEY_TYPE => 'first request type',
                     AddEventRequest::KEY_LABEL => 'first request label',
                     AddEventRequest::KEY_REFERENCE => 'first request reference',
@@ -292,6 +309,7 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                     ],
                 ],
                 'secondRequestPayload' => [
+                    AddEventRequest::KEY_JOB => $jobLabel4,
                     AddEventRequest::KEY_TYPE => 'first request type',
                     AddEventRequest::KEY_LABEL => 'first request label',
                     AddEventRequest::KEY_REFERENCE => 'first request reference',
