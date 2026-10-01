@@ -15,7 +15,6 @@ class HttpResponseFactory
     {
         $responseData = [
             'label' => $job->label,
-            'token' => $job->token,
             'event_add_url' => $job->authenticator,
             'state' => $job->state->state,
             'meta_state' => [
@@ -26,6 +25,10 @@ class HttpResponseFactory
             'has_events' => $job->hasEvents,
             'previous_states' => $job->previousStates,
         ];
+
+        if (null !== $job->token) {
+            $responseData['token'] = $job->token;
+        }
 
         $endState = $job->state->endState;
         if (is_string($endState)) {
