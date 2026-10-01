@@ -168,7 +168,7 @@ readonly class ResultsClientAdapter implements ClientInterface
 
         $relatedReferences = null;
 
-        if ([] !== $relatedReferencesData) {
+        if ([] !== $relatedReferences) {
             $filteredRelatedReferences = [];
 
             foreach ($relatedReferencesData as $relatedReference) {
