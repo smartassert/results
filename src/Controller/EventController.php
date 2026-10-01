@@ -10,6 +10,8 @@ use App\Event\WorkerEventCreatedEvent;
 use App\ObjectFactory\JobStateFactory;
 use App\Repository\EventRepository;
 use App\Request\AddEventRequest;
+use App\Request\AddEventRequestValidator;
+use App\Request\InvalidAddEventRequestException;
 use App\Request\ListEventsRequest;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,6 +23,7 @@ class EventController
 {
     #[Route('/event/add/{token<[A-Z0-9]{26,32}>}', methods: ['POST'])]
     public function add(
+        AddEventRequestValidator $requestValidator,
         EventFactory $eventFactory,
         JobStateFactory $jobStateFactory,
         EventDispatcherInterface $eventDispatcher,
@@ -31,42 +34,22 @@ class EventController
             return new Response('', 404);
         }
 
-        if (null === $request->job) {
-            return $this->createInvalidAddEventRequestFieldResponse(
-                AddEventRequest::KEY_JOB,
-                'a string'
-            );
-        }
-
-        if (null === $request->sequenceNumber) {
-            return $this->createInvalidAddEventRequestFieldResponse(
-                AddEventRequest::KEY_SEQUENCE_NUMBER,
-                'a positive integer'
-            );
-        }
-
-        if (null === $request->type) {
-            return $this->createInvalidAddEventRequestFieldResponse(AddEventRequest::KEY_TYPE, 'a string');
-        }
-
-        if (null === $request->label) {
-            return $this->createInvalidAddEventRequestFieldResponse(AddEventRequest::KEY_LABEL, 'a string');
-        }
-
-        if (null === $request->reference) {
-            return $this->createInvalidAddEventRequestFieldResponse(AddEventRequest::KEY_REFERENCE, 'a string');
+        try {
+            $validatedRequest = $requestValidator->validate($request);
+        } catch (InvalidAddEventRequestException $e) {
+            return $this->createInvalidAddEventRequestFieldResponse($e->field, $e->getMessage());
         }
 
         $currentJobState = $jobStateFactory->create($job->getLabel());
 
         $event = $eventFactory->create(
             $job->getLabel(),
-            $request->sequenceNumber,
-            $request->type,
-            $request->label,
-            $request->reference,
-            $request->body,
-            $request->relatedReferences,
+            $validatedRequest->sequenceNumber,
+            $validatedRequest->type,
+            $validatedRequest->label,
+            $validatedRequest->reference,
+            $validatedRequest->body,
+            $validatedRequest->relatedReferences,
         );
 
         $eventDispatcher->dispatch(new WorkerEventCreatedEvent($event));
@@ -108,7 +91,7 @@ class EventController
         );
     }
 
-    private function createInvalidAddEventRequestFieldResponse(string $field, string $expectedFormat): JsonResponse
+    private function createInvalidAddEventRequestFieldResponse(string $field, string $message): JsonResponse
     {
         return new JsonResponse(
             [
@@ -117,11 +100,7 @@ class EventController
                     'payload' => [
                         $field => [
                             'value' => null,
-                            'message' => sprintf(
-                                'Required field "%s" invalid, missing from request or not %s.',
-                                $field,
-                                $expectedFormat
-                            ),
+                            'message' => $message,
                         ],
                     ],
                 ],

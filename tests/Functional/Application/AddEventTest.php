@@ -14,6 +14,7 @@ use App\ObjectFactory\JobStateFactory;
 use App\Repository\EventRepository;
 use App\Repository\JobRepository;
 use App\Request\AddEventRequest;
+use App\Request\AddEventRequestValidator;
 use App\Tests\Application\AbstractAddEventTest;
 use App\Tests\Services\EventRecorder;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -49,6 +50,9 @@ class AddEventTest extends AbstractAddEventTest
 
         $job = $jobRepository->findAll()[0];
 
+        $requestValidator = self::getContainer()->get(AddEventRequestValidator::class);
+        \assert($requestValidator instanceof AddEventRequestValidator);
+
         $eventFactory = self::getContainer()->get(EventFactory::class);
         \assert($eventFactory instanceof EventFactory);
 
@@ -72,6 +76,7 @@ class AddEventTest extends AbstractAddEventTest
         $addEventRequest = $addEventRequestCreator($jobLabel);
 
         $eventController->add(
+            $requestValidator,
             $eventFactory,
             $jobStateFactory,
             $eventDispatcher,
