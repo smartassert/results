@@ -4,13 +4,13 @@ namespace App\Request\AddEvent;
 
 class AddEventRequest
 {
-    public const KEY_JOB = 'job';
-    public const KEY_SEQUENCE_NUMBER = 'sequence_number';
-    public const KEY_TYPE = 'type';
-    public const KEY_LABEL = 'label';
-    public const KEY_REFERENCE = 'reference';
-    public const KEY_RELATED_REFERENCES = 'related_references';
-    public const KEY_BODY = 'body';
+    public const string KEY_JOB = 'job';
+    public const string  KEY_SEQUENCE_NUMBER = 'sequence_number';
+    public const string  KEY_TYPE = 'type';
+    public const string  KEY_LABEL = 'label';
+    public const string  KEY_REFERENCE = 'reference';
+    public const string  KEY_RELATED_REFERENCES = 'related_references';
+    public const string  KEY_BODY = 'body';
 
     /**
      * @param null|non-empty-string $job
