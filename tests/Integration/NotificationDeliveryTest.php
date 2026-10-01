@@ -21,8 +21,8 @@ class NotificationDeliveryTest extends AbstractApplicationTest
     use GetResultsClientAdapterTrait;
 
     /**
-     * @param callable(non-empty-string): array<array<mixed>>                         $addEventPayloadsCreator
-     * @param callable(JobInterface): array<array<mixed>> $expectedRequestBodiesCreator
+     * @param callable(non-empty-string): array<array<mixed>> $addEventPayloadsCreator
+     * @param callable(JobInterface): array<array<mixed>>     $expectedRequestBodiesCreator
      */
     #[DataProvider('deliveredNotificationsDataProvider')]
     public function testDeliveredNotifications(
