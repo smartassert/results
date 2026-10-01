@@ -31,6 +31,13 @@ class EventController
             return new Response('', 404);
         }
 
+        if (null === $request->job) {
+            return $this->createInvalidAddEventRequestFieldResponse(
+                AddEventRequest::KEY_JOB,
+                'a string'
+            );
+        }
+
         if (null === $request->sequenceNumber) {
             return $this->createInvalidAddEventRequestFieldResponse(
                 AddEventRequest::KEY_SEQUENCE_NUMBER,

@@ -51,6 +51,19 @@ abstract class AbstractAddEventBadRequestTest extends AbstractApplicationTest
      */
     public static function addBadRequestDataProvider(): array
     {
+        $expectedInvalidJobResponseData = [
+            'error' => [
+                'type' => 'invalid_request',
+                'payload' => [
+                    AddEventRequest::KEY_JOB => [
+                        'value' => null,
+                        'message' => 'Required field "job" invalid, '
+                            . 'missing from request or not a string.',
+                    ],
+                ],
+            ],
+        ];
+
         $expectedInvalidSequenceNumberResponseData = [
             'error' => [
                 'type' => 'invalid_request',
@@ -65,8 +78,30 @@ abstract class AbstractAddEventBadRequestTest extends AbstractApplicationTest
         ];
 
         return [
+            'job missing' => [
+                'requestPayload' => [
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 1,
+                    AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
+                    AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
+                    AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
+                    AddEventRequest::KEY_BODY => json_encode([]),
+                ],
+                'expectedResponseData' => $expectedInvalidJobResponseData,
+            ],
+            'job not a string' => [
+                'requestPayload' => [
+                    AddEventRequest::KEY_JOB => 123,
+                    AddEventRequest::KEY_SEQUENCE_NUMBER => 1,
+                    AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
+                    AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
+                    AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
+                    AddEventRequest::KEY_BODY => json_encode([]),
+                ],
+                'expectedResponseData' => $expectedInvalidJobResponseData,
+            ],
             'sequence number missing' => [
                 'requestPayload' => [
+                    AddEventRequest::KEY_JOB => md5((string) rand()),
                     AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
                     AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
                     AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
@@ -76,6 +111,7 @@ abstract class AbstractAddEventBadRequestTest extends AbstractApplicationTest
             ],
             'sequence number not an integer' => [
                 'requestPayload' => [
+                    AddEventRequest::KEY_JOB => md5((string) rand()),
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 'not an integer',
                     AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
                     AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
@@ -86,6 +122,7 @@ abstract class AbstractAddEventBadRequestTest extends AbstractApplicationTest
             ],
             'sequence number is zero' => [
                 'requestPayload' => [
+                    AddEventRequest::KEY_JOB => md5((string) rand()),
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 0,
                     AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
                     AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
@@ -96,6 +133,7 @@ abstract class AbstractAddEventBadRequestTest extends AbstractApplicationTest
             ],
             'sequence number is negative' => [
                 'requestPayload' => [
+                    AddEventRequest::KEY_JOB => md5((string) rand()),
                     AddEventRequest::KEY_SEQUENCE_NUMBER => -1,
                     AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
                     AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
@@ -106,6 +144,7 @@ abstract class AbstractAddEventBadRequestTest extends AbstractApplicationTest
             ],
             'type missing' => [
                 'requestPayload' => [
+                    AddEventRequest::KEY_JOB => md5((string) rand()),
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 123,
                     AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
                     AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
@@ -125,6 +164,7 @@ abstract class AbstractAddEventBadRequestTest extends AbstractApplicationTest
             ],
             'label missing' => [
                 'requestPayload' => [
+                    AddEventRequest::KEY_JOB => md5((string) rand()),
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 123,
                     AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
                     AddEventRequest::KEY_REFERENCE => 'reference_' . md5((string) rand()),
@@ -144,6 +184,7 @@ abstract class AbstractAddEventBadRequestTest extends AbstractApplicationTest
             ],
             'reference missing' => [
                 'requestPayload' => [
+                    AddEventRequest::KEY_JOB => md5((string) rand()),
                     AddEventRequest::KEY_SEQUENCE_NUMBER => 123,
                     AddEventRequest::KEY_TYPE => 'type_' . md5((string) rand()),
                     AddEventRequest::KEY_LABEL => 'label_' . md5((string) rand()),
