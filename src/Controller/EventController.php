@@ -42,15 +42,7 @@ class EventController
 
         $currentJobState = $jobStateFactory->create($job->getLabel());
 
-        $event = $eventFactory->create(
-            $job->getLabel(),
-            $validatedRequest->sequenceNumber,
-            $validatedRequest->type,
-            $validatedRequest->label,
-            $validatedRequest->reference,
-            $validatedRequest->body,
-            $validatedRequest->relatedReferences,
-        );
+        $event = $eventFactory->createFromRequest($validatedRequest);
 
         $eventDispatcher->dispatch(new WorkerEventCreatedEvent($event));
 
