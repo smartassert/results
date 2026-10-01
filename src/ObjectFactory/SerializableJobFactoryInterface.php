@@ -8,4 +8,6 @@ use App\Model\SerializableJobInterface;
 interface SerializableJobFactoryInterface
 {
     public function create(JobInterface $job): SerializableJobInterface;
+
+    public function createWithoutToken(JobInterface $job): SerializableJobInterface;
 }

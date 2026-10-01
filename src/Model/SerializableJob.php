@@ -12,12 +12,12 @@ class SerializableJob implements SerializableJobInterface
     private string $endState;
 
     /**
-     * @param non-empty-string $label
-     * @param non-empty-string $token
+     * @param non-empty-string  $label
+     * @param ?non-empty-string $token
      */
     public function __construct(
         private readonly string $label,
-        private readonly string $token,
+        private readonly ?string $token,
         private readonly string $eventAddUrl,
         private readonly State $state,
         private readonly bool $hasEvents,
@@ -46,7 +46,6 @@ class SerializableJob implements SerializableJobInterface
 
         $data = [
             'label' => $this->label,
-            'token' => $this->token,
             'event_add_url' => $this->eventAddUrl,
             'state' => $this->state->value,
             'has_events' => $this->hasEvents,
@@ -57,6 +56,10 @@ class SerializableJob implements SerializableJobInterface
             ],
             'previous_states' => $previousStates,
         ];
+
+        if (null !== $this->token) {
+            $data['token'] = $this->token;
+        }
 
         if ($hasEnded) {
             $data['end_state'] = $this->endState;
