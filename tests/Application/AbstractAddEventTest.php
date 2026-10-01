@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Application;
 
 use App\Repository\EventRepository;
-use App\Request\AddEvent\AddEventRequest;
+use App\Request\AddEvent\Request;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Uid\Ulid;
 
@@ -41,10 +41,10 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         $serializedEvent = $event->jsonSerialize();
 
         if (
-            !array_key_exists(AddEventRequest::KEY_BODY, $expectedSerializedEvent)
-            && array_key_exists(AddEventRequest::KEY_BODY, $serializedEvent)
+            !array_key_exists(Request::KEY_BODY, $expectedSerializedEvent)
+            && array_key_exists(Request::KEY_BODY, $serializedEvent)
         ) {
-            unset($serializedEvent[AddEventRequest::KEY_BODY]);
+            unset($serializedEvent[Request::KEY_BODY]);
         }
 
         self::assertEquals($expectedSerializedEvent, $serializedEvent);
@@ -61,49 +61,49 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             'body not present, related references not present' => [
                 'jobLabel' => $jobLabel,
                 'requestPayload' => [
-                    AddEventRequest::KEY_JOB => $jobLabel,
-                    AddEventRequest::KEY_SEQUENCE_NUMBER => 1,
-                    AddEventRequest::KEY_TYPE => 'job/compiled',
-                    AddEventRequest::KEY_LABEL => $jobLabel,
-                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
+                    Request::KEY_JOB => $jobLabel,
+                    Request::KEY_SEQUENCE_NUMBER => 1,
+                    Request::KEY_TYPE => 'job/compiled',
+                    Request::KEY_LABEL => $jobLabel,
+                    Request::KEY_REFERENCE => md5($jobLabel),
                 ],
                 'expectedSerializedEvent' => [
-                    AddEventRequest::KEY_JOB => $jobLabel,
-                    AddEventRequest::KEY_SEQUENCE_NUMBER => 1,
-                    AddEventRequest::KEY_TYPE => 'job/compiled',
-                    AddEventRequest::KEY_LABEL => $jobLabel,
-                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
+                    Request::KEY_JOB => $jobLabel,
+                    Request::KEY_SEQUENCE_NUMBER => 1,
+                    Request::KEY_TYPE => 'job/compiled',
+                    Request::KEY_LABEL => $jobLabel,
+                    Request::KEY_REFERENCE => md5($jobLabel),
                 ],
             ],
             'body empty, related references empty' => [
                 'jobLabel' => $jobLabel,
                 'requestPayload' => [
-                    AddEventRequest::KEY_JOB => $jobLabel,
-                    AddEventRequest::KEY_SEQUENCE_NUMBER => 2,
-                    AddEventRequest::KEY_TYPE => 'job/compiled',
-                    AddEventRequest::KEY_LABEL => $jobLabel,
-                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
-                    AddEventRequest::KEY_RELATED_REFERENCES => [],
-                    AddEventRequest::KEY_BODY => [],
+                    Request::KEY_JOB => $jobLabel,
+                    Request::KEY_SEQUENCE_NUMBER => 2,
+                    Request::KEY_TYPE => 'job/compiled',
+                    Request::KEY_LABEL => $jobLabel,
+                    Request::KEY_REFERENCE => md5($jobLabel),
+                    Request::KEY_RELATED_REFERENCES => [],
+                    Request::KEY_BODY => [],
                 ],
                 'expectedSerializedEvent' => [
-                    AddEventRequest::KEY_JOB => $jobLabel,
-                    AddEventRequest::KEY_SEQUENCE_NUMBER => 2,
-                    AddEventRequest::KEY_TYPE => 'job/compiled',
-                    AddEventRequest::KEY_LABEL => $jobLabel,
-                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
-                    AddEventRequest::KEY_BODY => [],
+                    Request::KEY_JOB => $jobLabel,
+                    Request::KEY_SEQUENCE_NUMBER => 2,
+                    Request::KEY_TYPE => 'job/compiled',
+                    Request::KEY_LABEL => $jobLabel,
+                    Request::KEY_REFERENCE => md5($jobLabel),
+                    Request::KEY_BODY => [],
                 ],
             ],
             'body not empty, related references empty' => [
                 'jobLabel' => $jobLabel,
                 'requestPayload' => [
-                    AddEventRequest::KEY_JOB => $jobLabel,
-                    AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
-                    AddEventRequest::KEY_TYPE => 'job/started',
-                    AddEventRequest::KEY_LABEL => $jobLabel,
-                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
-                    AddEventRequest::KEY_BODY => [
+                    Request::KEY_JOB => $jobLabel,
+                    Request::KEY_SEQUENCE_NUMBER => 3,
+                    Request::KEY_TYPE => 'job/started',
+                    Request::KEY_LABEL => $jobLabel,
+                    Request::KEY_REFERENCE => md5($jobLabel),
+                    Request::KEY_BODY => [
                         'tests' => [
                             'Test/test1.yml',
                             'Test/test2.yml',
@@ -111,12 +111,12 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                     ],
                 ],
                 'expectedSerializedEvent' => [
-                    AddEventRequest::KEY_JOB => $jobLabel,
-                    AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
-                    AddEventRequest::KEY_TYPE => 'job/started',
-                    AddEventRequest::KEY_LABEL => $jobLabel,
-                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
-                    AddEventRequest::KEY_BODY => [
+                    Request::KEY_JOB => $jobLabel,
+                    Request::KEY_SEQUENCE_NUMBER => 3,
+                    Request::KEY_TYPE => 'job/started',
+                    Request::KEY_LABEL => $jobLabel,
+                    Request::KEY_REFERENCE => md5($jobLabel),
+                    Request::KEY_BODY => [
                         'tests' => [
                             'Test/test1.yml',
                             'Test/test2.yml',
@@ -127,34 +127,34 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
             'related references invalid' => [
                 'jobLabel' => $jobLabel,
                 'requestPayload' => [
-                    AddEventRequest::KEY_JOB => $jobLabel,
-                    AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
-                    AddEventRequest::KEY_TYPE => 'job/started',
-                    AddEventRequest::KEY_LABEL => $jobLabel,
-                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
-                    AddEventRequest::KEY_RELATED_REFERENCES => [
+                    Request::KEY_JOB => $jobLabel,
+                    Request::KEY_SEQUENCE_NUMBER => 3,
+                    Request::KEY_TYPE => 'job/started',
+                    Request::KEY_LABEL => $jobLabel,
+                    Request::KEY_REFERENCE => md5($jobLabel),
+                    Request::KEY_RELATED_REFERENCES => [
                         [
                             'invalid-key' => 'value',
                         ],
                     ],
                 ],
                 'expectedSerializedEvent' => [
-                    AddEventRequest::KEY_JOB => $jobLabel,
-                    AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
-                    AddEventRequest::KEY_TYPE => 'job/started',
-                    AddEventRequest::KEY_LABEL => $jobLabel,
-                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
+                    Request::KEY_JOB => $jobLabel,
+                    Request::KEY_SEQUENCE_NUMBER => 3,
+                    Request::KEY_TYPE => 'job/started',
+                    Request::KEY_LABEL => $jobLabel,
+                    Request::KEY_REFERENCE => md5($jobLabel),
                 ],
             ],
             'related references valid' => [
                 'jobLabel' => $jobLabel,
                 'requestPayload' => [
-                    AddEventRequest::KEY_JOB => $jobLabel,
-                    AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
-                    AddEventRequest::KEY_TYPE => 'job/started',
-                    AddEventRequest::KEY_LABEL => $jobLabel,
-                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
-                    AddEventRequest::KEY_RELATED_REFERENCES => [
+                    Request::KEY_JOB => $jobLabel,
+                    Request::KEY_SEQUENCE_NUMBER => 3,
+                    Request::KEY_TYPE => 'job/started',
+                    Request::KEY_LABEL => $jobLabel,
+                    Request::KEY_REFERENCE => md5($jobLabel),
+                    Request::KEY_RELATED_REFERENCES => [
                         [
                             'label' => 'reference 1 label',
                             'reference' => 'reference 1 reference',
@@ -166,12 +166,12 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                     ],
                 ],
                 'expectedSerializedEvent' => [
-                    AddEventRequest::KEY_JOB => $jobLabel,
-                    AddEventRequest::KEY_SEQUENCE_NUMBER => 3,
-                    AddEventRequest::KEY_TYPE => 'job/started',
-                    AddEventRequest::KEY_LABEL => $jobLabel,
-                    AddEventRequest::KEY_REFERENCE => md5($jobLabel),
-                    AddEventRequest::KEY_RELATED_REFERENCES => [
+                    Request::KEY_JOB => $jobLabel,
+                    Request::KEY_SEQUENCE_NUMBER => 3,
+                    Request::KEY_TYPE => 'job/started',
+                    Request::KEY_LABEL => $jobLabel,
+                    Request::KEY_REFERENCE => md5($jobLabel),
+                    Request::KEY_RELATED_REFERENCES => [
                         [
                             'label' => 'reference 1 label',
                             'reference' => 'reference 1 reference',
@@ -206,12 +206,12 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
         self::assertSame(0, $this->eventRepository->count([]));
 
         $addEventUrl = $this->createJobAddEventUrl($jobLabel);
-        $firstRequestPayload[AddEventRequest::KEY_SEQUENCE_NUMBER] = $sequenceNumber;
+        $firstRequestPayload[Request::KEY_SEQUENCE_NUMBER] = $sequenceNumber;
 
         $firstResponse = $this->applicationClient->makeEventAddRequest($addEventUrl, $firstRequestPayload);
         self::assertSame(1, $this->eventRepository->count([]));
 
-        $secondRequestPayload[AddEventRequest::KEY_SEQUENCE_NUMBER] = $sequenceNumber;
+        $secondRequestPayload[Request::KEY_SEQUENCE_NUMBER] = $sequenceNumber;
 
         $secondResponse = $this->applicationClient->makeEventAddRequest($addEventUrl, $secondRequestPayload);
         self::assertSame(1, $this->eventRepository->count([]));
@@ -234,20 +234,20 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                 'jobLabel' => $jobLabel1,
                 'sequenceNumber' => rand(),
                 'firstRequestPayload' => [
-                    AddEventRequest::KEY_JOB => $jobLabel1,
-                    AddEventRequest::KEY_TYPE => 'first request type',
-                    AddEventRequest::KEY_LABEL => 'first request label',
-                    AddEventRequest::KEY_REFERENCE => 'first request reference',
-                    AddEventRequest::KEY_BODY => [
+                    Request::KEY_JOB => $jobLabel1,
+                    Request::KEY_TYPE => 'first request type',
+                    Request::KEY_LABEL => 'first request label',
+                    Request::KEY_REFERENCE => 'first request reference',
+                    Request::KEY_BODY => [
                         'first request key' => 'first request value',
                     ],
                 ],
                 'secondRequestPayload' => [
-                    AddEventRequest::KEY_JOB => $jobLabel1,
-                    AddEventRequest::KEY_TYPE => 'second request type',
-                    AddEventRequest::KEY_REFERENCE => 'first request reference',
-                    AddEventRequest::KEY_LABEL => 'first request label',
-                    AddEventRequest::KEY_BODY => [
+                    Request::KEY_JOB => $jobLabel1,
+                    Request::KEY_TYPE => 'second request type',
+                    Request::KEY_REFERENCE => 'first request reference',
+                    Request::KEY_LABEL => 'first request label',
+                    Request::KEY_BODY => [
                         'first request key' => 'first request value',
                     ],
                 ],
@@ -256,20 +256,20 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                 'jobLabel' => $jobLabel2,
                 'sequenceNumber' => rand(),
                 'firstRequestPayload' => [
-                    AddEventRequest::KEY_JOB => $jobLabel2,
-                    AddEventRequest::KEY_TYPE => 'first request type',
-                    AddEventRequest::KEY_LABEL => 'first request label',
-                    AddEventRequest::KEY_REFERENCE => 'first request reference',
-                    AddEventRequest::KEY_BODY => [
+                    Request::KEY_JOB => $jobLabel2,
+                    Request::KEY_TYPE => 'first request type',
+                    Request::KEY_LABEL => 'first request label',
+                    Request::KEY_REFERENCE => 'first request reference',
+                    Request::KEY_BODY => [
                         'first request key' => 'first request value',
                     ],
                 ],
                 'secondRequestPayload' => [
-                    AddEventRequest::KEY_JOB => $jobLabel2,
-                    AddEventRequest::KEY_TYPE => 'first request type',
-                    AddEventRequest::KEY_REFERENCE => 'second request reference',
-                    AddEventRequest::KEY_LABEL => 'first request label',
-                    AddEventRequest::KEY_BODY => [
+                    Request::KEY_JOB => $jobLabel2,
+                    Request::KEY_TYPE => 'first request type',
+                    Request::KEY_REFERENCE => 'second request reference',
+                    Request::KEY_LABEL => 'first request label',
+                    Request::KEY_BODY => [
                         'first request key' => 'first request value',
                     ],
                 ],
@@ -278,20 +278,20 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                 'jobLabel' => $jobLabel3,
                 'sequenceNumber' => rand(),
                 'firstRequestPayload' => [
-                    AddEventRequest::KEY_JOB => $jobLabel3,
-                    AddEventRequest::KEY_TYPE => 'first request type',
-                    AddEventRequest::KEY_LABEL => 'first request label',
-                    AddEventRequest::KEY_REFERENCE => 'first request reference',
-                    AddEventRequest::KEY_BODY => [
+                    Request::KEY_JOB => $jobLabel3,
+                    Request::KEY_TYPE => 'first request type',
+                    Request::KEY_LABEL => 'first request label',
+                    Request::KEY_REFERENCE => 'first request reference',
+                    Request::KEY_BODY => [
                         'first request key' => 'first request value',
                     ],
                 ],
                 'secondRequestPayload' => [
-                    AddEventRequest::KEY_JOB => $jobLabel3,
-                    AddEventRequest::KEY_TYPE => 'first request type',
-                    AddEventRequest::KEY_LABEL => 'first request label',
-                    AddEventRequest::KEY_REFERENCE => 'second request reference',
-                    AddEventRequest::KEY_BODY => [
+                    Request::KEY_JOB => $jobLabel3,
+                    Request::KEY_TYPE => 'first request type',
+                    Request::KEY_LABEL => 'first request label',
+                    Request::KEY_REFERENCE => 'second request reference',
+                    Request::KEY_BODY => [
                         'first request key' => 'first request value',
                     ],
                 ],
@@ -300,20 +300,20 @@ abstract class AbstractAddEventTest extends AbstractApplicationTest
                 'jobLabel' => $jobLabel4,
                 'sequenceNumber' => rand(),
                 'firstRequestPayload' => [
-                    AddEventRequest::KEY_JOB => $jobLabel4,
-                    AddEventRequest::KEY_TYPE => 'first request type',
-                    AddEventRequest::KEY_LABEL => 'first request label',
-                    AddEventRequest::KEY_REFERENCE => 'first request reference',
-                    AddEventRequest::KEY_BODY => [
+                    Request::KEY_JOB => $jobLabel4,
+                    Request::KEY_TYPE => 'first request type',
+                    Request::KEY_LABEL => 'first request label',
+                    Request::KEY_REFERENCE => 'first request reference',
+                    Request::KEY_BODY => [
                         'first request key' => 'first request value',
                     ],
                 ],
                 'secondRequestPayload' => [
-                    AddEventRequest::KEY_JOB => $jobLabel4,
-                    AddEventRequest::KEY_TYPE => 'first request type',
-                    AddEventRequest::KEY_LABEL => 'first request label',
-                    AddEventRequest::KEY_REFERENCE => 'first request reference',
-                    AddEventRequest::KEY_BODY => [
+                    Request::KEY_JOB => $jobLabel4,
+                    Request::KEY_TYPE => 'first request type',
+                    Request::KEY_LABEL => 'first request label',
+                    Request::KEY_REFERENCE => 'first request reference',
+                    Request::KEY_BODY => [
                         'second request key' => 'second request value',
                     ],
                 ],

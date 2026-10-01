@@ -13,8 +13,8 @@ use App\Model\JobState;
 use App\ObjectFactory\JobStateFactory;
 use App\Repository\EventRepository;
 use App\Repository\JobRepository;
-use App\Request\AddEvent\AddEventRequest;
-use App\Request\AddEvent\AddEventRequestValidator;
+use App\Request\AddEvent\Request;
+use App\Request\AddEvent\Validator;
 use App\Tests\Application\AbstractAddEventTest;
 use App\Tests\Services\EventRecorder;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -27,7 +27,7 @@ class AddEventTest extends AbstractAddEventTest
 
     /**
      * @param callable(EventFactory, EventRepository, string): void $eventCreator
-     * @param callable(non-empty-string): AddEventRequest           $addEventRequestCreator
+     * @param callable(non-empty-string): Request                   $addEventRequestCreator
      * @param callable(JobInterface): ?JobStateChangedEvent         $expectedEventCreator
      */
     #[DataProvider('dispatchJobStateChangedEventDataProvider')]
@@ -50,8 +50,8 @@ class AddEventTest extends AbstractAddEventTest
 
         $job = $jobRepository->findAll()[0];
 
-        $requestValidator = self::getContainer()->get(AddEventRequestValidator::class);
-        \assert($requestValidator instanceof AddEventRequestValidator);
+        $requestValidator = self::getContainer()->get(Validator::class);
+        \assert($requestValidator instanceof Validator);
 
         $eventFactory = self::getContainer()->get(EventFactory::class);
         \assert($eventFactory instanceof EventFactory);
@@ -109,7 +109,7 @@ class AddEventTest extends AbstractAddEventTest
                 'addEventRequestCreator' => function (string $jobLabel) {
                     \assert('' !== $jobLabel);
 
-                    return new AddEventRequest(
+                    return new Request(
                         $jobLabel,
                         1,
                         'job/ended',
@@ -137,7 +137,7 @@ class AddEventTest extends AbstractAddEventTest
                 'addEventRequestCreator' => function (string $jobLabel) {
                     \assert('' !== $jobLabel);
 
-                    return new AddEventRequest(
+                    return new Request(
                         $jobLabel,
                         1,
                         'job/started',
@@ -176,7 +176,7 @@ class AddEventTest extends AbstractAddEventTest
                 'addEventRequestCreator' => function (string $jobLabel) {
                     \assert('' !== $jobLabel);
 
-                    return new AddEventRequest(
+                    return new Request(
                         $jobLabel,
                         1,
                         'job/ended',

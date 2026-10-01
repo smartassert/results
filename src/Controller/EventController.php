@@ -9,9 +9,9 @@ use App\Event\JobStateChangedEvent;
 use App\Event\WorkerEventCreatedEvent;
 use App\ObjectFactory\JobStateFactory;
 use App\Repository\EventRepository;
-use App\Request\AddEvent\AddEventRequest;
-use App\Request\AddEvent\AddEventRequestValidator;
-use App\Request\AddEvent\InvalidAddEventRequestException;
+use App\Request\AddEvent\InvalidRequestException;
+use App\Request\AddEvent\Request;
+use App\Request\AddEvent\Validator;
 use App\Request\ListEventsRequest;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,11 +23,11 @@ class EventController
 {
     #[Route('/event/add/{token<[A-Z0-9]{26,32}>}', methods: ['POST'])]
     public function add(
-        AddEventRequestValidator $requestValidator,
+        Validator $requestValidator,
         EventFactory $eventFactory,
         JobStateFactory $jobStateFactory,
         EventDispatcherInterface $eventDispatcher,
-        AddEventRequest $request,
+        Request $request,
         ?JobInterface $job
     ): Response {
         if (null === $job) {
@@ -36,7 +36,7 @@ class EventController
 
         try {
             $validatedRequest = $requestValidator->validate($request);
-        } catch (InvalidAddEventRequestException $e) {
+        } catch (InvalidRequestException $e) {
             return $this->createInvalidAddEventRequestFieldResponse($e->field, $e->getMessage());
         }
 

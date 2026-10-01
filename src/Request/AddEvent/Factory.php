@@ -2,30 +2,30 @@
 
 namespace App\Request\AddEvent;
 
-class AddEventRequestFactory
+class Factory
 {
     /**
      * @param array<mixed> $data
      */
-    public function create(array $data): AddEventRequest
+    public function create(array $data): Request
     {
-        $job = $data[AddEventRequest::KEY_JOB] ?? null;
+        $job = $data[Request::KEY_JOB] ?? null;
         $job = is_string($job) && '' !== $job ? $job : null;
 
-        $sequenceNumber = $data[AddEventRequest::KEY_SEQUENCE_NUMBER] ?? null;
+        $sequenceNumber = $data[Request::KEY_SEQUENCE_NUMBER] ?? null;
         $sequenceNumber = is_int($sequenceNumber) && $sequenceNumber > 0 ? $sequenceNumber : null;
 
-        $type = $this->getNonEmptyStringFromArray($data, AddEventRequest::KEY_TYPE);
-        $label = $this->getNonEmptyStringFromArray($data, AddEventRequest::KEY_LABEL);
-        $reference = $this->getNonEmptyStringFromArray($data, AddEventRequest::KEY_REFERENCE);
+        $type = $this->getNonEmptyStringFromArray($data, Request::KEY_TYPE);
+        $label = $this->getNonEmptyStringFromArray($data, Request::KEY_LABEL);
+        $reference = $this->getNonEmptyStringFromArray($data, Request::KEY_REFERENCE);
 
-        $relatedReferences = $data[AddEventRequest::KEY_RELATED_REFERENCES] ?? null;
+        $relatedReferences = $data[Request::KEY_RELATED_REFERENCES] ?? null;
         $relatedReferences = is_array($relatedReferences) ? $relatedReferences : null;
 
-        $body = $data[AddEventRequest::KEY_BODY] ?? null;
+        $body = $data[Request::KEY_BODY] ?? null;
         $body = is_array($body) ? $body : null;
 
-        return new AddEventRequest($job, $sequenceNumber, $type, $label, $reference, $relatedReferences, $body);
+        return new Request($job, $sequenceNumber, $type, $label, $reference, $relatedReferences, $body);
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace App\Request\AddEvent;
 
-class InvalidAddEventRequestException extends \Exception
+class InvalidRequestException extends \Exception
 {
     public function __construct(
         public readonly string $field,

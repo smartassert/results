@@ -2,7 +2,7 @@
 
 namespace App\Request\AddEvent;
 
-class AddEventRequest
+class Request
 {
     public const string KEY_JOB = 'job';
     public const string  KEY_SEQUENCE_NUMBER = 'sequence_number';

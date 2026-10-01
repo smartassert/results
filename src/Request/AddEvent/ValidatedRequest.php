@@ -2,7 +2,7 @@
 
 namespace App\Request\AddEvent;
 
-class ValidatedAddEventRequest
+class ValidatedRequest
 {
     /**
      * @param non-empty-string  $job
