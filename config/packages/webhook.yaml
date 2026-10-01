@@ -1,0 +1,6 @@
+framework:
+  webhook:
+    routing:
+      worker.event:
+        service: Symfony\Component\Webhook\Client\RequestParser
+        secret: 'not_applicable'
