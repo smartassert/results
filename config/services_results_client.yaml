@@ -36,6 +36,8 @@ services:
         arguments:
             $httpClient: '@app.tests.integration.http.client'
 
+    SmartAssert\ResultsClient\JobFactory: ~
+
     SmartAssert\ResultsClient\Client:
         public: true
         arguments:
