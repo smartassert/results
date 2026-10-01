@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\ValueResolver;
 
-use App\Request\AddEventRequest;
-use App\Request\AddEventRequestFactory;
+use App\Request\AddEvent\AddEventRequest;
+use App\Request\AddEvent\AddEventRequestFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;

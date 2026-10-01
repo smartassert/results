@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Application;
 
 use App\Repository\EventRepository;
-use App\Request\AddEventRequest;
+use App\Request\AddEvent\AddEventRequest;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Uid\Ulid;
 

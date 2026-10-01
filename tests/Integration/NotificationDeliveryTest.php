@@ -7,7 +7,7 @@ namespace App\Tests\Integration;
 use App\Entity\JobInterface;
 use App\ObjectFactory\UlidFactory;
 use App\Repository\JobRepository;
-use App\Request\AddEventRequest;
+use App\Request\AddEvent\AddEventRequest;
 use App\Tests\Application\AbstractApplicationTest;
 use PHPUnit\Framework\Attributes\DataProvider;
 use SmartAssert\CallbackReceiverLogReader\Parser;
