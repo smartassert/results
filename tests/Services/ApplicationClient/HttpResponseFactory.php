@@ -26,6 +26,10 @@ class HttpResponseFactory
             'previous_states' => $job->previousStates,
         ];
 
+        if (null !== $job->token) {
+            $responseData['token'] = $job->token;
+        }
+
         $endState = $job->state->endState;
         if (is_string($endState)) {
             $responseData['end_state'] = $endState;

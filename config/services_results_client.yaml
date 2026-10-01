@@ -36,6 +36,8 @@ services:
         arguments:
             $httpClient: '@app.tests.integration.http.client'
 
+    SmartAssert\ResultsClient\JobFactory: ~
+
     SmartAssert\ResultsClient\Client:
         public: true
         arguments:
@@ -43,8 +45,6 @@ services:
 
     SmartAssert\ResultsClient\AddEventClient:
         public: true
-
-    SmartAssert\ResultsClient\JobFactory: ~
 
     App\Tests\Services\ApplicationClient\HttpResponseFactory: ~
     App\Tests\Services\ApplicationClient\ResultsClientAdapter:
