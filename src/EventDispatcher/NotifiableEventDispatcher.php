@@ -31,7 +31,7 @@ readonly class NotifiableEventDispatcher implements EventSubscriberInterface
 
     public function dispatchForJobStateChangedEvent(JobStateChangedEvent $event): void
     {
-        $serializableJob = $this->serializableJobFactory->create($event->job);
+        $serializableJob = $this->serializableJobFactory->createWithoutToken($event->job);
 
         $notifiableEvent = new NotifiableJobStateChangedEvent(
             $event->job,
