@@ -134,6 +134,13 @@ readonly class ResultsClientAdapter implements ClientInterface
             return null;
         }
 
+        $label = $data['label'] ?? null;
+        $label = is_string($label) ? $label : null;
+        $label = '' !== $label ? $label : null;
+        if (null === $label) {
+            return null;
+        }
+
         $sequenceNumber = $data['sequence_number'] ?? null;
         $sequenceNumber = is_int($sequenceNumber) ? $sequenceNumber : null;
         $sequenceNumber = $sequenceNumber >= 1 ? $sequenceNumber : null;
@@ -156,15 +163,15 @@ readonly class ResultsClientAdapter implements ClientInterface
         $body = $data['body'] ?? null;
         $body = is_array($body) ? $body : [];
 
-        $event = new Event($sequenceNumber, $type, $resourceReference, $body);
+        $relatedReferencesData = $data['related_references'] ?? null;
+        $relatedReferencesData = is_array($relatedReferencesData) ? $relatedReferencesData : [];
 
-        $relatedReferences = $data['related_references'] ?? null;
-        $relatedReferences = is_array($relatedReferences) ? $relatedReferences : [];
+        $relatedReferences = null;
 
-        if ([] !== $relatedReferences) {
+        if ([] !== $relatedReferencesData) {
             $filteredRelatedReferences = [];
 
-            foreach ($relatedReferences as $relatedReference) {
+            foreach ($relatedReferencesData as $relatedReference) {
                 if (!is_array($relatedReference)) {
                     continue;
                 }
@@ -177,10 +184,10 @@ readonly class ResultsClientAdapter implements ClientInterface
                 $filteredRelatedReferences[] = $relatedResourceReference;
             }
 
-            $event = $event->withRelatedReferences(new ResourceReferenceCollection($filteredRelatedReferences));
+            $relatedReferences = new ResourceReferenceCollection($filteredRelatedReferences);
         }
 
-        return $event;
+        return new Event($label, $sequenceNumber, $type, $resourceReference, $body, $relatedReferences);
     }
 
     /**
