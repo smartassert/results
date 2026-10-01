@@ -9,6 +9,9 @@ class AddEventRequestFactory
      */
     public function create(array $data): AddEventRequest
     {
+        $job = $data[AddEventRequest::KEY_JOB] ?? null;
+        $job = is_string($job) && '' !== $job ? $job : null;
+
         $sequenceNumber = $data[AddEventRequest::KEY_SEQUENCE_NUMBER] ?? null;
         $sequenceNumber = is_int($sequenceNumber) && $sequenceNumber > 0 ? $sequenceNumber : null;
 
@@ -22,7 +25,7 @@ class AddEventRequestFactory
         $body = $data[AddEventRequest::KEY_BODY] ?? null;
         $body = is_array($body) ? $body : null;
 
-        return new AddEventRequest($sequenceNumber, $type, $label, $reference, $relatedReferences, $body);
+        return new AddEventRequest($job, $sequenceNumber, $type, $label, $reference, $relatedReferences, $body);
     }
 
     /**

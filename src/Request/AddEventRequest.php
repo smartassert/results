@@ -4,6 +4,7 @@ namespace App\Request;
 
 class AddEventRequest
 {
+    public const KEY_JOB = 'job';
     public const KEY_SEQUENCE_NUMBER = 'sequence_number';
     public const KEY_TYPE = 'type';
     public const KEY_LABEL = 'label';
@@ -12,6 +13,7 @@ class AddEventRequest
     public const KEY_BODY = 'body';
 
     /**
+     * @param null|non-empty-string $job
      * @param null|positive-int     $sequenceNumber
      * @param null|non-empty-string $type
      * @param null|non-empty-string $label
@@ -20,6 +22,7 @@ class AddEventRequest
      * @param null|array<mixed>     $body
      */
     public function __construct(
+        public readonly ?string $job,
         public readonly ?int $sequenceNumber,
         public readonly ?string $type,
         public readonly ?string $label,
