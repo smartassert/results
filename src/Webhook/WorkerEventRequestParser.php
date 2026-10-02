@@ -3,6 +3,9 @@
 namespace App\Webhook;
 
 use App\Repository\JobRepository;
+use App\Request\AddEvent\Factory;
+use App\Request\AddEvent\InvalidRequestException;
+use App\Request\AddEvent\Validator;
 use Symfony\Component\HttpFoundation\ChainRequestMatcher;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +21,8 @@ final class WorkerEventRequestParser extends AbstractRequestParser
 {
     public function __construct(
         private readonly JobRepository $jobRepository,
+        private readonly Factory $requestFactory,
+        private readonly Validator $requestValidator,
         private readonly string $algo = 'sha256',
         private readonly string $signatureHeaderName = 'Webhook-Signature',
         private readonly string $eventHeaderName = 'Webhook-Event',
@@ -32,6 +37,9 @@ final class WorkerEventRequestParser extends AbstractRequestParser
         ]);
     }
 
+    /**
+     * @throws InvalidRequestException
+     */
     protected function doParse(Request $request, #[\SensitiveParameter] string $secret): RemoteEvent
     {
         if (!$secret) {
@@ -44,7 +52,6 @@ final class WorkerEventRequestParser extends AbstractRequestParser
         $jobLabel = is_string($jobLabel) ? $jobLabel : null;
 
         $job = $this->jobRepository->findOneBy(['label' => $jobLabel]);
-
         if (null === $job) {
             throw new RejectWebhookException(404, \sprintf('Job "%s" not found.', $jobLabel));
         }
@@ -56,6 +63,10 @@ final class WorkerEventRequestParser extends AbstractRequestParser
         }
 
         $this->validateSignature($request->headers, $request->getContent(), $job->getToken());
+
+        $addEventRequest = $this->requestFactory->create($body);
+
+        $this->requestValidator->validate($addEventRequest);
 
         return new RemoteEvent(
             (string) $request->headers->get($this->eventHeaderName),
