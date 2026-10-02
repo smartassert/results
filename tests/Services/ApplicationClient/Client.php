@@ -102,6 +102,22 @@ class Client
     }
 
     /**
+     * @param array<string, string> $headers
+     */
+    public function makeWorkerEventWebhookRequest(
+        array $headers,
+        string $body,
+        string $method = 'POST',
+    ): ResponseInterface {
+        return $this->client->makeRequest(
+            $method,
+            $this->router->generate('_webhook_controller', ['type' => 'worker.event']),
+            $headers,
+            $body,
+        );
+    }
+
+    /**
      * @return array<string, string>
      */
     private function createAuthorizationHeader(?string $authenticationToken): array

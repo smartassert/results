@@ -30,9 +30,6 @@ final class WorkerEventWebhookConsumer implements ConsumerInterface
         private readonly EventDispatcherInterface $eventDispatcher,
     ) {}
 
-    /**
-     * @throws InvalidRequestException
-     */
     public function consume(RemoteEvent $event): void
     {
         if (self::NAME !== $event->getName()) {
@@ -40,7 +37,12 @@ final class WorkerEventWebhookConsumer implements ConsumerInterface
         }
 
         $addEventRequest = $this->requestFactory->create($event->getPayload());
-        $validatedRequest = $this->requestValidator->validate($addEventRequest);
+
+        try {
+            $validatedRequest = $this->requestValidator->validate($addEventRequest);
+        } catch (InvalidRequestException) {
+            return;
+        }
 
         $job = $this->jobRepository->findOneBy(['label' => $validatedRequest->job]);
         if (!$job instanceof Job) {

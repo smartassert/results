@@ -43,14 +43,7 @@ final class WorkerEventRequestParser extends AbstractRequestParser
         $jobLabel = $body['job'] ?? null;
         $jobLabel = is_string($jobLabel) ? $jobLabel : null;
 
-        $token = $body['token'] ?? null;
-        $token = is_string($token) ? $token : null;
-
-        if (null === $jobLabel || null === $token) {
-            throw new RejectWebhookException(404, \sprintf('Job "%s" not found.', $jobLabel));
-        }
-
-        $job = $this->jobRepository->findOneBy(['label' => $jobLabel, 'token' => $token]);
+        $job = $this->jobRepository->findOneBy(['label' => $jobLabel]);
 
         if (null === $job) {
             throw new RejectWebhookException(404, \sprintf('Job "%s" not found.', $jobLabel));
@@ -62,7 +55,7 @@ final class WorkerEventRequestParser extends AbstractRequestParser
             }
         }
 
-        $this->validateSignature($request->headers, $request->getContent(), $token);
+        $this->validateSignature($request->headers, $request->getContent(), $job->getToken());
 
         return new RemoteEvent(
             (string) $request->headers->get($this->eventHeaderName),

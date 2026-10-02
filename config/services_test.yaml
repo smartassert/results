@@ -58,3 +58,19 @@ services:
 
     App\Tests\Services\EventRecorder:
         public: true
+
+    Symfony\Component\Webhook\Server\HeadersConfigurator:
+        public: true
+
+    Symfony\Component\Webhook\Server\HeaderSignatureConfigurator:
+        public: true
+
+    Symfony\Component\Webhook\Server\NativeJsonPayloadSerializer: ~
+
+    Symfony\Component\Webhook\Server\JsonBodyConfigurator:
+        public: true
+        arguments:
+            $payloadSerializer: '@Symfony\Component\Webhook\Server\NativeJsonPayloadSerializer'
+
+    SmartAssert\SymfonyRemoteEventRequestFactory\Factory:
+        public: true
