@@ -7,14 +7,28 @@ namespace App\EntityFactory;
 use App\Entity\Event;
 use App\ObjectFactory\UlidFactory;
 use App\Repository\EventRepository;
+use App\Request\AddEvent\ValidatedRequest;
 
-class EventFactory
+readonly class EventFactory
 {
     public function __construct(
-        private readonly EventRepository $repository,
-        private readonly ReferenceFactory $referenceFactory,
-        private readonly UlidFactory $ulidFactory,
+        private EventRepository $repository,
+        private ReferenceFactory $referenceFactory,
+        private UlidFactory $ulidFactory,
     ) {}
+
+    public function createFromRequest(ValidatedRequest $request): Event
+    {
+        return $this->create(
+            $request->job,
+            $request->sequenceNumber,
+            $request->type,
+            $request->label,
+            $request->reference,
+            $request->body,
+            $request->relatedReferences,
+        );
+    }
 
     /**
      * @param non-empty-string  $jobLabel
