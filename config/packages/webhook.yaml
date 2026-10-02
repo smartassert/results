@@ -1,0 +1,6 @@
+framework:
+  webhook:
+    routing:
+      worker.event:
+        service: App\Webhook\WorkerEventRequestParser
+        secret: 'not_applicable'
