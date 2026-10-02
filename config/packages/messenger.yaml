@@ -10,6 +10,7 @@ framework:
 
         routing:
             '*': async
+            Symfony\Component\RemoteEvent\Messenger\ConsumeRemoteEventMessage: sync
 
 when@test:
     framework:
