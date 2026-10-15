@@ -35,7 +35,7 @@ readonly class JobController
         $job = $jobEntityFactory->createForUserAndJob($user, $label, $request->notifyUrl);
         $eventDispatcher->dispatch(new JobCreatedEvent($job));
 
-        $serializableJob = $this->serializableJobFactory->create($job);
+        $serializableJob = $this->serializableJobFactory->createForNewJob($job);
 
         return new JsonResponse($serializableJob);
     }
@@ -47,7 +47,7 @@ readonly class JobController
             return new Response(null, 404);
         }
 
-        $serializableJob = $this->serializableJobFactory->createWithoutToken($job);
+        $serializableJob = $this->serializableJobFactory->createForExistingJob($job);
 
         return new JsonResponse($serializableJob);
     }

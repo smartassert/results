@@ -3,6 +3,7 @@
 namespace App\ObjectFactory;
 
 use App\Entity\JobInterface;
+use App\Model\SerializableCreatedJob;
 use App\Model\SerializableJob;
 use App\Model\SerializableJobInterface;
 use App\Repository\EventRepository;
@@ -17,51 +18,33 @@ readonly class SerializableJobFactory implements SerializableJobFactoryInterface
         private EventRepository $eventRepository,
     ) {}
 
-    public function createWithoutToken(JobInterface $job): SerializableJobInterface
+    public function createForNewJob(JobInterface $job): SerializableJobInterface
     {
         $jobState = $this->jobStateFactory->create($job->getLabel());
-        $relativeUrl = $this->router->generate('app_event_add', ['token' => $job->getToken()]);
-        $eventAddUrl = rtrim($this->selfUrl, '/') . $relativeUrl;
 
-        $job = new SerializableJob(
-            $job->getLabel(),
-            null,
-            $eventAddUrl,
-            null,
-            $jobState->getState(),
-            $this->eventRepository->hasForJob($job->getLabel()),
-        );
-
-        $endState = $jobState->getEndState();
-        if (null !== $endState) {
-            $job = $job->withEndState($endState);
-        }
-
-        return $job;
-    }
-
-    public function create(JobInterface $job): SerializableJobInterface
-    {
-        $jobState = $this->jobStateFactory->create($job->getLabel());
         $relativeUrl = $this->router->generate('app_event_add', ['token' => $job->getToken()]);
         $eventAddUrl = rtrim($this->selfUrl, '/') . $relativeUrl;
         $eventNotifyUrl = rtrim($this->selfUrl, '/')
             . $this->router->generate('_webhook_controller', ['type' => 'worker.event']);
 
-        $job = new SerializableJob(
+        return new SerializableCreatedJob(
             $job->getLabel(),
-            $job->getToken(),
+            $jobState->getState(),
             $eventAddUrl,
+            $job->getToken(),
             $eventNotifyUrl,
+        );
+    }
+
+    public function createForExistingJob(JobInterface $job): SerializableJobInterface
+    {
+        $jobState = $this->jobStateFactory->create($job->getLabel());
+
+        return new SerializableJob(
+            $job->getLabel(),
             $jobState->getState(),
             $this->eventRepository->hasForJob($job->getLabel()),
+            $jobState->getEndState(),
         );
-
-        $endState = $jobState->getEndState();
-        if (null !== $endState) {
-            $job = $job->withEndState($endState);
-        }
-
-        return $job;
     }
 }

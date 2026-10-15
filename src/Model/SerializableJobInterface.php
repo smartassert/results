@@ -8,7 +8,7 @@ use App\Enum\JobState as State;
  * @phpstan-type SerializedJob array{
  *   token?: ?string,
  *   label: non-empty-string,
- *   event_add_url: string,
+ *   event_add_url?: string,
  *   state: non-empty-string,
  *   has_events: bool,
  *   end_state?: non-empty-string,
