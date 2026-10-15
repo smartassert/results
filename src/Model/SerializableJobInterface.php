@@ -6,7 +6,7 @@ use App\Enum\JobState as State;
 
 /**
  * @phpstan-type SerializedJob array{
- *   token?: ?non-empty-string,
+ *   token?: ?string,
  *   label: non-empty-string,
  *   event_add_url: string,
  *   state: non-empty-string,
@@ -17,7 +17,11 @@ use App\Enum\JobState as State;
  *     ended: bool,
  *     succeeded: bool
  *   },
- *   previous_states: value-of<State>[]
+ *   previous_states: value-of<State>[],
+ *   event_notify?: array{
+ *     url: string,
+ *     token: ?string
+ *   }
  *  }
  */
 interface SerializableJobInterface extends \JsonSerializable

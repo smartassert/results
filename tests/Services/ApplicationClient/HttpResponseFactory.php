@@ -35,6 +35,13 @@ class HttpResponseFactory
             $responseData['end_state'] = $endState;
         }
 
+        if (null !== $job->eventNotifyUrl) {
+            $responseData['event_notify'] = [
+                'url' => $job->eventNotifyUrl,
+                'token' => $job->token,
+            ];
+        }
+
         return new Response(
             200,
             [
