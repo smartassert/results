@@ -27,6 +27,7 @@ readonly class SerializableJobFactory implements SerializableJobFactoryInterface
             $job->getLabel(),
             null,
             $eventAddUrl,
+            null,
             $jobState->getState(),
             $this->eventRepository->hasForJob($job->getLabel()),
         );
@@ -44,11 +45,14 @@ readonly class SerializableJobFactory implements SerializableJobFactoryInterface
         $jobState = $this->jobStateFactory->create($job->getLabel());
         $relativeUrl = $this->router->generate('app_event_add', ['token' => $job->getToken()]);
         $eventAddUrl = rtrim($this->selfUrl, '/') . $relativeUrl;
+        $eventNotifyUrl = rtrim($this->selfUrl, '/')
+            . $this->router->generate('_webhook_controller', ['type' => 'worker.event']);
 
         $job = new SerializableJob(
             $job->getLabel(),
             $job->getToken(),
             $eventAddUrl,
+            $eventNotifyUrl,
             $jobState->getState(),
             $this->eventRepository->hasForJob($job->getLabel()),
         );

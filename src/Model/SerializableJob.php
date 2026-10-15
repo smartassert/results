@@ -19,6 +19,7 @@ class SerializableJob implements SerializableJobInterface
         private readonly string $label,
         private readonly ?string $token,
         private readonly string $eventAddUrl,
+        private readonly ?string $eventNotifyUrl,
         private readonly State $state,
         private readonly bool $hasEvents,
     ) {}
@@ -56,6 +57,13 @@ class SerializableJob implements SerializableJobInterface
             ],
             'previous_states' => $previousStates,
         ];
+
+        if (null !== $this->eventNotifyUrl) {
+            $data['event_notify'] = [
+                'url' => $this->eventNotifyUrl,
+                'token' => $this->token,
+            ];
+        }
 
         if (null !== $this->token) {
             $data['token'] = $this->token;
