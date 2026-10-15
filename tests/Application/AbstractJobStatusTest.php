@@ -64,10 +64,9 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
         return [
             'awaiting-events' => [
                 'eventCreator' => function (): void {},
-                'expectedCreator' => function (Job $job, string $selfUrl): array {
+                'expectedCreator' => function (Job $job): array {
                     return [
                         'label' => $job->getLabel(),
-                        'event_add_url' => $selfUrl . '/event/add/' . $job->getToken(),
                         'state' => 'awaiting-events',
                         'has_events' => false,
                         'meta_state' => [
@@ -99,10 +98,9 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
 
                     $eventRepository->add($event);
                 },
-                'expectedCreator' => function (Job $job, string $selfUrl): array {
+                'expectedCreator' => function (Job $job): array {
                     return [
                         'label' => $job->getLabel(),
-                        'event_add_url' => $selfUrl . '/event/add/' . $job->getToken(),
                         'state' => 'ended',
                         'has_events' => true,
                         'meta_state' => [
@@ -144,10 +142,9 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
 
                     $eventRepository->add($event);
                 },
-                'expectedCreator' => function (Job $job, string $selfUrl): array {
+                'expectedCreator' => function (Job $job): array {
                     return [
                         'label' => $job->getLabel(),
-                        'event_add_url' => $selfUrl . '/event/add/' . $job->getToken(),
                         'state' => 'ended',
                         'has_events' => true,
                         'meta_state' => [
@@ -187,10 +184,9 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
 
                     $eventRepository->add($event);
                 },
-                'expectedCreator' => function (Job $job, string $selfUrl): array {
+                'expectedCreator' => function (Job $job): array {
                     return [
                         'label' => $job->getLabel(),
-                        'event_add_url' => $selfUrl . '/event/add/' . $job->getToken(),
                         'state' => 'executed',
                         'has_events' => true,
                         'meta_state' => [
@@ -228,10 +224,9 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
 
                     $eventRepository->add($event);
                 },
-                'expectedCreator' => function (Job $job, string $selfUrl): array {
+                'expectedCreator' => function (Job $job): array {
                     return [
                         'label' => $job->getLabel(),
-                        'event_add_url' => $selfUrl . '/event/add/' . $job->getToken(),
                         'state' => 'executing',
                         'has_events' => true,
                         'meta_state' => [
@@ -268,10 +263,9 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
 
                     $eventRepository->add($event);
                 },
-                'expectedCreator' => function (Job $job, string $selfUrl): array {
+                'expectedCreator' => function (Job $job): array {
                     return [
                         'label' => $job->getLabel(),
-                        'event_add_url' => $selfUrl . '/event/add/' . $job->getToken(),
                         'state' => 'compiled',
                         'has_events' => true,
                         'meta_state' => [
@@ -307,10 +301,9 @@ abstract class AbstractJobStatusTest extends AbstractApplicationTest
 
                     $eventRepository->add($event);
                 },
-                'expectedCreator' => function (Job $job, string $selfUrl): array {
+                'expectedCreator' => function (Job $job): array {
                     return [
                         'label' => $job->getLabel(),
-                        'event_add_url' => $selfUrl . '/event/add/' . $job->getToken(),
                         'state' => 'compiling',
                         'has_events' => true,
                         'meta_state' => [
