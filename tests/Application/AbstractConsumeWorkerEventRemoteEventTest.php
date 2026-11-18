@@ -42,6 +42,7 @@ abstract class AbstractConsumeWorkerEventRemoteEventTest extends AbstractApplica
             $jobLabel,
             null,
         );
+
         self::assertSame(200, $response->getStatusCode());
 
         $job = $this->jobRepository->findOneBy(['label' => $jobLabel]);
