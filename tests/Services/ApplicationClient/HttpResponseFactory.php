@@ -28,6 +28,7 @@ class HttpResponseFactory
 
         if ($job instanceof CreatedJobInterface) {
             $responseData['token'] = $job->getEventNotifyToken();
+            $responseData['event_add_url'] = 'empty';
         }
 
         $endState = $job->getState()->endState;
