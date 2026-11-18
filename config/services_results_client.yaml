@@ -43,9 +43,6 @@ services:
         arguments:
             $baseUrl: "https://localhost/"
 
-    SmartAssert\ResultsClient\AddEventClient:
-        public: true
-
     App\Tests\Services\ApplicationClient\HttpResponseFactory: ~
     App\Tests\Services\ApplicationClient\ResultsClientAdapter:
         public: true

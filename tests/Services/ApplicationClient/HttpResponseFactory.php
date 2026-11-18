@@ -6,39 +6,40 @@ namespace App\Tests\Services\ApplicationClient;
 
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
+use SmartAssert\ResultsClient\Model\CreatedJobInterface;
 use SmartAssert\ResultsClient\Model\EventInterface;
-use SmartAssert\ResultsClient\Model\Job;
+use SmartAssert\ResultsClient\Model\JobInterface;
 
 class HttpResponseFactory
 {
-    public function createJobResponse(Job $job): ResponseInterface
+    public function createJobResponse(JobInterface $job): ResponseInterface
     {
         $responseData = [
-            'label' => $job->label,
+            'label' => $job->getLabel(),
             'event_add_url' => 'empty',
-            'state' => $job->state->state,
+            'state' => $job->getState()->state,
             'meta_state' => [
-                'pending' => $job->state->metaState->pending,
-                'ended' => $job->state->metaState->ended,
-                'succeeded' => $job->state->metaState->succeeded,
+                'pending' => $job->getState()->metaState->pending,
+                'ended' => $job->getState()->metaState->ended,
+                'succeeded' => $job->getState()->metaState->succeeded,
             ],
-            'has_events' => $job->hasEvents,
-            'previous_states' => $job->previousStates,
+            'has_events' => $job->hasEvents(),
+            'previous_states' => $job->getPreviousStates(),
         ];
 
-        if (null !== $job->token) {
-            $responseData['token'] = $job->token;
+        if ($job instanceof CreatedJobInterface) {
+            $responseData['token'] = $job->getEventNotifyToken();
         }
 
-        $endState = $job->state->endState;
+        $endState = $job->getState()->endState;
         if (is_string($endState)) {
             $responseData['end_state'] = $endState;
         }
 
-        if (null !== $job->eventNotifyUrl) {
+        if ($job instanceof CreatedJobInterface) {
             $responseData['event_notify'] = [
-                'url' => $job->eventNotifyUrl,
-                'token' => $job->token,
+                'url' => $job->getEventNotifyUrl(),
+                'token' => $job->getEventNotifyToken(),
             ];
         }
 
