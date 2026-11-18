@@ -16,7 +16,6 @@ class HttpResponseFactory
     {
         $responseData = [
             'label' => $job->getLabel(),
-            'event_add_url' => 'empty',
             'state' => $job->getState()->state,
             'meta_state' => [
                 'pending' => $job->getState()->metaState->pending,
