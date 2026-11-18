@@ -6,13 +6,7 @@ namespace App\Tests\Services\ApplicationClient;
 
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
-use SmartAssert\ResultsClient\AddEventClient;
 use SmartAssert\ResultsClient\Client as ResultsClient;
-use SmartAssert\ResultsClient\Model\Event;
-use SmartAssert\ResultsClient\Model\EventInterface;
-use SmartAssert\ResultsClient\Model\ResourceReference;
-use SmartAssert\ResultsClient\Model\ResourceReferenceCollection;
-use SmartAssert\ResultsClient\Model\ResourceReferenceInterface;
 use SmartAssert\ServiceClient\Exception\UnauthorizedException;
 use SmartAssert\SymfonyTestClient\ClientInterface;
 
@@ -20,7 +14,6 @@ readonly class ResultsClientAdapter implements ClientInterface
 {
     public function __construct(
         private ResultsClient $resultsClient,
-        private AddEventClient $addEventClient,
         private HttpResponseFactory $httpResponseFactory,
     ) {}
 
@@ -57,15 +50,6 @@ readonly class ResultsClientAdapter implements ClientInterface
                         $this->getJobLabelFromUri($uri),
                     )
                 );
-            }
-
-            if ('POST' === $method && str_contains($uri, '/event/add/')) {
-                $event = $this->createEventFromJsonBody((string) $body);
-                \assert($event instanceof EventInterface);
-
-                $this->addEventClient->add($uri, $event);
-
-                return $this->httpResponseFactory->createSuccessResponse();
             }
 
             if ('GET' === $method && str_starts_with($uri, '/event/list/')) {
@@ -125,91 +109,6 @@ readonly class ResultsClientAdapter implements ClientInterface
         }
 
         return 'missing-label';
-    }
-
-    private function createEventFromJsonBody(string $body): ?EventInterface
-    {
-        $data = json_decode($body, true);
-        if (!is_array($data)) {
-            return null;
-        }
-
-        $job = $data['job'] ?? null;
-        $job = is_string($job) ? $job : null;
-        $job = '' !== $job ? $job : null;
-        if (null === $job) {
-            return null;
-        }
-
-        $sequenceNumber = $data['sequence_number'] ?? null;
-        $sequenceNumber = is_int($sequenceNumber) ? $sequenceNumber : null;
-        $sequenceNumber = $sequenceNumber >= 1 ? $sequenceNumber : null;
-        if (null === $sequenceNumber) {
-            return null;
-        }
-
-        $type = $data['type'] ?? null;
-        $type = is_string($type) ? $type : null;
-        $type = '' !== $type ? $type : null;
-        if (null === $type) {
-            return null;
-        }
-
-        $resourceReference = $this->createResourceReference($data);
-        if (null === $resourceReference) {
-            return null;
-        }
-
-        $body = $data['body'] ?? null;
-        $body = is_array($body) ? $body : [];
-
-        $relatedReferencesData = $data['related_references'] ?? null;
-        $relatedReferencesData = is_array($relatedReferencesData) ? $relatedReferencesData : [];
-
-        $relatedReferences = null;
-
-        if ([] !== $relatedReferencesData) {
-            $filteredRelatedReferences = [];
-
-            foreach ($relatedReferencesData as $relatedReference) {
-                if (!is_array($relatedReference)) {
-                    continue;
-                }
-
-                $relatedResourceReference = $this->createResourceReference($relatedReference);
-                if (null === $relatedResourceReference) {
-                    continue;
-                }
-
-                $filteredRelatedReferences[] = $relatedResourceReference;
-            }
-
-            $relatedReferences = new ResourceReferenceCollection($filteredRelatedReferences);
-        }
-
-        return new Event($job, $sequenceNumber, $type, $resourceReference, $body, $relatedReferences);
-    }
-
-    /**
-     * @param array<mixed> $data
-     */
-    private function createResourceReference(array $data): ?ResourceReferenceInterface
-    {
-        $label = $data['label'] ?? null;
-        $label = is_string($label) ? $label : null;
-        $label = '' !== $label ? $label : null;
-        if (null === $label) {
-            return null;
-        }
-
-        $reference = $data['reference'] ?? null;
-        $reference = is_string($reference) ? $reference : null;
-        $reference = '' !== $reference ? $reference : null;
-        if (null === $reference) {
-            return null;
-        }
-
-        return new ResourceReference($label, $reference);
     }
 
     /**
