@@ -4,21 +4,49 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration;
 
+use App\Entity\Job;
 use App\Entity\JobInterface;
-use App\ObjectFactory\UlidFactory;
 use App\Repository\JobRepository;
 use App\Request\AddEvent\Request;
 use App\Tests\Application\AbstractApplicationTest;
 use PHPUnit\Framework\Attributes\DataProvider;
 use SmartAssert\CallbackReceiverLogReader\Parser;
+use SmartAssert\SymfonyRemoteEventRequestFactory\Factory;
 use Symfony\Component\Process\Process;
+use Symfony\Component\RemoteEvent\RemoteEvent;
+use Symfony\Component\Uid\Ulid;
 use webignition\WaitFor\WaitFor;
-
-use function PHPUnit\Framework\assertEquals;
 
 class NotificationDeliveryTest extends AbstractApplicationTest
 {
-    use GetResultsClientAdapterTrait;
+    use GetHttpAdapter;
+
+    private Factory $remoteEventRequestFactory;
+    private Job $job;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $remoteEventRequestFactory = self::getContainer()->get(Factory::class);
+        \assert($remoteEventRequestFactory instanceof Factory);
+        $this->remoteEventRequestFactory = $remoteEventRequestFactory;
+
+        $jobLabel = (string) new Ulid();
+        $response = $this->applicationClient->makeJobCreationRequest(
+            self::$apiTokens->get('user@example.com'),
+            $jobLabel,
+            'http://callback-receiver:8080',
+        );
+        self::assertSame(200, $response->getStatusCode());
+
+        $jobRepository = self::getContainer()->get(JobRepository::class);
+        \assert($jobRepository instanceof JobRepository);
+
+        $job = $jobRepository->findOneBy(['label' => $jobLabel]);
+        self::assertNotNull($job);
+        $this->job = $job;
+    }
 
     /**
      * @param callable(non-empty-string): array<array<mixed>> $addEventPayloadsCreator
@@ -29,45 +57,33 @@ class NotificationDeliveryTest extends AbstractApplicationTest
         callable $addEventPayloadsCreator,
         string $stopState,
         int $expectedDispatchedNotificationsCount,
-        callable $expectedRequestBodiesCreator
+        callable $expectedRequestBodiesCreator,
     ): void {
-        $jobLabel = new UlidFactory()->create();
-
-        $createJobResponse = $this->applicationClient->makeJobCreationRequest(
-            self::$apiTokens->get('user@example.com'),
-            $jobLabel,
-            'http://callback-receiver:8080',
-        );
-
-        self::assertSame(200, $createJobResponse->getStatusCode());
-
-        $jobRepository = self::getContainer()->get(JobRepository::class);
-        \assert($jobRepository instanceof JobRepository);
-
-        $job = $jobRepository->findOneBy(['label' => $jobLabel]);
-        \assert($job instanceof JobInterface);
-
-        $responseData = json_decode($createJobResponse->getBody()->getContents(), true);
-        \assert(is_array($responseData));
-        \assert(array_key_exists('event_add_url', $responseData));
-
-        $addEventUrl = (string) $responseData['event_add_url'];
-
-        $addEventPayloads = $addEventPayloadsCreator($jobLabel);
+        $addEventPayloads = $addEventPayloadsCreator($this->job->getLabel());
 
         foreach ($addEventPayloads as $addEventPayload) {
-            $response = $this->applicationClient->makeEventAddRequest($addEventUrl, $addEventPayload);
-            \assert(200 === $response->getStatusCode());
+            $event = new RemoteEvent(
+                name: 'worker.event',
+                id: (string) new Ulid(),
+                payload: $addEventPayload,
+            );
+
+            $response = $this->applicationClient->makeWorkerEventWebhookRequest(
+                $this->remoteEventRequestFactory->createHeaders($event, $this->job->getToken()),
+                $this->remoteEventRequestFactory->createBody($event, $this->job->getToken()),
+            );
+
+            self::assertSame(202, $response->getStatusCode());
         }
 
         new WaitFor()->waitFor(
             30,
-            function () use ($jobLabel, $stopState) {
-                $jobState = $this->getJobState($jobLabel);
+            function () use ($stopState) {
+                $jobState = $this->getJobState($this->job->getLabel());
 
                 return $stopState === $jobState;
             },
-            $jobLabel . '" to be in "' . $stopState . '"',
+            $this->job->getLabel() . '" to be in "' . $stopState . '"',
         );
 
         sleep(1);
@@ -81,7 +97,7 @@ class NotificationDeliveryTest extends AbstractApplicationTest
         $requests = $parser->parse($output, $expectedDispatchedNotificationsCount);
         self::assertCount($expectedDispatchedNotificationsCount, $requests);
 
-        $expectedRequestBodies = $expectedRequestBodiesCreator($job);
+        $expectedRequestBodies = $expectedRequestBodiesCreator($this->job);
 
         foreach ($expectedRequestBodies as $requestIndex => $expectedRequestBody) {
             $request = $requests[$requestIndex];
@@ -93,7 +109,7 @@ class NotificationDeliveryTest extends AbstractApplicationTest
             $requestData = json_decode($request->getBody()->getContents(), true);
             self::assertIsArray($requestData);
 
-            self:assertEquals($expectedRequestBody, $requestData);
+            self::assertEquals($expectedRequestBody, $requestData);
         }
     }
 
