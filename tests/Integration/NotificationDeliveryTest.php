@@ -177,7 +177,7 @@ class NotificationDeliveryTest extends AbstractApplicationTest
                     return [
                         [
                             'label' => $job->getLabel(),
-                            'event_add_url' => 'https://localhost/event/add/' . $job->getToken(),
+                            'event_add_url' => 'empty',
                             'state' => 'started',
                             'has_events' => true,
                             'meta_state' => [
@@ -191,7 +191,7 @@ class NotificationDeliveryTest extends AbstractApplicationTest
                         ],
                         [
                             'label' => $job->getLabel(),
-                            'event_add_url' => 'https://localhost/event/add/' . $job->getToken(),
+                            'event_add_url' => 'empty',
                             'state' => 'compiling',
                             'has_events' => true,
                             'meta_state' => [
@@ -206,7 +206,7 @@ class NotificationDeliveryTest extends AbstractApplicationTest
                         ],
                         [
                             'label' => $job->getLabel(),
-                            'event_add_url' => 'https://localhost/event/add/' . $job->getToken(),
+                            'event_add_url' => 'empty',
                             'state' => 'compiled',
                             'has_events' => true,
                             'meta_state' => [
@@ -222,7 +222,7 @@ class NotificationDeliveryTest extends AbstractApplicationTest
                         ],
                         [
                             'label' => $job->getLabel(),
-                            'event_add_url' => 'https://localhost/event/add/' . $job->getToken(),
+                            'event_add_url' => 'empty',
                             'state' => 'executing',
                             'has_events' => true,
                             'meta_state' => [
@@ -239,7 +239,7 @@ class NotificationDeliveryTest extends AbstractApplicationTest
                         ],
                         [
                             'label' => $job->getLabel(),
-                            'event_add_url' => 'https://localhost/event/add/' . $job->getToken(),
+                            'event_add_url' => 'empty',
                             'state' => 'executed',
                             'has_events' => true,
                             'meta_state' => [
@@ -257,7 +257,7 @@ class NotificationDeliveryTest extends AbstractApplicationTest
                         ],
                         [
                             'label' => $job->getLabel(),
-                            'event_add_url' => 'https://localhost/event/add/' . $job->getToken(),
+                            'event_add_url' => 'empty',
                             'state' => 'ended',
                             'has_events' => true,
                             'meta_state' => [

@@ -20,8 +20,7 @@ readonly class SerializableJobFactory implements SerializableJobFactoryInterface
     public function createWithoutToken(JobInterface $job): SerializableJobInterface
     {
         $jobState = $this->jobStateFactory->create($job->getLabel());
-        $relativeUrl = $this->router->generate('app_event_add', ['token' => $job->getToken()]);
-        $eventAddUrl = rtrim($this->selfUrl, '/') . $relativeUrl;
+        $eventAddUrl = 'empty';
 
         $job = new SerializableJob(
             $job->getLabel(),
@@ -43,8 +42,7 @@ readonly class SerializableJobFactory implements SerializableJobFactoryInterface
     public function create(JobInterface $job): SerializableJobInterface
     {
         $jobState = $this->jobStateFactory->create($job->getLabel());
-        $relativeUrl = $this->router->generate('app_event_add', ['token' => $job->getToken()]);
-        $eventAddUrl = rtrim($this->selfUrl, '/') . $relativeUrl;
+        $eventAddUrl = 'empty';
         $eventNotifyUrl = rtrim($this->selfUrl, '/')
             . $this->router->generate('_webhook_controller', ['type' => 'worker.event']);
 

@@ -15,7 +15,7 @@ class HttpResponseFactory
     {
         $responseData = [
             'label' => $job->label,
-            'event_add_url' => $job->authenticator,
+            'event_add_url' => 'empty',
             'state' => $job->state->state,
             'meta_state' => [
                 'pending' => $job->state->metaState->pending,
