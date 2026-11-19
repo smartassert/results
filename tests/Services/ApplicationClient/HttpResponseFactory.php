@@ -26,11 +26,6 @@ class HttpResponseFactory
             'previous_states' => $job->getPreviousStates(),
         ];
 
-        if ($job instanceof CreatedJobInterface) {
-            $responseData['token'] = $job->getEventNotifyToken();
-            $responseData['event_add_url'] = 'empty';
-        }
-
         $endState = $job->getState()->endState;
         if (is_string($endState)) {
             $responseData['end_state'] = $endState;
