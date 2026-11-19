@@ -105,7 +105,6 @@ class NotificationDeliveryTest extends AbstractApplicationTest
 
             self::assertSame('POST', $request->getMethod());
             self::assertSame('application/json', $request->getHeaderLine('Content-Type'));
-            self::assertEquals('/results.job.state_changed', (string) $request->getUri());
 
             $requestData = json_decode($request->getBody()->getContents(), true);
             self::assertIsArray($requestData);

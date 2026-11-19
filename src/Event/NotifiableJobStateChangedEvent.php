@@ -21,12 +21,7 @@ final class NotifiableJobStateChangedEvent extends Event implements NotifiableEv
 
     public function getNotifyUrl(): ?string
     {
-        $baseUrl = $this->job->getNotifyUrl();
-        if (null === $baseUrl) {
-            return null;
-        }
-
-        return rtrim($baseUrl, '/') . '/' . $this->getRemoteEventName();
+        return $this->job->getNotifyUrl();
     }
 
     public function getRemoteEventName(): string
