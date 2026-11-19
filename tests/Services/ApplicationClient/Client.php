@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Services\ApplicationClient;
 
+use App\Enum\RemoteEventType;
 use Psr\Http\Message\ResponseInterface;
 use SmartAssert\SymfonyTestClient\ClientInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -111,7 +112,7 @@ class Client
     ): ResponseInterface {
         return $this->client->makeRequest(
             $method,
-            $this->router->generate('_webhook_controller', ['type' => 'worker.event']),
+            $this->router->generate('_webhook_controller', ['type' => RemoteEventType::WORKER_EVENT->value]),
             $headers,
             $body,
         );

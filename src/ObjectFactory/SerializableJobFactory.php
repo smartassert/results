@@ -3,6 +3,7 @@
 namespace App\ObjectFactory;
 
 use App\Entity\JobInterface;
+use App\Enum\RemoteEventType;
 use App\Model\SerializableCreatedJob;
 use App\Model\SerializableJob;
 use App\Model\SerializableJobInterface;
@@ -23,7 +24,7 @@ readonly class SerializableJobFactory implements SerializableJobFactoryInterface
         $jobState = $this->jobStateFactory->create($job->getLabel());
 
         $eventNotifyUrl = rtrim($this->selfUrl, '/')
-            . $this->router->generate('_webhook_controller', ['type' => 'worker.event']);
+            . $this->router->generate('_webhook_controller', ['type' => RemoteEventType::WORKER_EVENT->value]);
 
         return new SerializableCreatedJob(
             $job->getLabel(),

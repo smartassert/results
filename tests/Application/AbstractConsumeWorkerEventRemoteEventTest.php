@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Application;
 
 use App\Entity\Job;
+use App\Enum\RemoteEventType;
 use App\Repository\EventRepository;
 use App\Repository\JobRepository;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -65,7 +66,7 @@ abstract class AbstractConsumeWorkerEventRemoteEventTest extends AbstractApplica
         ];
 
         $event = new RemoteEvent(
-            name: 'worker.event',
+            name: RemoteEventType::WORKER_EVENT->value,
             id: (string) new Ulid(),
             payload: $payload,
         );
@@ -97,7 +98,7 @@ abstract class AbstractConsumeWorkerEventRemoteEventTest extends AbstractApplica
         ];
 
         $event = new RemoteEvent(
-            name: 'worker.event',
+            name: RemoteEventType::WORKER_EVENT->value,
             id: (string) new Ulid(),
             payload: $payload,
         );
@@ -146,7 +147,7 @@ abstract class AbstractConsumeWorkerEventRemoteEventTest extends AbstractApplica
         $payload = $payloadCreator($jobLabel);
 
         $event = new RemoteEvent(
-            name: 'worker.event',
+            name: RemoteEventType::WORKER_EVENT->value,
             id: (string) new Ulid(),
             payload: $payload,
         );

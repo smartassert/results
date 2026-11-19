@@ -4,6 +4,7 @@ namespace App\RemoteEvent;
 
 use App\Entity\Job;
 use App\EntityFactory\EventFactory;
+use App\Enum\RemoteEventType;
 use App\Event\JobStateChangedEvent;
 use App\Event\WorkerEventCreatedEvent;
 use App\ObjectFactory\JobStateFactory;
@@ -16,11 +17,9 @@ use Symfony\Component\RemoteEvent\Attribute\AsRemoteEventConsumer;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
 use Symfony\Component\RemoteEvent\RemoteEvent;
 
-#[AsRemoteEventConsumer('worker.event')]
+#[AsRemoteEventConsumer(RemoteEventType::WORKER_EVENT->value)]
 final class WorkerEventWebhookConsumer implements ConsumerInterface
 {
-    public const string NAME = 'worker.event';
-
     public function __construct(
         private readonly Factory $requestFactory,
         private readonly Validator $requestValidator,
@@ -32,7 +31,7 @@ final class WorkerEventWebhookConsumer implements ConsumerInterface
 
     public function consume(RemoteEvent $event): void
     {
-        if (self::NAME !== $event->getName()) {
+        if (RemoteEventType::WORKER_EVENT->value !== $event->getName()) {
             return;
         }
 
