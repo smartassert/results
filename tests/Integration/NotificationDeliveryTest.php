@@ -6,6 +6,7 @@ namespace App\Tests\Integration;
 
 use App\Entity\Job;
 use App\Entity\JobInterface;
+use App\Enum\RemoteEventType;
 use App\Repository\JobRepository;
 use App\Request\AddEvent\Request;
 use App\Tests\Application\AbstractApplicationTest;
@@ -63,7 +64,7 @@ class NotificationDeliveryTest extends AbstractApplicationTest
 
         foreach ($addEventPayloads as $addEventPayload) {
             $event = new RemoteEvent(
-                name: 'worker.event',
+                name: RemoteEventType::WORKER_EVENT->value,
                 id: (string) new Ulid(),
                 payload: $addEventPayload,
             );
