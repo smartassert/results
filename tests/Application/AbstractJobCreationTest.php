@@ -54,7 +54,7 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
                 ],
                 'previous_states' => [],
                 'event_notify' => [
-                    'url' => $this->getSelfUrl() . '/worker_event/add/worker.event',
+                    'url' => $this->getSelfUrl() . '/event/add/worker.event',
                     'token' => $job->getToken(),
                 ],
             ],
