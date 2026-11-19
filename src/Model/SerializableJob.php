@@ -4,36 +4,18 @@ namespace App\Model;
 
 use App\Enum\JobState as State;
 
-class SerializableJob implements SerializableJobInterface
+readonly class SerializableJob implements SerializableJobInterface
 {
     /**
-     * @var non-empty-string
-     */
-    private string $endState;
-
-    /**
      * @param non-empty-string  $label
-     * @param ?non-empty-string $token
+     * @param ?non-empty-string $endState
      */
     public function __construct(
-        private readonly string $label,
-        private readonly ?string $token,
-        private readonly string $eventAddUrl,
-        private readonly ?string $eventNotifyUrl,
-        private readonly State $state,
-        private readonly bool $hasEvents,
+        public string $label,
+        public State $state,
+        public bool $hasEvents,
+        public ?string $endState,
     ) {}
-
-    /**
-     * @param non-empty-string $endState
-     */
-    public function withEndState(string $endState): self
-    {
-        $new = clone $this;
-        $new->endState = $endState;
-
-        return $new;
-    }
 
     public function jsonSerialize(): array
     {
@@ -47,7 +29,6 @@ class SerializableJob implements SerializableJobInterface
 
         $data = [
             'label' => $this->label,
-            'event_add_url' => $this->eventAddUrl,
             'state' => $this->state->value,
             'has_events' => $this->hasEvents,
             'meta_state' => [
@@ -58,18 +39,7 @@ class SerializableJob implements SerializableJobInterface
             'previous_states' => $previousStates,
         ];
 
-        if (null !== $this->eventNotifyUrl) {
-            $data['event_notify'] = [
-                'url' => $this->eventNotifyUrl,
-                'token' => $this->token,
-            ];
-        }
-
-        if (null !== $this->token) {
-            $data['token'] = $this->token;
-        }
-
-        if ($hasEnded) {
+        if (null !== $this->endState) {
             $data['end_state'] = $this->endState;
         }
 

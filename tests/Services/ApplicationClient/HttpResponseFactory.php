@@ -16,7 +16,6 @@ class HttpResponseFactory
     {
         $responseData = [
             'label' => $job->getLabel(),
-            'event_add_url' => 'empty',
             'state' => $job->getState()->state,
             'meta_state' => [
                 'pending' => $job->getState()->metaState->pending,
@@ -29,6 +28,7 @@ class HttpResponseFactory
 
         if ($job instanceof CreatedJobInterface) {
             $responseData['token'] = $job->getEventNotifyToken();
+            $responseData['event_add_url'] = 'empty';
         }
 
         $endState = $job->getState()->endState;
