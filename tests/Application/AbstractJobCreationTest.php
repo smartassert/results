@@ -45,8 +45,6 @@ abstract class AbstractJobCreationTest extends AbstractApplicationTest
         self::assertEquals(
             [
                 'label' => $jobLabel,
-                'token' => $job->getToken(),
-                'event_add_url' => 'empty',
                 'state' => 'awaiting-events',
                 'has_events' => false,
                 'meta_state' => [

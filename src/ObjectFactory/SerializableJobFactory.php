@@ -28,7 +28,6 @@ readonly class SerializableJobFactory implements SerializableJobFactoryInterface
         return new SerializableCreatedJob(
             $job->getLabel(),
             $jobState->getState(),
-            'empty',
             $job->getToken(),
             $eventNotifyUrl,
         );

@@ -13,7 +13,6 @@ readonly class SerializableCreatedJob extends SerializableJob implements Seriali
     public function __construct(
         string $label,
         State $state,
-        private string $eventAddUrl,
         private string $token,
         private string $eventNotifyUrl,
     ) {
@@ -25,8 +24,6 @@ readonly class SerializableCreatedJob extends SerializableJob implements Seriali
         return array_merge(
             parent::jsonSerialize(),
             [
-                'event_add_url' => $this->eventAddUrl,
-                'token' => $this->token,
                 'event_notify' => [
                     'url' => $this->eventNotifyUrl,
                     'token' => $this->token,
