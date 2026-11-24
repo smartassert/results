@@ -65,15 +65,16 @@ final class WorkerEventRequestParser extends AbstractRequestParser
 
         $this->validateSignature($request->headers, $request->getContent(), $job->getToken());
 
-        $addEventRequest = $this->requestFactory->create($body);
-
-        $this->requestValidator->validate($addEventRequest);
+        $validatedRequest = $this->requestValidator->validate(
+            $this->requestFactory->create($body),
+        );
 
         return new WorkerEventRemoteEvent(
             (string) $request->headers->get($this->eventHeaderName),
             (string) $request->headers->get($this->idHeaderName),
             $body,
             $job,
+            $validatedRequest,
         );
     }
 
