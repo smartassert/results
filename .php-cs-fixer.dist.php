@@ -23,4 +23,5 @@ return (new PhpCsFixer\Config())
         ],
     ])
     ->setFinder($finder)
-    ;
+    ->setUnsupportedPhpVersionAllowed(true)
+;
