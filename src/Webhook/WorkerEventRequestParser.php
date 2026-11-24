@@ -2,6 +2,7 @@
 
 namespace App\Webhook;
 
+use App\RemoteEvent\WorkerEventRemoteEvent;
 use App\Repository\JobRepository;
 use App\Request\AddEvent\Factory;
 use App\Request\AddEvent\InvalidRequestException;
@@ -64,14 +65,16 @@ final class WorkerEventRequestParser extends AbstractRequestParser
 
         $this->validateSignature($request->headers, $request->getContent(), $job->getToken());
 
-        $addEventRequest = $this->requestFactory->create($body);
+        $validatedRequest = $this->requestValidator->validate(
+            $this->requestFactory->create($body),
+        );
 
-        $this->requestValidator->validate($addEventRequest);
-
-        return new RemoteEvent(
+        return new WorkerEventRemoteEvent(
             (string) $request->headers->get($this->eventHeaderName),
             (string) $request->headers->get($this->idHeaderName),
-            $body
+            $body,
+            $job,
+            $validatedRequest,
         );
     }
 
